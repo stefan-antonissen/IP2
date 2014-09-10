@@ -19,6 +19,7 @@ namespace Medicare.Controller
         }
 
         #region getters
+
         public string[] GetStatus()
         {
             cc.send(Enums.GetValue(Enums.BikeCommands.STATUS)); 
@@ -28,9 +29,11 @@ namespace Medicare.Controller
             rawArray[4] = (float.Parse(rawArray[4])).ToString();
             return rawArray;
         }
+
         #endregion
 
         #region setters
+
         public string[] SetPower(int power)
         {
             cc.send(Enums.GetValue(Enums.BikeCommands.POWER) + " " + power.ToString());
@@ -40,6 +43,7 @@ namespace Medicare.Controller
             rawArray[4] = (float.Parse(rawArray[4])).ToString();
             return rawArray;
         }
+
         #endregion
     }
 }
