@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace MediCare.Properties
+namespace MediCare.ArtsClient.Properties
 {
 
 
