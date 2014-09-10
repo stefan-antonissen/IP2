@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace Medicare.Controller
 {
-    public class Controller
+    public class BikeController
     {
+        public BikeController(string comPort)
+        {
+            ComController cc = new ComController(comPort);
+        }
     }
 }
