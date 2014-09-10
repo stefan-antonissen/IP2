@@ -37,7 +37,7 @@ namespace MediCare.ArtsClient
 
         }
 
-        private void textBox9_TextChanged(object sender, EventArgs e)
+        private void newpowerbox_TextChanged(object sender, EventArgs e)
         {
             //send information back to host controller
         }
@@ -45,6 +45,16 @@ namespace MediCare.ArtsClient
         private void updatebutton_Click(object sender, EventArgs e)
         {
             MessageBox.Show("tuktuktuktuk");
+        }
+
+        private void newpowerbox_Click(object sender, EventArgs e)
+        {
+            newpowerbox.Text = "";
+        }
+
+        private void comportbox_Select(object sender, EventArgs e, String item)
+        {
+            MessageBox.Show(item);
         }
     }
 }

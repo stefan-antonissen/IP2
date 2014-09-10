@@ -46,9 +46,11 @@
             this.textBox8 = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
-            this.textBox9 = new System.Windows.Forms.TextBox();
+            this.newpowerbox = new System.Windows.Forms.TextBox();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.updatebutton = new System.Windows.Forms.Button();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.comlabel = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -64,7 +66,7 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(12, 478);
+            this.checkBox1.Location = new System.Drawing.Point(18, 498);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(86, 17);
             this.checkBox1.TabIndex = 1;
@@ -212,40 +214,64 @@
             // label9
             // 
             this.label9.Font = new System.Drawing.Font("Comic Sans MS", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label9.Location = new System.Drawing.Point(7, 411);
+            this.label9.Location = new System.Drawing.Point(12, 413);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(199, 35);
             this.label9.TabIndex = 17;
             this.label9.Text = "New power";
             // 
-            // textBox9
+            // newpowerbox
             // 
-            this.textBox9.AcceptsReturn = true;
-            this.textBox9.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox9.Location = new System.Drawing.Point(259, 411);
-            this.textBox9.Name = "textBox9";
-            this.textBox9.Size = new System.Drawing.Size(215, 35);
-            this.textBox9.TabIndex = 18;
-            this.textBox9.Text = "Enter new value";
-            this.textBox9.TextChanged += new System.EventHandler(this.textBox9_TextChanged);
+            this.newpowerbox.AcceptsReturn = true;
+            this.newpowerbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.newpowerbox.Location = new System.Drawing.Point(259, 413);
+            this.newpowerbox.Name = "newpowerbox";
+            this.newpowerbox.Size = new System.Drawing.Size(180, 35);
+            this.newpowerbox.TabIndex = 18;
+            this.newpowerbox.Text = "Enter new value";
+            this.newpowerbox.Click += new System.EventHandler(this.newpowerbox_Click);
+            this.newpowerbox.TextChanged += new System.EventHandler(this.newpowerbox_TextChanged);
             // 
             // updatebutton
             // 
-            this.updatebutton.Location = new System.Drawing.Point(259, 452);
+            this.updatebutton.Location = new System.Drawing.Point(445, 413);
             this.updatebutton.Name = "updatebutton";
-            this.updatebutton.Size = new System.Drawing.Size(215, 23);
+            this.updatebutton.Size = new System.Drawing.Size(58, 35);
             this.updatebutton.TabIndex = 19;
             this.updatebutton.Text = "Update";
             this.updatebutton.UseVisualStyleBackColor = true;
             this.updatebutton.Click += new System.EventHandler(this.updatebutton_Click);
             // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(394, 484);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(109, 21);
+            this.comboBox1.TabIndex = 20;
+            this.comboBox1.Items.Add("hoi"); // for each loop necessary to add everything to the array
+            this.comboBox1.Items.Add("doei");
+            this.comboBox1.Items.Add("knappe");
+            this.comboBox1.Items.Add("jongen");
+            // 
+            // comlabel
+            // 
+            this.comlabel.Font = new System.Drawing.Font("Comic Sans MS", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.comlabel.Location = new System.Drawing.Point(255, 480);
+            this.comlabel.Name = "comlabel";
+            this.comlabel.Size = new System.Drawing.Size(78, 31);
+            this.comlabel.TabIndex = 21;
+            this.comlabel.Text = "Com port";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(518, 507);
+            this.ClientSize = new System.Drawing.Size(515, 527);
+            this.Controls.Add(this.comlabel);
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.updatebutton);
-            this.Controls.Add(this.textBox9);
+            this.Controls.Add(this.newpowerbox);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.textBox8);
@@ -293,8 +319,10 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label9;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
-        public System.Windows.Forms.TextBox textBox9;
+        public System.Windows.Forms.TextBox newpowerbox;
         private System.Windows.Forms.Button updatebutton;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label comlabel;
     }
 }
 

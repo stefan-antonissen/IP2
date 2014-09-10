@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30501.0
+# Visual Studio Express 2013 for Windows Desktop
+VisualStudioVersion = 12.0.30723.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediCare.Server", "MediCare.Server\MediCare.Server.csproj", "{2536AC4B-2EE8-42FC-843E-00766B713285}"
 EndProject
@@ -9,9 +9,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediCare.Controller", "Medi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediCare.DataHandling", "MediCare.DataHandling\MediCare.DataHandling.csproj", "{6C973F5B-0D9F-40F3-882C-A470B7D58155}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediCare.ArtsClient", "MediCare.ArtsClient\MediCare.ArtsClient.csproj", "{8C36272D-2DBB-471F-9FCF-4ABEC9CB44FF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediCare.Client", "MediCare.ArtsClient\MediCare.Client.csproj", "{8C36272D-2DBB-471F-9FCF-4ABEC9CB44FF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediCare.Client", "MediCare.Client\MediCare.Client.csproj", "{70B09893-22EC-4D0D-8CE4-B1F84D99ACA7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediCare.ArtsClient", "MediCare.Client\MediCare.ArtsClient.csproj", "{70B09893-22EC-4D0D-8CE4-B1F84D99ACA7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
