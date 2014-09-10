@@ -7,7 +7,7 @@ public class ComController
 
 	public ComController(string port)
 	{
-        _comPort = new SerialPort(port);
+        _comPort = new SerialPort(port, 9600);
 	}
 
     public void openConnection()
@@ -22,16 +22,21 @@ public class ComController
 
     public void send(string command)
     {
-        _comPort.Write(command);
+        _comPort.WriteLine(command);
     }
 
-    public string[] getAvailablePorts()
+    public string[] getAvailablePorts() 
     {
         return SerialPort.GetPortNames();
     }
 
     public string read() 
     {
-        return _comPort.ReadExisting();
+        return _comPort.ReadLine();
     }
+
+    /*public bool isOpen()
+    {
+        return _comPort.IsOpen();
+    }*/
 }

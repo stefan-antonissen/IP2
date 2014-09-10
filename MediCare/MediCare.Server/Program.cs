@@ -10,6 +10,18 @@ namespace MediCare.Server
     {
         static void Main(string[] args)
         {
+            ComController cc = new ComController("COM5");
+            cc.openConnection();
+            cc.send("rs");
+            Console.WriteLine((cc.read()));
+            cc.send("cm");
+            Console.WriteLine((cc.read()));
+            while (true)
+            {
+                cc.send("st");
+                Console.WriteLine((cc.read()));
+               // Console.ReadKey();
+            }
         }
     }
 }
