@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Medicare.Controller
 {
-    class Enums
+    public class Enums
     {
 
         public enum BikeCommands
