@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Medicare.Controller;
 
 namespace MediCare.Client
 {
@@ -20,3 +21,4 @@ namespace MediCare.Client
         }
     }
 }
+

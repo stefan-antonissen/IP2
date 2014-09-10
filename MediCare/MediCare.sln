@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2012
+# Visual Studio 2013
+VisualStudioVersion = 12.0.30501.0
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediCare.Server", "MediCare.Server\MediCare.Server.csproj", "{2536AC4B-2EE8-42FC-843E-00766B713285}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Medicare.Controller", "Medicare.Controller\Medicare.Controller.csproj", "{6638429B-0183-478F-A7F0-8C44ECE6CB9D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediCare.Controller", "Medicare.Controller\MediCare.Controller.csproj", "{6638429B-0183-478F-A7F0-8C44ECE6CB9D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediCare.DataHandling", "MediCare.DataHandling\MediCare.DataHandling.csproj", "{6C973F5B-0D9F-40F3-882C-A470B7D58155}"
 EndProject
