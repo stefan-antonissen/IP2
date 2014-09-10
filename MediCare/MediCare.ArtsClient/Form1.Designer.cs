@@ -1,4 +1,4 @@
-﻿namespace MediCare.Client
+﻿namespace MediCare.ArtsClient
 {
     partial class Form1
     {
