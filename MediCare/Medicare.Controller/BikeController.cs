@@ -10,7 +10,10 @@ namespace Medicare.Controller
     {
         public BikeController(string comPort)
         {
+            comPort = "COM5"; //TO DO: remove
             ComController cc = new ComController(comPort);
         }
+
+
     }
 }
