@@ -16,6 +16,7 @@ namespace MediCare.ArtsClient
         {
             InitializeComponent();
         }
+<<<<<<< HEAD
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -37,7 +38,7 @@ namespace MediCare.ArtsClient
 
         }
 
-        private void textBox9_TextChanged(object sender, EventArgs e)
+        private void newpowerbox_TextChanged(object sender, EventArgs e)
         {
             //send information back to host controller
         }
@@ -46,5 +47,17 @@ namespace MediCare.ArtsClient
         {
             MessageBox.Show("tuktuktuktuk");
         }
+
+        private void newpowerbox_Click(object sender, EventArgs e)
+        {
+            newpowerbox.Text = "";
+        }
+
+        private void comportbox_Select(object sender, EventArgs e, String item)
+        {
+            MessageBox.Show(item);
+        }
+=======
+>>>>>>> e340480e8d8119f9a78629d322bcb432a73ff22b
     }
 }
