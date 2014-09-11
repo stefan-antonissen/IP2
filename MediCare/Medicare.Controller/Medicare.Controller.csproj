@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6638429B-0183-478F-A7F0-8C44ECE6CB9D}</ProjectGuid>
+    <ProjectGuid>{55AA52BF-53CC-4061-AB67-F3EE6633121B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Medicare.Controller</RootNamespace>

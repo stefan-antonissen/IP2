@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{6C973F5B-0D9F-40F3-882C-A470B7D58155}</ProjectGuid>
+    <ProjectGuid>{2A89EE5A-46FF-4F11-AAB7-C90F1FDFAD07}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MediCare.DataHandling</RootNamespace>

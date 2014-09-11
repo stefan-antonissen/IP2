@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{70B09893-22EC-4D0D-8CE4-B1F84D99ACA7}</ProjectGuid>
+    <ProjectGuid>{6AE46731-5C93-4454-97EC-9A3A702AF5E5}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>MediCare.ArtsClient</RootNamespace>
