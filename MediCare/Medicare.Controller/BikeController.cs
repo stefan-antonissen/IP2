@@ -11,10 +11,8 @@ namespace Medicare.Controller
         private ComController cc;
         public BikeController(string comPort)
         {
-            comPort = "COM5"; //TO DO: remove
             cc = new ComController(comPort);
             cc.openConnection();
-            cc.send(Enums.GetValue(Enums.BikeCommands.CONTROLMODE));
             //Console.WriteLine(Enums.GetValue(Enums.BikeCommands.CONTROLMODE));
         }
 
@@ -34,8 +32,16 @@ namespace Medicare.Controller
 
         #region setters
 
+        public void ResetBike() 
+        {
+            cc.send(Enums.GetValue(Enums.BikeCommands.CONTROLMODE));
+            cc.send(Enums.GetValue(Enums.BikeCommands.RESET));
+            cc.read();
+        }
+
         public string[] SetPower(int power)
         {
+            cc.send(Enums.GetValue(Enums.BikeCommands.CONTROLMODE));
             cc.send(Enums.GetValue(Enums.BikeCommands.POWER) + " " + power.ToString());
             string raw = cc.read();
             string[] rawArray = raw.Split();

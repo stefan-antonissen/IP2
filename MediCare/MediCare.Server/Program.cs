@@ -12,7 +12,15 @@ namespace MediCare.Server
         static void Main(string[] args)
         {
             BikeController bc = new BikeController("COM5");
-            bc.GetStatus();
+            //bc.ResetBike();
+            while (true)
+            {
+                String[] stat = bc.GetStatus();
+                Console.Write("Heartrate: " + stat[(int)Enums.StatusInfo.HEARTRATE]);
+                Console.Write(" Power: "+ stat[(int)Enums.StatusInfo.POWER]);
+                Console.Write(" Distance: " + stat[(int)Enums.StatusInfo.DISTANCE]);
+                Console.WriteLine(" RPM: " + stat[(int)Enums.StatusInfo.RPM]);
+            }
             /*
             ComController cc = new ComController("COM5");
             cc.openConnection();
