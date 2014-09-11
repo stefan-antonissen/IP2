@@ -36,6 +36,18 @@ namespace Medicare.Controller
             GETDATETIME
         };
 
+        public enum StatusInfo
+        {
+            HEARTRATE = 0,
+            RPM = 1,
+            SPEED = 2,
+            DISTANCE = 3,
+            POWER = 4,
+            ENERGY = 5,
+            TIME = 6,
+            CURRENTPOWER = 7 
+        };
+
         public class StringValue : System.Attribute
         {
             private string _value;
