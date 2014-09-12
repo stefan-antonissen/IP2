@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediCare.Client", "MediCare
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediCare.ArtsClient", "MediCare.Client\MediCare.ArtsClient.csproj", "{1D13D6E0-54E8-4BAE-A495-6A6899DD357A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediCare.BikeSimulator", "MediCare.BikeSimulator\MediCare.BikeSimulator.csproj", "{A5DE0A78-1EE1-4D7E-B040-7C9EE0543C54}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{1D13D6E0-54E8-4BAE-A495-6A6899DD357A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D13D6E0-54E8-4BAE-A495-6A6899DD357A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D13D6E0-54E8-4BAE-A495-6A6899DD357A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A5DE0A78-1EE1-4D7E-B040-7C9EE0543C54}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5DE0A78-1EE1-4D7E-B040-7C9EE0543C54}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5DE0A78-1EE1-4D7E-B040-7C9EE0543C54}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5DE0A78-1EE1-4D7E-B040-7C9EE0543C54}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

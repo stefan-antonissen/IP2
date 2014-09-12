@@ -7,8 +7,8 @@
     <ProjectGuid>{55AA52BF-53CC-4061-AB67-F3EE6633121B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Medicare.Controller</RootNamespace>
-    <AssemblyName>Medicare.Controller</AssemblyName>
+    <RootNamespace>MediCare.Controller</RootNamespace>
+    <AssemblyName>MediCare.Controller</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

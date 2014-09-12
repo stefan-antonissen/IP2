@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2536AC4B-2EE8-42FC-843E-00766B713285}</ProjectGuid>
+    <ProjectGuid>{A5DE0A78-1EE1-4D7E-B040-7C9EE0543C54}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MediCare.Server</RootNamespace>
-    <AssemblyName>MediCare.Server</AssemblyName>
+    <RootNamespace>MediCare.BikeSimulator</RootNamespace>
+    <AssemblyName>MediCare.BikeSimulator</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
