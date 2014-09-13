@@ -13,15 +13,15 @@ namespace MediCare.Controller
         {
             if (comPort.Contains("COM"))
             {
-                cc = new ComController(comPort);
-                cc.openConnection();
+                cc = new SerialController(comPort);
                 //Console.WriteLine(Enums.GetValue(Enums.BikeCommands.CONTROLMODE));
             }
             else
             {
-                //TODO change content of ComController to SerialController EXTENDS ComController. and add BikeSimulator EXTENDS ComController class.
-                // cc gets type ComController and gets object of either SerialController or BikeSimulator.. Bikesimulator will be made in a way that it responds accordingly to cc.send() methods etc..
+                cc = new BikeSimulator(comPort); //TODO fix.. does not work.
             }
+
+            cc.openConnection();
 
         }
 

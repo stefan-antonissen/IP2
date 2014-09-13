@@ -36,6 +36,18 @@ namespace MediCare.Controller
             GETDATETIME
         };
 
+        public static bool ContainsCommand(String cmd)
+        {
+            if (cmd == "rs" || cmd == "lb") //TODO FIX!
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public enum StatusInfo
         {
             HEARTRATE = 0,
