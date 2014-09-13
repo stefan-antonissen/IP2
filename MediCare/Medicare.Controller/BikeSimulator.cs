@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace MediCare.Controller
 {
@@ -40,15 +41,16 @@ namespace MediCare.Controller
 
         override public string read()
         {
+            Thread.Sleep(400);
             switch (status)
-	        {
+            {
                 case "st":
-                    return "st"; //TODO change
-                break;
-		        default:
+                    return "110 40 33 14 400 1200 12 150"; // Heartrate, Rpm, Speed, Distance, Power, Energy, Time, Current Power
+                    break;
+                default:
                     return "er"; //TODO change
-                break;
-	        }
+                    break;
+            }            
         }
 
         /*public bool isOpen()

@@ -38,7 +38,7 @@ namespace MediCare.Controller
 
         public static bool ContainsCommand(String cmd)
         {
-            if (cmd == "rs" || cmd == "lb") //TODO FIX!
+            if (cmd == "st" || cmd == "lb") //TODO FIX!
             {
                 return true;
             }

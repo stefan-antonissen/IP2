@@ -11,7 +11,7 @@ namespace MediCare.Server
     {
         static void Main(string[] args)
         {
-            BikeController bc = new BikeController("COM5");
+            BikeController bc = new BikeController("V");
             //bc.ResetBike();
             while (true)
             {
