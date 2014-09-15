@@ -262,6 +262,7 @@
             this.Comport_ComboBox.Name = "Comport_ComboBox";
             this.Comport_ComboBox.Size = new System.Drawing.Size(121, 21);
             this.Comport_ComboBox.TabIndex = 21;
+            this.Comport_ComboBox.SelectedIndex = 0;
             this.Comport_ComboBox.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChange);
             // 
             // Form1
