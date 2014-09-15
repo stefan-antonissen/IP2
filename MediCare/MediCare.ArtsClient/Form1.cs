@@ -9,69 +9,84 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
 using MediCare.Controller;
+using System.IO.Ports;
 
 namespace MediCare.ArtsClient
 {
     public partial class Form1 : Form
     {
         private Controller.BikeController c;
+        private string currentPort = "";
+        private bool auto = false;
 
         public Form1()
         {
             InitializeComponent();
-            RunProgram();            
+            //Connect("");
+            //RunProgram();            
         }
 
         private void Form1_Load(object sender, EventArgs e) // Loads the windows //true story
         {
-            String[] ports = c.GetPorts(); //gets list of all com ports
-            Comport_ComboBox.Items.AddRange(ports);
+            //String[] ports = c.GetPorts(); //gets list of all com ports
+            Comport_ComboBox.Items.AddRange(SerialPort.GetPortNames());
+            Comport_ComboBox.Items.Add("SIM");
         }
 
         private void Connect(String SelectedPort)
         {
-            c = new BikeController("SIM"); // sim is for testing methods
+            if (SelectedPort == "")
+            {
+                c = new BikeController("SIM"); // sim is for testing methods
+            }
+            else
+            {
+                c = new BikeController(SelectedPort); // sim is for testing methods
+            }
+        }
+
+        private void run()
+        {
+            auto = Update_CheckBox.Checked;
+            updateValues(c.GetStatus());
         }
 
         private void updatebutton_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("" + Update_CheckBox.Checked);
-        }
-
-        private void Update_CheckBox_Click(object sender, EventArgs e) // auto update checkbox
-        {
-            //TimeRunning_Update();
+            updateValues(c.GetStatus());
+            auto = Update_CheckBox.Checked;
+            while (auto)
+            {
+                run();
+            }
         }
 
         private void ComportComboBox_SelectedIndexChange(object sender, EventArgs e)
         {
-            Connect(Comport_ComboBox.SelectedItem.ToString());
+            string selectedPort = Comport_ComboBox.SelectedItem.ToString();
+            if (currentPort.Equals(""))
+            {
+                currentPort = selectedPort;
+                Connect(selectedPort);
+                updateValues(c.GetStatus());
+            }
+            else if (!selectedPort.Equals(currentPort))
+            {
+                Connect(selectedPort);
+                updateValues(c.GetStatus());
+            }
         }
 
-        private void RunProgram()
-        {
-           // while (true)
-           // {
-            for (int i = 0; i < 10; i++)
-            {
-                 if (Update_CheckBox.Checked == false)
-                {
-                    //Console.WriteLine("dit is update" + i);
-                    updateValues(c.GetStatus());
-                }
-            }
-           // }
-        }
         private void updateValues(String[] data)
         {
-            TimeRunning_Box.Text = data[0];
-            Speed_Box.Text = data[1];
-            Distance_Box.Text = data[2];
-            Brake_Box.Text = data[3];
+            Heartbeats_Box.Text = data[0];
+            RPM_Box.Text = data[1];
+            Speed_Box.Text = data[2];
+            Distance_Box.Text = data[3];
             Power_Box.Text = data[4];
             Energy_Box.Text = data[5];
-            Heartbeats_Box.Text = data[6];
-            RPM_Box.Text = data[7];
+            TimeRunning_Box.Text = data[6];
+            Brake_Box.Text = data[7];
         }
     }
 }

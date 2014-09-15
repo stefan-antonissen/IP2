@@ -15,8 +15,8 @@ namespace MediCare.Controller
             if (comPort.Equals(""))
             {
                 cc = new SerialController();
+                comPort = cc.getPort();
             }
-            comPort = cc.getPort();
             
             if (comPort.Contains("COM"))
             {
