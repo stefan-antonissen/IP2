@@ -172,7 +172,6 @@
             this.Power_Box.ReadOnly = true;
             this.Power_Box.Size = new System.Drawing.Size(215, 35);
             this.Power_Box.TabIndex = 12;
-            this.Power_Box.TextChanged += new System.EventHandler(this.textBox5_TextChanged);
             // 
             // Brake_Box
             // 
@@ -228,8 +227,6 @@
             this.NewPower_Box.Size = new System.Drawing.Size(178, 35);
             this.NewPower_Box.TabIndex = 18;
             this.NewPower_Box.Text = "Enter new value";
-            this.NewPower_Box.Click += new System.EventHandler(this.textbox9_Click);
-            this.NewPower_Box.TextChanged += new System.EventHandler(this.textBox9_TextChanged);
             // 
             // updatebutton
             // 
@@ -249,7 +246,6 @@
             this.label10.Size = new System.Drawing.Size(79, 25);
             this.label10.TabIndex = 20;
             this.label10.Text = "Com port";
-            this.label10.Click += new System.EventHandler(this.label10_Click);
             // 
             // Comport_ComboBox
             // 
@@ -263,7 +259,7 @@
             this.Comport_ComboBox.Size = new System.Drawing.Size(121, 21);
             this.Comport_ComboBox.TabIndex = 21;
             this.Comport_ComboBox.SelectedIndex = 0;
-            this.Comport_ComboBox.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChange);
+            this.Comport_ComboBox.SelectedIndexChanged += new System.EventHandler(this.ComportComboBox_SelectedIndexChange);
             // 
             // Form1
             // 
