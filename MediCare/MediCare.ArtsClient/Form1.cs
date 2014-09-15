@@ -13,11 +13,15 @@ namespace MediCare.ArtsClient
 {
     public partial class Form1 : Form
     {
-        private String[] data = {"1", "2", "3", "4", "5", "6", "7", "8"}; // Put GetStatus method here and loop it so it will update textboxes below
-
+        private String[] data = { "1", "2", "3", "4", "5", "6", "7", "8" }; // Put GetStatus method here and loop it so it will update textboxes below
+        static Thread updateThread = new Thread(new ThreadStart(updateThreadFunction));
+        static Boolean auto_Update = false;
+       
         public Form1()
         {
             InitializeComponent();
+            updateThread.Start();
+            Console.WriteLine("The Thread is: " + updateThread.ThreadState);
         }
 
         private void Form1_Load(object sender, EventArgs e) // wtf
@@ -42,7 +46,8 @@ namespace MediCare.ArtsClient
 
         private void updatebutton_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("tuktuktuktuk"); // do something usefull here
+          //  MessageBox.Show("tuktuktuktuk"); // do something usefull here
+            MessageBox.Show("" + Update_CheckBox.Checked);
         }
 
         private void label10_Click(object sender, EventArgs e) // wtf not used
@@ -53,6 +58,8 @@ namespace MediCare.ArtsClient
         private void Update_CheckBox_Click(object sender, EventArgs e) // auto update checkbox
         {
             TimeRunning_Update();
+            auto_Update = !auto_Update;
+         
         }
 
         private void comboBox1_SelectedIndexChange(object sender, EventArgs e)
@@ -64,7 +71,7 @@ namespace MediCare.ArtsClient
 
         private void TimeRunning_Update()
         {
-                TimeRunning_Box.Text = data[0];   
+            TimeRunning_Box.Text = data[0];
         }
 
         private void Speed_Update(object sender, EventArgs e)
@@ -105,6 +112,31 @@ namespace MediCare.ArtsClient
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
 
+        }
+
+        static void updateThreadFunction()
+        {
+            while (true)
+            {
+                if (auto_Update)
+                {
+                    try
+                    {
+                        Console.WriteLine("Thread IS ACTIF");
+                        // Renew Data from controller (String[] vernieuwen 
+                       // updateThread.s
+                    }
+                    catch (Exception e)
+                    {
+                        //e.StackTrace;
+                    }
+                }
+                else
+                {
+                    // do Nothing
+                    Console.WriteLine("Update is NON ACTIF");
+                }
+            }
         }
 
 

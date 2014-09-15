@@ -50,7 +50,6 @@
             this.updatebutton = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
             this.Comport_ComboBox = new System.Windows.Forms.ComboBox();
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.SuspendLayout();
             // 
             // label1
@@ -265,10 +264,6 @@
             this.Comport_ComboBox.TabIndex = 21;
             this.Comport_ComboBox.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChange);
             // 
-            // backgroundWorker1
-            // 
-            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -328,7 +323,6 @@
         private System.Windows.Forms.Button updatebutton;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.ComboBox Comport_ComboBox;
-        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }
 
