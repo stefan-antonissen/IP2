@@ -9,6 +9,7 @@ namespace MediCare.Controller
     public class BikeController
     {
         private ComController cc;
+
         public BikeController(string comPort)
         {
             if (comPort.Contains("COM"))
@@ -41,11 +42,11 @@ namespace MediCare.Controller
 
         #region setters
 
-        public void ResetBike() 
+        public string ResetBike() 
         {
             cc.send(Enums.GetValue(Enums.BikeCommands.CONTROLMODE));
             cc.send(Enums.GetValue(Enums.BikeCommands.RESET));
-            cc.read();
+            return cc.read();
         }
 
         public string[] SetPower(int power)
