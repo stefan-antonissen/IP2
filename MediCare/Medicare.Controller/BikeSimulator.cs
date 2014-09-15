@@ -46,7 +46,11 @@ namespace MediCare.Controller
             if(Enums.ContainsCommand(command))
 	        {
                 _status = command.Substring(0, 2);
-                _value = int.Parse( command.Substring(2,command.Length - 2 )) ;
+                if (command.Length > 2)
+                {
+                   _value = int.Parse(command.Substring(2, command.Length - 2));
+                }
+
                 if (command == "cm" || command == "cd")
                 {
                     isCM = true;
