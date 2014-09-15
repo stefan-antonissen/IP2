@@ -23,7 +23,6 @@ namespace MediCare.Controller
             }
 
             cc.openConnection();
-
         }
 
         #region getters
@@ -45,6 +44,7 @@ namespace MediCare.Controller
         public string ResetBike() 
         {
             cc.send(Enums.GetValue(Enums.BikeCommands.CONTROLMODE));
+            cc.read();
             cc.send(Enums.GetValue(Enums.BikeCommands.RESET));
             return cc.read();
         }
@@ -52,6 +52,7 @@ namespace MediCare.Controller
         public string[] SetPower(int power)
         {
             cc.send(Enums.GetValue(Enums.BikeCommands.CONTROLMODE));
+            cc.read();
             cc.send(Enums.GetValue(Enums.BikeCommands.POWER) + " " + power.ToString());
             string raw = cc.read();
             string[] rawArray = raw.Split();
