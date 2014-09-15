@@ -9,8 +9,15 @@ namespace MediCare.Controller
     public class BikeController
     {
         private ComController cc;
+
         public BikeController(string comPort)
         {
+            if (comPort.Equals(""))
+            {
+                cc = new SerialController();
+            }
+            comPort = cc.getPort();
+            
             if (comPort.Contains("COM"))
             {
                 cc = new SerialController(comPort);
@@ -22,7 +29,11 @@ namespace MediCare.Controller
             }
 
             cc.openConnection();
+        }
 
+        public string[] GetPorts()
+        {
+            return cc.getAvailablePorts();
         }
 
         #region getters
@@ -41,16 +52,16 @@ namespace MediCare.Controller
 
         #region setters
 
-        public void ResetBike() 
+        public string ResetBike() 
         {
-            cc.send(Enums.GetValue(Enums.BikeCommands.CONTROLMODE));
             cc.send(Enums.GetValue(Enums.BikeCommands.RESET));
-            cc.read();
+            return cc.read();
         }
 
         public string[] SetPower(int power)
         {
             cc.send(Enums.GetValue(Enums.BikeCommands.CONTROLMODE));
+            cc.read();
             cc.send(Enums.GetValue(Enums.BikeCommands.POWER) + " " + power.ToString());
             string raw = cc.read();
             string[] rawArray = raw.Split();

@@ -53,6 +53,11 @@ namespace MediCare.Controller
             }            
         }
 
+        public override string getPort()
+        {
+            return "SIM";
+        }
+
         /*public bool isOpen()
         {
             return _comPort.IsOpen();

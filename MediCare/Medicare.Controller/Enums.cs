@@ -20,8 +20,10 @@ namespace MediCare.Controller
             STATUS,
             [StringValue("pw")]
             POWER,
-            [StringValue("cm")]
+            [StringValue("cd")]
             CONTROLMODE,
+            [StringValue("cm")]
+            CONTROLMODE2,
             [StringValue("id")]
             ID,
             [StringValue("ki")]

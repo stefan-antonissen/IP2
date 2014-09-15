@@ -11,8 +11,8 @@ namespace MediCare.Server
     {
         static void Main(string[] args)
         {
-            BikeController bc = new BikeController("V");
-            //bc.ResetBike();
+            BikeController bc = new BikeController("");
+            bc.ResetBike();
             while (true)
             {
                 String[] stat = bc.GetStatus();
