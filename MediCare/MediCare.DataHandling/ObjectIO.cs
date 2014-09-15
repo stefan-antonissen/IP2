@@ -54,13 +54,15 @@ namespace MediCare.DataHandling
             return measurements.Capacity;
         }
 
-        public void writeToDisk()
+        // save the arraylist of measurements to a file
+        public void SaveMeasurements(string filename)
         {
-            serializer.SerializeObject("UrFile.Dat", measurements);
+            serializer.SerializeObject(filename, measurements);
         }
 
-        public ArrayList ReadFromDisk() {
-            ArrayList result = serializer.DeSerializeObject("UrFile.Dat");
+        // load the arraylist of measurements from a file, returns the arraylist
+        public ArrayList LoadMeasurements(string filename) {
+            ArrayList result = serializer.DeSerializeObject(filename);
 
             return result;
         }

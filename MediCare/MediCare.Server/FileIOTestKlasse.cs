@@ -21,8 +21,8 @@ namespace MediCare.Server
             o.add(m1);
             o.add(m2);
 
-            o.writeToDisk();
-            ArrayList list = o.ReadFromDisk();
+            o.SaveMeasurements("filename.dat");
+            ArrayList list = o.LoadMeasurements("filename.dat");
             Console.WriteLine(list.ToString());
 
         }
