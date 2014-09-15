@@ -17,6 +17,7 @@ namespace MediCare.ArtsClient
             InitializeComponent();
         }
         private void newpowerbox_TextChanged(object sender, EventArgs e)
+        {
         }
 
         private void newpowerbox_Click(object sender, EventArgs e)
@@ -27,5 +28,6 @@ namespace MediCare.ArtsClient
         private void comportbox_Select(object sender, EventArgs e, String item)
         {
             MessageBox.Show(item);
+        }
     }
 }
