@@ -70,7 +70,7 @@
             this.Update_CheckBox.TabIndex = 1;
             this.Update_CheckBox.Text = "Auto Update";
             this.Update_CheckBox.UseVisualStyleBackColor = true;
-            this.Update_CheckBox.Click += new System.EventHandler(this.Update_CheckBox_Click);
+            //this.Update_CheckBox.Click += new System.EventHandler(this.Update_CheckBox_Click);
             // 
             // TimeRunning_Box
             // 
@@ -250,15 +250,10 @@
             // Comport_ComboBox
             // 
             this.Comport_ComboBox.FormattingEnabled = true;
-            this.Comport_ComboBox.Items.AddRange(new object[] {
-            "1",
-            "2",
-            "3"});
             this.Comport_ComboBox.Location = new System.Drawing.Point(385, 465);
             this.Comport_ComboBox.Name = "Comport_ComboBox";
             this.Comport_ComboBox.Size = new System.Drawing.Size(121, 21);
             this.Comport_ComboBox.TabIndex = 21;
-            this.Comport_ComboBox.SelectedIndex = 0;
             this.Comport_ComboBox.SelectedIndexChanged += new System.EventHandler(this.ComportComboBox_SelectedIndexChange);
             // 
             // Form1

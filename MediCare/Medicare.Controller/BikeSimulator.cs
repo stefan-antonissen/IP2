@@ -58,7 +58,7 @@ namespace MediCare.Controller
 
         override public string[] getAvailablePorts()
         {
-            return null;
+            return new string[] {"SIM"};
         }
 
         override public string read()
