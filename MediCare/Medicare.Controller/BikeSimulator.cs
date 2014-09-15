@@ -9,7 +9,17 @@ namespace MediCare.Controller
 {
     class BikeSimulator : ComController
     {
-        private String status = "default";
+        private String _status = ""; //command that was sent in trough the send method. excluding the value that has been added to the end.
+        private int _value = 0; //value that was passed in witht he command via send.
+
+        private int heartrate = 110;
+        private int rpm = 40;
+        private int speed = 33;
+        private int distance = 14;
+        private int power = 400;
+        private int energy = 1200;
+        private int time = 1111; //11minutes 11 seconds???? verify
+        private int currentPower = 150;
 
         public BikeSimulator(string port)
         {
@@ -18,38 +28,43 @@ namespace MediCare.Controller
 
         override public void openConnection()
         {
-            status = "open";
+            _status = "open";
         }
 
         override public void closeConnection()
         {
-            status = "closed";
+            _status = "closed";
         }
 
         override public void send(string command)
         {
             if(Enums.ContainsCommand(command))
 	        {
-		        status = command;
+                //char[8] = command.ToArray();
+
+		        _status = command.Substring(0, 2);
+                _value = int.Parse( command.Substring(2,command.Length - 2 )) ;
 	        }
         }
 
         override public string[] getAvailablePorts()
         {
-            return null;
+            return new string[] {"SIM"};
         }
 
         override public string read()
         {
             Thread.Sleep(400);
-            switch (status)
+            switch (_status)
             {
                 case "st":
-                    return "110 40 33 14 400 1200 12 150"; // Heartrate, Rpm, Speed, Distance, Power, Energy, Time, Current Power
-                    break;
+                    _status = "";
+                    return heartrate + " " + rpm + " " + speed + " " + distance + " " + power + " " + energy + " " + time + " " + currentPower; // Heartrate, Rpm, Speed, Distance, Power, Energy, Time, Current Power
+                case "pd":
+                    distance = _value;
+                    return heartrate + " " + rpm + " " + speed + " " + distance + " " + power + " " + energy + " " + time + " " + currentPower; // Heartrate, Rpm, Speed, Distance, Power, Energy, Time, Current Power
                 default:
-                    return "er"; //TODO change
-                    break;
+                    return ""; //TODO change
             }            
         }
 

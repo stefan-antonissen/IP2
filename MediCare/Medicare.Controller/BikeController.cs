@@ -15,8 +15,8 @@ namespace MediCare.Controller
             if (comPort.Equals(""))
             {
                 cc = new SerialController();
+                comPort = cc.getPort();
             }
-            comPort = cc.getPort();
             
             if (comPort.Contains("COM"))
             {
@@ -43,8 +43,8 @@ namespace MediCare.Controller
             cc.send(Enums.GetValue(Enums.BikeCommands.STATUS)); 
             string raw = cc.read();
             string[] rawArray = raw.Split();
+            rawArray[2] = (float.Parse(rawArray[2]) / 10).ToString();
             rawArray[3] = (float.Parse(rawArray[3]) / 10).ToString();
-            rawArray[4] = (float.Parse(rawArray[4])).ToString();
             return rawArray;
         }
 
