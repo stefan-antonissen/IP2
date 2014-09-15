@@ -14,7 +14,7 @@ namespace MediCare.ArtsClient
 {
     public partial class Form1 : Form
     {
-        private Controller.BikeController c = new BikeController("blabla");
+        private Controller.BikeController c;
 
         public Form1()
         {
@@ -24,22 +24,13 @@ namespace MediCare.ArtsClient
 
         private void Form1_Load(object sender, EventArgs e) // Loads the windows //true story
         {
-
+            String[] ports = c.GetPorts(); //gets list of all com ports
+            Comport_ComboBox.Items.AddRange(ports);
         }
 
-        private void textBox5_TextChanged(object sender, EventArgs e) // wtf
+        private void Connect(String SelectedPort)
         {
-
-        }
-
-        private void textBox9_TextChanged(object sender, EventArgs e) // needs rename
-        {
-            //send information back to host controller
-        }
-
-        private void textbox9_Click(object Sender, EventArgs e) // needs rename
-        {
-            NewPower_Box.Text = "";
+            c = new BikeController("SIM"); // sim is for testing methods
         }
 
         private void updatebutton_Click(object sender, EventArgs e)
@@ -47,19 +38,14 @@ namespace MediCare.ArtsClient
             MessageBox.Show("" + Update_CheckBox.Checked);
         }
 
-        private void label10_Click(object sender, EventArgs e) // wtf not used
-        {
-
-        }
-
         private void Update_CheckBox_Click(object sender, EventArgs e) // auto update checkbox
         {
             //TimeRunning_Update();
         }
 
-        private void comboBox1_SelectedIndexChange(object sender, EventArgs e)
+        private void ComportComboBox_SelectedIndexChange(object sender, EventArgs e)
         {
-            MessageBox.Show("" + Comport_ComboBox.SelectedItem);
+            Connect(Comport_ComboBox.SelectedItem.ToString());
         }
 
         private void RunProgram()
@@ -70,7 +56,7 @@ namespace MediCare.ArtsClient
             {
                  if (Update_CheckBox.Checked == false)
                 {
-                    Console.WriteLine("dit is update" + i);
+                    //Console.WriteLine("dit is update" + i);
                     updateValues(c.GetStatus());
                 }
             }
