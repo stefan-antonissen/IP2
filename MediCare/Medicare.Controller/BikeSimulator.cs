@@ -40,7 +40,7 @@ namespace MediCare.Controller
         {
             if(Enums.ContainsCommand(command))
 	        {
-                char[8] = command.ToArray();
+                //char[8] = command.ToArray();
 
 		        _status = command.Substring(0, 2);
                 _value = int.Parse( command.Substring(2,command.Length - 2 )) ;
