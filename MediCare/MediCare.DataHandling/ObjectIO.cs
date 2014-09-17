@@ -8,6 +8,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+/**
+ * @Author: Frank
+ * @version: 1.0
+ * Every data will be stored here (for now) u can call the last 2 methods to save and load the file.
+ * It maybe necessary to write something that will split it up in smaller files etc... just ask me to improve in that case.
+ * 
+ * Tested fully operational.
+ *
+ */
+
 namespace MediCare.DataHandling
 {
     [Serializable()]

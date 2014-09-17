@@ -7,6 +7,16 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
+/**
+ * @Author: Frank
+ * @version: 1.0
+ * This class Serializes objects. U can sthrow in everything you want. It does currently not check if the file exists already.
+ * That may be a future feature.
+ * 
+ * Tested fully operational.
+ *
+ */
+
 namespace MediCare.DataHandling
 {
     public class Serializer
