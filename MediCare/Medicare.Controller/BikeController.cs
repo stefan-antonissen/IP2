@@ -56,8 +56,8 @@ namespace MediCare.Controller
                 if (!raw.ToLower().Contains("err"))
                 {
                     string[] rawArray = raw.Split();
+            	    rawArray[2] = (float.Parse(rawArray[2]) / 10).ToString();
                     rawArray[3] = (float.Parse(rawArray[3]) / 10).ToString();
-                    rawArray[4] = (float.Parse(rawArray[4])).ToString();
                     return rawArray;
                 }
                 else

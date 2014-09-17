@@ -41,7 +41,7 @@ namespace MediCare.ArtsClient
             }
             else
             {
-                c = new BikeController(SelectedPort); // sim is for testing methods
+                c = new BikeController(SelectedPort);
             }
         }
 
