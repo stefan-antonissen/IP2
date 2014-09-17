@@ -46,8 +46,8 @@
             this.Speed_Box = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
-            this.NewPower_Box = new System.Windows.Forms.TextBox();
-            this.updatebutton = new System.Windows.Forms.Button();
+            this.newPowerBox = new System.Windows.Forms.TextBox();
+            this.updatePowerButton = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
             this.Comport_ComboBox = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
@@ -218,25 +218,27 @@
             this.label9.TabIndex = 17;
             this.label9.Text = "New power";
             // 
-            // NewPower_Box
+            // newPowerBox
             // 
-            this.NewPower_Box.AcceptsReturn = true;
-            this.NewPower_Box.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.NewPower_Box.Location = new System.Drawing.Point(259, 411);
-            this.NewPower_Box.Name = "NewPower_Box";
-            this.NewPower_Box.Size = new System.Drawing.Size(178, 35);
-            this.NewPower_Box.TabIndex = 18;
-            this.NewPower_Box.Text = "Enter new value";
+            this.newPowerBox.AcceptsReturn = true;
+            this.newPowerBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.newPowerBox.Location = new System.Drawing.Point(259, 411);
+            this.newPowerBox.Name = "NewPower_Box";
+            this.newPowerBox.Size = new System.Drawing.Size(178, 35);
+            this.newPowerBox.TabIndex = 18;
+            this.newPowerBox.Text = "Enter new value";
+            this.newPowerBox.GotFocus += new System.EventHandler(this.newPowerBox_GotFocus);
+            this.newPowerBox.Leave += new System.EventHandler(this.newPowerBox_Leave);
             // 
-            // updatebutton
+            // updatePowerButton
             // 
-            this.updatebutton.Location = new System.Drawing.Point(443, 411);
-            this.updatebutton.Name = "updatebutton";
-            this.updatebutton.Size = new System.Drawing.Size(63, 35);
-            this.updatebutton.TabIndex = 19;
-            this.updatebutton.Text = "Update";
-            this.updatebutton.UseVisualStyleBackColor = true;
-            this.updatebutton.Click += new System.EventHandler(this.updatebutton_Click);
+            this.updatePowerButton.Location = new System.Drawing.Point(443, 411);
+            this.updatePowerButton.Name = "updatebutton";
+            this.updatePowerButton.Size = new System.Drawing.Size(63, 35);
+            this.updatePowerButton.TabIndex = 19;
+            this.updatePowerButton.Text = "Update";
+            this.updatePowerButton.UseVisualStyleBackColor = true;
+            this.updatePowerButton.Click += new System.EventHandler(this.updatePowerButton_Click);
             // 
             // label10
             // 
@@ -263,8 +265,8 @@
             this.ClientSize = new System.Drawing.Size(518, 507);
             this.Controls.Add(this.Comport_ComboBox);
             this.Controls.Add(this.label10);
-            this.Controls.Add(this.updatebutton);
-            this.Controls.Add(this.NewPower_Box);
+            this.Controls.Add(this.updatePowerButton);
+            this.Controls.Add(this.newPowerBox);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.Speed_Box);
@@ -311,8 +313,8 @@
         private System.Windows.Forms.TextBox Speed_Box;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label9;
-        public System.Windows.Forms.TextBox NewPower_Box;
-        private System.Windows.Forms.Button updatebutton;
+        public System.Windows.Forms.TextBox newPowerBox;
+        private System.Windows.Forms.Button updatePowerButton;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.ComboBox Comport_ComboBox;
     }
