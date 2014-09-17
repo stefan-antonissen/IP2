@@ -39,7 +39,7 @@ namespace MediCare.Controller
             }
             catch (Exception e)
             {
-                string[] rawArray = null;
+                string[] rawArray = new string[1];
                 rawArray[0] = e.Message.ToString();
                 return rawArray; 
             }
@@ -69,7 +69,7 @@ namespace MediCare.Controller
             }
             catch (Exception e)
             {
-                string[] rawArray = null;
+                string[] rawArray = new string[1];
                 rawArray[0] = e.Message.ToString();
                 return rawArray;
             }

@@ -17,13 +17,18 @@ namespace MediCare.ArtsClient
     {
         private Controller.BikeController c;
         private string currentPort = "";
-        private bool auto = false;
+        private bool _autoUpdate = false;
+        private readonly System.Windows.Forms.Timer _timer;
 
         public ClientGui()
         {
             InitializeComponent();
-            Connect("");
-            //RunProgram();            
+            //Connect("");
+            _timer = new System.Windows.Forms.Timer
+            {
+                Interval = 500 // 0.5 delay voor het updaten van de waarden, eventueel nog aanpassen
+            };
+            _timer.Tick += UpdateGUI;       
         }
 
         private void Form1_Load(object sender, EventArgs e) // Loads the windows //true story
@@ -45,22 +50,24 @@ namespace MediCare.ArtsClient
             }
         }
 
-        private void run()
-        {
-            auto = Update_CheckBox.Checked;
-            updateValues(c.GetStatus());
-        }
-
         private void updatebutton_Click(object sender, EventArgs e)
         {
-            updateValues(c.GetStatus());
-            auto = Update_CheckBox.Checked;
-            while (auto)
+
+        }
+        private void Update_CheckBox_Click(object sender, EventArgs e)
+        {
+            // auto update werkt
+            if (_autoUpdate == false)
             {
-                run();
+                _timer.Start();
+                _autoUpdate = !_autoUpdate;
+            }
+            else if (_autoUpdate == true)
+            {
+                _timer.Stop();
+                _autoUpdate = !_autoUpdate;
             }
         }
-
         private void ComportComboBox_SelectedIndexChange(object sender, EventArgs e)
         {
             string selectedPort = Comport_ComboBox.SelectedItem.ToString();
@@ -87,6 +94,22 @@ namespace MediCare.ArtsClient
             Energy_Box.Text = data[5];
             TimeRunning_Box.Text = data[6];
             Brake_Box.Text = data[7];
+        }
+        private async void UpdateGUI(object sender, EventArgs e)
+        {
+            var result = await DoWorkAsync();
+            updateValues(result);
+        }
+
+        private async Task<string[]> DoWorkAsync()
+        {
+            await Task.Delay(100); // 0.1 delay voor het starten van de update, ook eventueel nog aanpassen
+            // hieronder test code om de update te testen, deze methode moet de string array returnen van c.getStatus()
+            Random r = new Random();
+            string num = r.Next(1, 100).ToString();
+            string[] str = new string[] { "1", "2", "3", "4", "5", "6", "7", num };
+            return str;
+            //return c.getStatus();
         }
     }
 }

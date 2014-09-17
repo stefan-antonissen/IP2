@@ -70,7 +70,7 @@
             this.Update_CheckBox.TabIndex = 1;
             this.Update_CheckBox.Text = "Auto Update";
             this.Update_CheckBox.UseVisualStyleBackColor = true;
-            //this.Update_CheckBox.Click += new System.EventHandler(this.Update_CheckBox_Click);
+            this.Update_CheckBox.Click += new System.EventHandler(this.Update_CheckBox_Click);
             // 
             // TimeRunning_Box
             // 
