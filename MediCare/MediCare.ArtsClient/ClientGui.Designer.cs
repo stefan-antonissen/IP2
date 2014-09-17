@@ -1,6 +1,6 @@
 ﻿namespace MediCare.ArtsClient
 {
-    partial class Form1
+    partial class ClientGui
     {
         /// <summary>
         /// Required designer variable.
