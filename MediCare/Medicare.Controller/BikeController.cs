@@ -33,19 +33,46 @@ namespace MediCare.Controller
 
         public string[] GetPorts()
         {
-            return cc.getAvailablePorts();
+            try
+            {
+                return cc.getAvailablePorts();
+            }
+            catch (Exception e)
+            {
+                string[] rawArray = null;
+                rawArray[0] = e.Message.ToString();
+                return rawArray; 
+            }
         }
 
         #region getters
 
         public string[] GetStatus()
         {
-            cc.send(Enums.GetValue(Enums.BikeCommands.STATUS)); 
-            string raw = cc.read();
-            string[] rawArray = raw.Split();
-            rawArray[3] = (float.Parse(rawArray[3]) / 10).ToString();
-            rawArray[4] = (float.Parse(rawArray[4])).ToString();
-            return rawArray;
+            try
+            {
+                cc.send(Enums.GetValue(Enums.BikeCommands.STATUS));
+                string raw = cc.read();
+                if (!raw.ToLower().Contains("err"))
+                {
+                    string[] rawArray = raw.Split();
+                    rawArray[3] = (float.Parse(rawArray[3]) / 10).ToString();
+                    rawArray[4] = (float.Parse(rawArray[4])).ToString();
+                    return rawArray;
+                }
+                else
+                {
+                    string[] rawArray = null;
+                    rawArray[0] = "ERROR";
+                    return rawArray; 
+                }
+            }
+            catch (Exception e)
+            {
+                string[] rawArray = null;
+                rawArray[0] = e.Message.ToString();
+                return rawArray;
+            }
         }
 
         #endregion
@@ -54,20 +81,36 @@ namespace MediCare.Controller
 
         public string ResetBike() 
         {
-            cc.send(Enums.GetValue(Enums.BikeCommands.RESET));
-            return cc.read();
+            try
+            {
+                cc.send(Enums.GetValue(Enums.BikeCommands.RESET));
+                return cc.read();
+            }
+            catch (Exception e)
+            {
+                return e.Message.ToString();
+            }
         }
 
         public string[] SetPower(int power)
         {
-            cc.send(Enums.GetValue(Enums.BikeCommands.CONTROLMODE));
-            cc.read();
-            cc.send(Enums.GetValue(Enums.BikeCommands.POWER) + " " + power.ToString());
-            string raw = cc.read();
-            string[] rawArray = raw.Split();
-            rawArray[3] = (float.Parse(rawArray[3]) / 10).ToString();
-            rawArray[4] = (float.Parse(rawArray[4])).ToString();
-            return rawArray;
+            try
+            {
+                cc.send(Enums.GetValue(Enums.BikeCommands.CONTROLMODE));
+                cc.read();
+                cc.send(Enums.GetValue(Enums.BikeCommands.POWER) + /*" " +*/ power.ToString());
+                string raw = cc.read();
+                string[] rawArray = raw.Split();
+                rawArray[3] = (float.Parse(rawArray[3]) / 10).ToString();
+                rawArray[4] = (float.Parse(rawArray[4])).ToString();
+                return rawArray;
+            }
+            catch (Exception e)
+            {
+                string[] rawArray = null;
+                rawArray[0] = e.Message.ToString();
+                return rawArray;
+            }
         }
 
         #endregion

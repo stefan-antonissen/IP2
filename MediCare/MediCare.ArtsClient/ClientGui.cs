@@ -13,13 +13,13 @@ using System.IO.Ports;
 
 namespace MediCare.ArtsClient
 {
-    public partial class Form1 : Form
+    public partial class ClientGui : Form
     {
         private Controller.BikeController c;
         private string currentPort = "";
         private bool auto = false;
 
-        public Form1()
+        public ClientGui()
         {
             InitializeComponent();
             //Connect("");

@@ -32,8 +32,8 @@
             this.newpowerbox = new System.Windows.Forms.TextBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.comlabel = new System.Windows.Forms.Label();
-            this.checkBox1.Location = new System.Drawing.Point(18, 498);
-            this.label9.Location = new System.Drawing.Point(12, 413);
+            //this.checkBox1.Location = new System.Drawing.Point(18, 498);
+            //this.label9.Location = new System.Drawing.Point(12, 413);
             // newpowerbox
             this.newpowerbox.AcceptsReturn = true;
             this.newpowerbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -44,8 +44,8 @@
             this.newpowerbox.Text = "Enter new value";
             this.newpowerbox.Click += new System.EventHandler(this.newpowerbox_Click);
             this.newpowerbox.TextChanged += new System.EventHandler(this.newpowerbox_TextChanged);
-            this.updatebutton.Location = new System.Drawing.Point(445, 413);
-            this.updatebutton.Size = new System.Drawing.Size(58, 35);
+            //this.updatebutton.Location = new System.Drawing.Point(445, 413);
+            //this.updatebutton.Size = new System.Drawing.Size(58, 35);
             // comboBox1
             // 
             this.comboBox1.FormattingEnabled = true;
