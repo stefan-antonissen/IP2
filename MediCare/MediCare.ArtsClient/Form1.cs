@@ -22,7 +22,7 @@ namespace MediCare.ArtsClient
         public Form1()
         {
             InitializeComponent();
-            //Connect("");
+            Connect("");
             //RunProgram();            
         }
 
