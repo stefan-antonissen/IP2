@@ -5,6 +5,16 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
+/**
+ * @Author: Frank
+ * @version: 1.0
+ * 
+ * Class whick contaisn data about a Measurement.
+ * 
+ * Tested fully operational.
+ *
+ */
+
 namespace MediCare.DataHandling
 {
 
@@ -42,6 +52,11 @@ namespace MediCare.DataHandling
             this.energy = 0;
             this.time = 0;
             this.currentPower = 0;
+        }
+
+        public void ToConsole()
+        {
+            Console.WriteLine("" + this.heartRate + " \n" + this.rpm + " \n" + this.speed + " \n" + this.distance + " \n" + this.power + " \n" + this.energy + " \n" + this.time + " \n" + this.currentPower);
         }
     }
 }
