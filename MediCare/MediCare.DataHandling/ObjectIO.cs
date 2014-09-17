@@ -23,7 +23,7 @@ namespace MediCare.DataHandling
     [Serializable()]
     public class ObjectIO
     {
-        public ArrayList measurements;
+        public ArrayList measurements { get; set; }
         Serializer serializer;
 
         public ObjectIO()
@@ -37,7 +37,7 @@ namespace MediCare.DataHandling
             measurements.Add(m);
         }
 
-        public void delete(int index)
+        public void del(int index)
         {
             measurements.RemoveAt(index);
         }
@@ -71,12 +71,10 @@ namespace MediCare.DataHandling
         }
 
         // load the arraylist of measurements from a file, returns the arraylist
-        public ArrayList LoadMeasurements(string filename) {
+        public ArrayList LoadMeasurements(string filename)
+        {
             ArrayList result = serializer.DeSerializeObject(filename);
-
             return result;
         }
     }
-
-
 }

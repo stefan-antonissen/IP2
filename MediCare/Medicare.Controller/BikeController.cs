@@ -33,19 +33,64 @@ namespace MediCare.Controller
 
         public string[] GetPorts()
         {
-            return cc.getAvailablePorts();
+            try
+            {
+                return cc.getAvailablePorts();
+            }
+            catch (Exception e)
+            {
+                string[] rawArray = new string[1];
+                rawArray[0] = e.Message.ToString();
+                return rawArray; 
+            }
         }
 
         #region getters
 
         public string[] GetStatus()
         {
-            cc.send(Enums.GetValue(Enums.BikeCommands.STATUS)); 
-            string raw = cc.read();
-            string[] rawArray = raw.Split();
-            rawArray[2] = (float.Parse(rawArray[2]) / 10).ToString();
-            rawArray[3] = (float.Parse(rawArray[3]) / 10).ToString();
-            return rawArray;
+            try
+            {
+                cc.send(Enums.GetValue(Enums.BikeCommands.STATUS));
+                string raw = cc.read();
+                if (!raw.ToLower().Contains("err"))
+                {
+                    string[] rawArray = raw.Split();
+            	    rawArray[2] = (float.Parse(rawArray[2]) / 10).ToString();
+                    rawArray[3] = (float.Parse(rawArray[3]) / 10).ToString();
+                    return rawArray;
+                }
+                else
+                {
+                    string[] rawArray = null;
+                    rawArray[0] = "ERROR";
+                    return rawArray; 
+                }
+            }
+            catch (Exception e)
+            {
+                string[] rawArray = new string[1];
+                rawArray[0] = e.Message.ToString();
+                return rawArray;
+            }
+        }
+
+        public string getTime()
+        {
+            try
+            {
+                cc.send(Enums.GetValue(Enums.BikeCommands.GETDATETIME));
+                string raw = cc.read();
+                if (!raw.ToLower().Contains("err"))
+                {
+                    return raw;
+                }
+                else return "ERROR";
+            }
+            catch (Exception e)
+            {
+                return e.Message.ToString();
+            }
         }
 
         #endregion
@@ -54,20 +99,126 @@ namespace MediCare.Controller
 
         public string ResetBike() 
         {
-            cc.send(Enums.GetValue(Enums.BikeCommands.RESET));
-            return cc.read();
+            try
+            {
+                cc.send(Enums.GetValue(Enums.BikeCommands.RESET));
+                return cc.read();
+            }
+            catch (Exception e)
+            {
+                return e.Message.ToString();
+            }
         }
 
         public string[] SetPower(int power)
         {
-            cc.send(Enums.GetValue(Enums.BikeCommands.CONTROLMODE));
-            cc.read();
-            cc.send(Enums.GetValue(Enums.BikeCommands.POWER) + " " + power.ToString());
-            string raw = cc.read();
-            string[] rawArray = raw.Split();
-            rawArray[3] = (float.Parse(rawArray[3]) / 10).ToString();
-            rawArray[4] = (float.Parse(rawArray[4])).ToString();
-            return rawArray;
+            try
+            {
+                cc.send(Enums.GetValue(Enums.BikeCommands.CONTROLMODE));
+                string rawcm = cc.read();
+                if (rawcm.ToLower().Contains("err"))
+                {
+                    string[] rawArrayCM = new string[1];
+                    rawArrayCM[0] = "ERROR CM";
+                    return rawArrayCM;
+                }
+                else
+                {
+                    cc.send(Enums.GetValue(Enums.BikeCommands.POWER) + /*" " +*/ power.ToString());
+                    string raw = cc.read();
+                    if (!raw.ToLower().Contains("err"))
+                    {
+                        string[] rawArray = raw.Split();
+                        rawArray[3] = (float.Parse(rawArray[3]) / 10).ToString();
+                        rawArray[4] = (float.Parse(rawArray[4])).ToString();
+                        return rawArray;
+                    }
+                    else
+                    {
+                        string[] ErrorArray = new string[1];
+                        ErrorArray[0] = "ERROR PW";
+                        return ErrorArray;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                string[] rawArray = new string[1];
+                rawArray[0] = e.Message.ToString();
+                return rawArray;
+            }
+        }
+
+        public string[] SetTime(int time)
+        {
+            try
+            {
+                cc.send(Enums.GetValue(Enums.BikeCommands.CONTROLMODE));
+                string rawcm = cc.read();
+                if (rawcm.ToLower().Contains("err"))
+                {
+                    string[] rawArrayCM = new string[1];
+                    rawArrayCM[0] = "ERROR CM";
+                    return rawArrayCM;
+                }
+                cc.send(Enums.GetValue(Enums.BikeCommands.SETTIME) + /*" " +*/ time.ToString());
+                string raw = cc.read();
+                if (!raw.ToLower().Contains("err"))
+                {
+                    string[] rawArray = raw.Split();
+                    rawArray[3] = (float.Parse(rawArray[3]) / 10).ToString();
+                    rawArray[4] = (float.Parse(rawArray[4])).ToString();
+                    return rawArray;
+                }
+                else
+                {
+                    string[] ErrorArray = new string[1];
+                    ErrorArray[0] = "ERROR ST";
+                    return ErrorArray;
+                }
+            }
+            catch (Exception e)
+            {
+                string[] rawArray = new string[1];
+                rawArray[0] = e.Message.ToString();
+                return rawArray;
+            }
+        }
+
+        public string[] SetEnergy(int energy)
+        {
+            try
+            {
+                cc.send(Enums.GetValue(Enums.BikeCommands.CONTROLMODE));
+                string rawcm = cc.read();
+                if (rawcm.ToLower().Contains("err"))
+                {
+                    string[] rawArrayCM = new string[1];
+                    rawArrayCM[0] = "ERROR CM";
+                    return rawArrayCM;
+                }
+                cc.send(Enums.GetValue(Enums.BikeCommands.SETENERGY) + /*" " +*/ energy.ToString());
+                string raw = cc.read();
+                if (!raw.ToLower().Contains("err"))
+                {
+                    string[] rawArray = raw.Split();
+                    rawArray[3] = (float.Parse(rawArray[3]) / 10).ToString();
+                    rawArray[4] = (float.Parse(rawArray[4])).ToString();
+                    return rawArray;
+                }
+                else
+                {
+                    string[] ErrorArray = new string[1];
+                    ErrorArray[0] = "ERROR PE";
+                    return ErrorArray;
+                }
+            }
+            catch (Exception e)
+            {
+                string[] rawArray = new string[1];
+                rawArray[0] = e.Message.ToString();
+                return rawArray;
+            }
         }
 
         #endregion
