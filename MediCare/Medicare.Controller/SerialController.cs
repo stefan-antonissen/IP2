@@ -30,7 +30,15 @@ namespace MediCare.Controller
 
         override public void openConnection()
         {
-            _comPort.Open();
+            try
+            {
+                _comPort.Open();
+            }
+            catch (System.IO.IOException ex)
+            {
+                closeConnection();
+            }
+            
         }
 
         override public void closeConnection() 

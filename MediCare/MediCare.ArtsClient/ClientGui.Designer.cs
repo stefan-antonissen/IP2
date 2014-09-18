@@ -50,6 +50,7 @@
             this.updatePowerButton = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
             this.Comport_ComboBox = new System.Windows.Forms.ComboBox();
+            this.label11 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -223,7 +224,7 @@
             this.newPowerBox.AcceptsReturn = true;
             this.newPowerBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.newPowerBox.Location = new System.Drawing.Point(259, 411);
-            this.newPowerBox.Name = "NewPower_Box";
+            this.newPowerBox.Name = "newPowerBox";
             this.newPowerBox.Size = new System.Drawing.Size(178, 35);
             this.newPowerBox.TabIndex = 18;
             this.newPowerBox.Text = "Enter new value";
@@ -233,7 +234,7 @@
             // updatePowerButton
             // 
             this.updatePowerButton.Location = new System.Drawing.Point(443, 411);
-            this.updatePowerButton.Name = "updatebutton";
+            this.updatePowerButton.Name = "updatePowerButton";
             this.updatePowerButton.Size = new System.Drawing.Size(63, 35);
             this.updatePowerButton.TabIndex = 19;
             this.updatePowerButton.Text = "Update";
@@ -258,11 +259,22 @@
             this.Comport_ComboBox.TabIndex = 21;
             this.Comport_ComboBox.SelectedIndexChanged += new System.EventHandler(this.ComportComboBox_SelectedIndexChange);
             // 
-            // Form1
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(385, 493);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(41, 13);
+            this.label11.TabIndex = 22;
+            this.label11.Text = "label11";
+            this.label11.Click += new System.EventHandler(this.label11_Click);
+            // 
+            // ClientGui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(518, 507);
+            this.Controls.Add(this.label11);
             this.Controls.Add(this.Comport_ComboBox);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.updatePowerButton);
@@ -285,7 +297,7 @@
             this.Controls.Add(this.TimeRunning_Box);
             this.Controls.Add(this.Update_CheckBox);
             this.Controls.Add(this.label1);
-            this.Name = "Form1";
+            this.Name = "ClientGui";
             this.Text = "MediCare GUI";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
@@ -317,6 +329,7 @@
         private System.Windows.Forms.Button updatePowerButton;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.ComboBox Comport_ComboBox;
+        private System.Windows.Forms.Label label11;
     }
 }
 
