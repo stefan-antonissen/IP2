@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO.Ports;
-using System.Windows.Forms;
 
 namespace MediCare.Controller
 {
@@ -40,13 +39,9 @@ namespace MediCare.Controller
             }
             catch (System.IO.IOException)
             {
-                MessageBox.Show("Could not open selected port, please try again",
-                                "Critical Error",
-                                MessageBoxButtons.OK,
-                                MessageBoxIcon.Error,
-                                MessageBoxDefaultButton.Button1);
-               closeConnection();
+                closeConnection();
             }
+            
         }
 
         override public void closeConnection()
