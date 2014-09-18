@@ -267,7 +267,6 @@
             this.label11.Size = new System.Drawing.Size(41, 13);
             this.label11.TabIndex = 22;
             this.label11.Text = "label11";
-            this.label11.Click += new System.EventHandler(this.label11_Click);
             // 
             // ClientGui
             // 
