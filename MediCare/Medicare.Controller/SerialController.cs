@@ -11,10 +11,10 @@ namespace MediCare.Controller
     {
         private SerialPort _comPort;
 
-	    public SerialController(string port)
-	    {
+        public SerialController(string port)
+        {
             _comPort = new SerialPort(port, 9600);
-	    }
+        }
         public SerialController()
         {
             Console.WriteLine("Available Connected Com Ports:");
@@ -28,20 +28,22 @@ namespace MediCare.Controller
             _comPort = new SerialPort(port, 9600);
         }
 
+        /**
+         * Remove Try Catch Clausule When switching to auto detection Mode for COM port detection (located in BikeController)
+         */ 
         override public void openConnection()
         {
             try
             {
                 _comPort.Open();
             }
-            catch (System.IO.IOException ex)
+            catch (System.IO.IOException)
             {
-                closeConnection();
+                Console.WriteLine("Failed to open Connection");
             }
-            
         }
 
-        override public void closeConnection() 
+        override public void closeConnection()
         {
             _comPort.Close();
         }
@@ -51,7 +53,7 @@ namespace MediCare.Controller
             _comPort.WriteLine(command);
         }
 
-        override public string[] getAvailablePorts() 
+        override public string[] getAvailablePorts()
         {
             string[] temp = SerialPort.GetPortNames();
             List<string> tempList = temp.ToList();
@@ -59,7 +61,7 @@ namespace MediCare.Controller
             return tempList.ToArray<string>();
         }
 
-        override public string read() 
+        override public string read()
         {
             return _comPort.ReadLine();
         }

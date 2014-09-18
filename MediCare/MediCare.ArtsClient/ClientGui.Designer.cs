@@ -50,7 +50,7 @@
             this.updatePowerButton = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
             this.Comport_ComboBox = new System.Windows.Forms.ComboBox();
-            this.label11 = new System.Windows.Forms.Label();
+            this.Comport_ERROR = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label1
@@ -259,21 +259,20 @@
             this.Comport_ComboBox.TabIndex = 21;
             this.Comport_ComboBox.SelectedIndexChanged += new System.EventHandler(this.ComportComboBox_SelectedIndexChange);
             // 
-            // label11
+            // Comport_ERROR
             // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(385, 493);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(41, 13);
-            this.label11.TabIndex = 22;
-            this.label11.Text = "label11";
+            this.Comport_ERROR.AutoSize = true;
+            this.Comport_ERROR.Location = new System.Drawing.Point(391, 489);
+            this.Comport_ERROR.Name = "Comport_ERROR";
+            this.Comport_ERROR.Size = new System.Drawing.Size(0, 13);
+            this.Comport_ERROR.TabIndex = 22;
             // 
             // ClientGui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(518, 507);
-            this.Controls.Add(this.label11);
+            this.Controls.Add(this.Comport_ERROR);
             this.Controls.Add(this.Comport_ComboBox);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.updatePowerButton);
@@ -328,7 +327,7 @@
         private System.Windows.Forms.Button updatePowerButton;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.ComboBox Comport_ComboBox;
-        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.Label Comport_ERROR;
     }
 }
 

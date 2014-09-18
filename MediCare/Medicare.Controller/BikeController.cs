@@ -41,8 +41,48 @@ namespace MediCare.Controller
             {
                 string[] rawArray = new string[1];
                 rawArray[0] = e.Message.ToString();
+                Console.WriteLine(e.Message.ToString());
                 return rawArray; 
             }
+        }
+
+        /**
+         * AutoPort Detection.
+         * 
+         * Note: In the SerialController is a TRY > CATCH clausule in order for this to work you have to comment out / remove that.
+         * 
+         * This isnt finished yet. It needs to send a signal to the bike to detect if it IS the bike.
+         * 
+         * For now it returns a String it may be better to return the SerialController directly.
+         * 
+         * It may be necessary to do some cleanup i dont know if all SerialControllers are left over in the memory or not.
+         * 
+         * @Author: Frank van Veen
+         * @Version: 1.0 
+         * @Return: The correct port as string
+         */
+        public string GetCorrectPort()
+        {
+            string[] ports = cc.getAvailablePorts();
+            for (int i = 0; i < ports.Length; i++)
+            {
+                if(ports[i].StartsWith("COM")) {
+                    try {
+                        SerialController sc = new SerialController(ports[i]);
+                        Console.WriteLine("Checked: " + ports[i]);
+                        sc.openConnection(); // breaks on this line
+
+                        // Just to be sure the command RS (or similar) should be sent here. I don't know if it will return something so that we can check if the bike is connected.
+                       
+                        return ports[i];
+
+                    } catch(System.IO.IOException) {
+                        Console.WriteLine(ports[i] + " Failed to open. Trying next port");
+                        // Should break here?
+                    }
+                }
+            }
+            return null;
         }
 
         #region getters
