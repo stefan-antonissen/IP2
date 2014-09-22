@@ -28,56 +28,104 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.newpowerbox = new System.Windows.Forms.TextBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.comlabel = new System.Windows.Forms.Label();
-            //this.checkBox1.Location = new System.Drawing.Point(18, 498);
-            //this.label9.Location = new System.Drawing.Point(12, 413);
-            // newpowerbox
-            this.newpowerbox.AcceptsReturn = true;
-            this.newpowerbox.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.newpowerbox.Location = new System.Drawing.Point(259, 413);
-            this.newpowerbox.Name = "newpowerbox";
-            this.newpowerbox.Size = new System.Drawing.Size(180, 35);
-            this.newpowerbox.TabIndex = 18;
-            this.newpowerbox.Text = "Enter new value";
-            this.newpowerbox.Click += new System.EventHandler(this.newpowerbox_Click);
-            this.newpowerbox.TextChanged += new System.EventHandler(this.newpowerbox_TextChanged);
-            //this.updatebutton.Location = new System.Drawing.Point(445, 413);
-            //this.updatebutton.Size = new System.Drawing.Size(58, 35);
-            // comboBox1
+            this.IndexTab = new System.Windows.Forms.TabPage();
+            this.button3 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
+            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.IndexTab.SuspendLayout();
+            this.tabControl1.SuspendLayout();
+            this.SuspendLayout();
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(394, 484);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(109, 21);
-            this.comboBox1.TabIndex = 20;
-            this.comboBox1.Items.Add("hoi"); // for each loop necessary to add everything to the array
-            this.comboBox1.Items.Add("doei");
-            this.comboBox1.Items.Add("knappe");
-            this.comboBox1.Items.Add("jongen");
+            // IndexTab
             // 
-            // comlabel
+            this.IndexTab.Controls.Add(this.button3);
+            this.IndexTab.Controls.Add(this.button2);
+            this.IndexTab.Controls.Add(this.button1);
+            this.IndexTab.Controls.Add(this.label1);
+            this.IndexTab.Cursor = System.Windows.Forms.Cursors.Default;
+            this.IndexTab.Location = new System.Drawing.Point(4, 22);
+            this.IndexTab.Name = "IndexTab";
+            this.IndexTab.Padding = new System.Windows.Forms.Padding(3);
+            this.IndexTab.Size = new System.Drawing.Size(1232, 631);
+            this.IndexTab.TabIndex = 0;
+            this.IndexTab.Text = "Overview";
+            this.IndexTab.UseVisualStyleBackColor = true;
             // 
-            this.comlabel.Font = new System.Drawing.Font("Comic Sans MS", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.comlabel.Location = new System.Drawing.Point(255, 480);
-            this.comlabel.Name = "comlabel";
-            this.comlabel.Size = new System.Drawing.Size(78, 31);
-            this.comlabel.TabIndex = 21;
-            this.comlabel.Text = "Com port";
+            // button3
             // 
+            this.button3.Location = new System.Drawing.Point(34, 204);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(207, 77);
+            this.button3.TabIndex = 3;
+            this.button3.Text = "button3";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(34, 121);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(207, 77);
+            this.button2.TabIndex = 2;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(34, 38);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(207, 77);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(31, 22);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(52, 13);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "Overview";
+            this.label1.Click += new System.EventHandler(this.label1_Click);
+            // 
+            // tabControl1
+            // 
+            this.tabControl1.Controls.Add(this.IndexTab);
+            this.tabControl1.Location = new System.Drawing.Point(12, 12);
+            this.tabControl1.Name = "tabControl1";
+            this.tabControl1.SelectedIndex = 0;
+            this.tabControl1.Size = new System.Drawing.Size(1240, 657);
+            this.tabControl1.TabIndex = 0;
+            // 
+            // Form1
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(515, 527);
-            this.Controls.Add(this.comlabel);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.newpowerbox);
+            this.ClientSize = new System.Drawing.Size(1264, 681);
+            this.Controls.Add(this.tabControl1);
+            this.Name = "Form1";
+            this.Text = "Form1";
+            this.IndexTab.ResumeLayout(false);
+            this.IndexTab.PerformLayout();
+            this.tabControl1.ResumeLayout(false);
+            this.ResumeLayout(false);
+
         }
 
         #endregion
-        public System.Windows.Forms.TextBox newpowerbox;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.Label comlabel;
+
+        private System.Windows.Forms.TabPage IndexTab;
+        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.TabControl tabControl1;
+
     }
 }
 

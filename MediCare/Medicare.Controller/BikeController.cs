@@ -71,7 +71,6 @@ namespace MediCare.Controller
                         SerialController sc = new SerialController(ports[i]);
                         Console.WriteLine("Checked: " + ports[i]);
                         sc.openConnection(); // breaks on this line
-
                         // Just to be sure the command RS (or similar) should be sent here. I don't know if it will return something so that we can check if the bike is connected.
                        
                         return ports[i];
