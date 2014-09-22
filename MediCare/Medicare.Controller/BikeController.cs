@@ -51,29 +51,30 @@ namespace MediCare.Controller
          * 
          * Note: In the SerialController is a TRY > CATCH clausule in order for this to work you have to comment out / remove that.
          * 
-         * This isnt finished yet. It needs to send a signal to the bike to detect if it IS the bike.
-         * 
-         * For now it returns a String it may be better to return the SerialController directly.
-         * 
          * It may be necessary to do some cleanup i dont know if all SerialControllers are left over in the memory or not.
          * 
          * @Author: Frank van Veen
+         * @corrector: Collin Baden
          * @Version: 1.0 
          * @Return: The correct port as string
          */
-        public string GetCorrectPort()
+        public List<string> GetCorrectPort()
         {
             string[] ports = cc.getAvailablePorts();
+            List<string> correctport = null;
             for (int i = 0; i < ports.Length; i++)
             {
                 if(ports[i].StartsWith("COM")) {
                     try {
                         SerialController sc = new SerialController(ports[i]);
-                        Console.WriteLine("Checked: " + ports[i]);
                         sc.openConnection(); // breaks on this line
-                        // Just to be sure the command RS (or similar) should be sent here. I don't know if it will return something so that we can check if the bike is connected.
-                       
-                        return ports[i];
+                        sc.send(Enums.GetValue(Enums.BikeCommands.RESET)); // send reset to port
+                        if (sc.read() != null && sc.read() != "" && !sc.read().ToLower().Contains("err"))
+                        {
+                            correctport.Add(ports[i]); //add the correct port to string
+                        }
+                        Console.WriteLine("Checked: " + ports[i]);
+                        sc.closeConnection();
 
                     } catch(System.IO.IOException) {
                         Console.WriteLine(ports[i] + " Failed to open. Trying next port");
@@ -81,7 +82,7 @@ namespace MediCare.Controller
                     }
                 }
             }
-            return null;
+            return correctport;
         }
 
         #region getters
