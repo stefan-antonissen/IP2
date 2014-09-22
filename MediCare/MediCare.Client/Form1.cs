@@ -86,5 +86,30 @@ namespace MediCare.ArtsClient
                 }
             }
         }
+
+        # region Chat Box
+        private void txtLog_TextChanged(object sender, EventArgs e)
+        {
+            //nonedonexD
+        }
+
+        private void sendButton_Click(object sender, EventArgs e)
+        {
+            if (typeBox.Text != "")
+            {
+                txtLog.AppendText("" + typeBox.Text + "\n");
+                typeBox.Text = "";
+            }
+        }
+
+        private void txtLog_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                txtLog.AppendText("" + typeBox.Text + "\n");
+                typeBox.Text = "";
+            }
+        }
+# endregion
     }
 }

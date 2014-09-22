@@ -29,6 +29,10 @@
         private void InitializeComponent()
         {
             this.IndexTab = new System.Windows.Forms.TabPage();
+            this.SendMessage = new System.Windows.Forms.Button();
+            this.typeBox = new System.Windows.Forms.TextBox();
+            this.txtLog = new System.Windows.Forms.TextBox();
+            this.listView1 = new System.Windows.Forms.ListView();
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
@@ -40,6 +44,10 @@
             // 
             // IndexTab
             // 
+            this.IndexTab.Controls.Add(this.SendMessage);
+            this.IndexTab.Controls.Add(this.typeBox);
+            this.IndexTab.Controls.Add(this.txtLog);
+            this.IndexTab.Controls.Add(this.listView1);
             this.IndexTab.Controls.Add(this.button3);
             this.IndexTab.Controls.Add(this.button2);
             this.IndexTab.Controls.Add(this.button1);
@@ -52,6 +60,45 @@
             this.IndexTab.TabIndex = 0;
             this.IndexTab.Text = "Overview";
             this.IndexTab.UseVisualStyleBackColor = true;
+            // 
+            // SendMessage
+            // 
+            this.SendMessage.Location = new System.Drawing.Point(942, 605);
+            this.SendMessage.Name = "SendMessage";
+            this.SendMessage.Size = new System.Drawing.Size(75, 23);
+            this.SendMessage.TabIndex = 10;
+            this.SendMessage.Text = "Send";
+            this.SendMessage.UseVisualStyleBackColor = true;
+            this.SendMessage.Click += new System.EventHandler(this.sendButton_Click);
+            // 
+            // typeBox
+            // 
+            this.typeBox.Location = new System.Drawing.Point(34, 603);
+            this.typeBox.Name = "typeBox";
+            this.typeBox.Size = new System.Drawing.Size(902, 20);
+            this.typeBox.TabIndex = 9;
+            this.typeBox.KeyDown += new System.Windows.Forms.KeyEventHandler(txtLog_KeyDown);
+            // 
+            // txtLog
+            // 
+            this.txtLog.AllowDrop = true;
+            this.txtLog.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.txtLog.Location = new System.Drawing.Point(34, 317);
+            this.txtLog.Multiline = true;
+            this.txtLog.Name = "txtLog";
+            this.txtLog.ReadOnly = true;
+            this.txtLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.txtLog.Size = new System.Drawing.Size(983, 282);
+            this.txtLog.TabIndex = 6;
+            this.txtLog.TextChanged += new System.EventHandler(this.txtLog_TextChanged);
+            // 
+            // listView1
+            // 
+            this.listView1.Location = new System.Drawing.Point(217, 417);
+            this.listView1.Name = "listView1";
+            this.listView1.Size = new System.Drawing.Size(8, 8);
+            this.listView1.TabIndex = 4;
+            this.listView1.UseCompatibleStateImageBehavior = false;
             // 
             // button3
             // 
@@ -125,6 +172,10 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.Button SendMessage;
+        private System.Windows.Forms.TextBox typeBox;
+        private System.Windows.Forms.TextBox txtLog;
+        private System.Windows.Forms.ListView listView1;
 
     }
 }
