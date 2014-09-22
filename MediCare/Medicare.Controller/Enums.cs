@@ -40,14 +40,7 @@ namespace MediCare.Controller
 
         public static bool ContainsCommand(String cmd)
         {
-            if (cmd == "st" || cmd == "lb") //TODO FIX!
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return (cmd.Contains("st") || cmd.Contains("rs")); //TODO create solution
         }
 
         public enum StatusInfo

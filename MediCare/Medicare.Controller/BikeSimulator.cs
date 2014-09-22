@@ -43,7 +43,8 @@ namespace MediCare.Controller
 
         override public void send(string command)
         {
-            if(Enums.ContainsCommand(command))
+
+            if(Enums.ContainsCommand(command.Substring(0, 2)))
 	        {
                 _status = command.Substring(0, 2);
                 if (command.Length > 2)
@@ -56,7 +57,6 @@ namespace MediCare.Controller
                     isCM = true;
                 }
                 UpdateData();
-                _status = "";
 	        }
         }
 
@@ -68,6 +68,9 @@ namespace MediCare.Controller
         override public string read()
         {
             Thread.Sleep(400);
+
+            Console.WriteLine("set status was: " + _status);
+
             switch (_status)
             {
                 case "cd":
