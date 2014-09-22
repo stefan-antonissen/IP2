@@ -69,9 +69,13 @@ namespace MediCare.Controller
                         SerialController sc = new SerialController(ports[i]);
                         sc.openConnection(); // breaks on this line
                         sc.send(Enums.GetValue(Enums.BikeCommands.RESET)); // send reset to port
-                        if (sc.read() != null && sc.read() != "" && !sc.read().ToLower().Contains("err"))
+                        string result = sc.read();
+                        if (result != null && result != "" && !result.ToLower().Contains("err"))
                         {
-                            correctport.Add(ports[i]); //add the correct port to string
+                            if (result.ToLower().Contains("ac"))
+                            {
+                                correctport.Add(ports[i]); //add the correct port to string
+                            }
                         }
                         Console.WriteLine("Checked: " + ports[i]);
                         sc.closeConnection();
