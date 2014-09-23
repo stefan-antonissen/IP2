@@ -29,13 +29,14 @@
         private void InitializeComponent()
         {
             this.IndexTab = new System.Windows.Forms.TabPage();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
+            this.button3 = new System.Windows.Forms.Button();
             this.SendMessage = new System.Windows.Forms.Button();
             this.typeBox = new System.Windows.Forms.TextBox();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.listView1 = new System.Windows.Forms.ListView();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.IndexTab.SuspendLayout();
@@ -44,6 +45,7 @@
             // 
             // IndexTab
             // 
+            this.IndexTab.Controls.Add(this.panel1);
             this.IndexTab.Controls.Add(this.SendMessage);
             this.IndexTab.Controls.Add(this.typeBox);
             this.IndexTab.Controls.Add(this.txtLog);
@@ -61,9 +63,51 @@
             this.IndexTab.Text = "Overview";
             this.IndexTab.UseVisualStyleBackColor = true;
             // 
+            // panel1
+            // 
+            this.panel1.AutoScroll = true;
+            this.panel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.panel1.Location = new System.Drawing.Point(34, 38);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(983, 243);
+            this.panel1.TabIndex = 11;
+            this.panel1.Controls.Add(button1);
+            this.panel1.Controls.Add(button2);
+            this.panel1.Controls.Add(button3);
+            // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(0, 0);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(200, 80);
+            this.button1.TabIndex = 1;
+            this.button1.Text = "button1";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(0, 100);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(200, 80);
+            this.button2.TabIndex = 2;
+            this.button2.Text = "button2";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(0, 200);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(200, 80);
+            this.button3.TabIndex = 3;
+            this.button3.Text = "button3";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // SendMessage
             // 
-            this.SendMessage.Location = new System.Drawing.Point(942, 605);
+            this.SendMessage.Location = new System.Drawing.Point(942, 601);
             this.SendMessage.Name = "SendMessage";
             this.SendMessage.Size = new System.Drawing.Size(75, 23);
             this.SendMessage.TabIndex = 10;
@@ -77,7 +121,7 @@
             this.typeBox.Name = "typeBox";
             this.typeBox.Size = new System.Drawing.Size(902, 20);
             this.typeBox.TabIndex = 9;
-            this.typeBox.KeyDown += new System.Windows.Forms.KeyEventHandler(txtLog_KeyDown);
+            this.typeBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtLog_KeyDown);
             // 
             // txtLog
             // 
@@ -100,36 +144,6 @@
             this.listView1.TabIndex = 4;
             this.listView1.UseCompatibleStateImageBehavior = false;
             // 
-            // button3
-            // 
-            this.button3.Location = new System.Drawing.Point(34, 204);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(207, 77);
-            this.button3.TabIndex = 3;
-            this.button3.Text = "button3";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.button3_Click);
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(34, 121);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(207, 77);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "button2";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(34, 38);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(207, 77);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -138,7 +152,6 @@
             this.label1.Size = new System.Drawing.Size(52, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "Overview";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // tabControl1
             // 
@@ -176,6 +189,7 @@
         private System.Windows.Forms.TextBox typeBox;
         private System.Windows.Forms.TextBox txtLog;
         private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.Panel panel1;
 
     }
 }
