@@ -42,6 +42,9 @@ namespace MediCare.ArtsClient
             System.Windows.Forms.TabPage tabPage = new System.Windows.Forms.TabPage();
             System.Windows.Forms.Button closeButton = new System.Windows.Forms.Button();
             System.Windows.Forms.Button closeAllButThisButton = new System.Windows.Forms.Button();
+            System.Windows.Forms.TextBox chatBox = new System.Windows.Forms.TextBox();
+            System.Windows.Forms.TextBox typeBox = new System.Windows.Forms.TextBox();
+            System.Windows.Forms.Button sendButtonClient = new System.Windows.Forms.Button();
 
             //close button
             closeButton.Location = new System.Drawing.Point(20, 20);
@@ -53,9 +56,40 @@ namespace MediCare.ArtsClient
             closeAllButThisButton.Text = "Close all";
             closeAllButThisButton.Click += new System.EventHandler(On_Tab_Close_All_Event);
 
+            //ChatBox
+            chatBox.AllowDrop = true;
+            chatBox.BackColor = System.Drawing.Color.WhiteSmoke;
+            chatBox.Location = new System.Drawing.Point(34, 317);
+            chatBox.Multiline = true;
+            chatBox.Name = "txtLog";
+            chatBox.ReadOnly = true;
+            chatBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            chatBox.Size = new System.Drawing.Size(983, 282);
+            chatBox.TabIndex = 6;
+            chatBox.TextChanged += new System.EventHandler(this.txtLog_TextChanged);
+
+            //TypeBox
+            typeBox.Location = new System.Drawing.Point(34, 603);
+            typeBox.Name = "typeBox";
+            typeBox.Size = new System.Drawing.Size(902, 20);
+            typeBox.TabIndex = 9;
+            typeBox.KeyDown += new System.Windows.Forms.KeyEventHandler(txtLog_KeyDown);
+
+            //sendButton
+            sendButtonClient.Location = new System.Drawing.Point(942, 605);
+            sendButtonClient.Name = "SendMessage";
+            sendButtonClient.Size = new System.Drawing.Size(75, 23);
+            sendButtonClient.TabIndex = 10;
+            sendButtonClient.Text = "Send";
+            sendButtonClient.UseVisualStyleBackColor = true;
+            sendButtonClient.Click += new System.EventHandler(this.sendButton_Click);
+
             //add components
             tabPage.Controls.Add(closeButton);
             tabPage.Controls.Add(closeAllButThisButton);
+            tabPage.Controls.Add(chatBox);
+            tabPage.Controls.Add(typeBox);
+            tabPage.Controls.Add(sendButtonClient);
 
             //set tab Settings
             tabPage.Cursor = System.Windows.Forms.Cursors.Default;
@@ -101,14 +135,37 @@ namespace MediCare.ArtsClient
                 typeBox.Text = "";
             }
         }
-
         private void txtLog_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
             {
-                txtLog.AppendText("" + typeBox.Text + "\n");
-                typeBox.Text = "";
+                if (typeBox.Text != "")
+                {
+
+                    //txtLog.AppendText("");
+                    txtLog.AppendText(Environment.NewLine + typeBox.Text);
+                    txtLog_AlignTextToBottom();
+                    txtLog_ScrollToBottom();
+                    typeBox.Text = "";
+                }
             }
+        }
+        private void txtLog_AlignTextToBottom()
+        {
+            int visibleLines = (int)(txtLog.Height / txtLog.Font.GetHeight()) - 1;
+            if (visibleLines > txtLog.Lines.Length)
+            {
+                int emptyLines = (visibleLines - txtLog.Lines.Length);
+                for (int i = 0; i < emptyLines; i++)
+                {
+                    txtLog.Text = (Environment.NewLine + txtLog.Text);
+                }
+            }
+        }
+        private void txtLog_ScrollToBottom()
+        {
+            txtLog.SelectionStart = txtLog.Text.Length;
+            txtLog.ScrollToCaret();
         }
 # endregion
     }
