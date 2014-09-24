@@ -40,7 +40,15 @@ namespace MediCare.Controller
 
         public static bool ContainsCommand(String cmd)
         {
-            return (cmd.Contains("st") || cmd.Contains("rs")); //TODO create solution
+            foreach (Enums.BikeCommands bc in (BikeCommands[])Enum.GetValues(typeof(BikeCommands)) )
+            {
+                if (Enums.GetValue(bc).Contains(cmd) )
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public enum StatusInfo
