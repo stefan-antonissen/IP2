@@ -8,7 +8,7 @@ using MediCare.NetworkLibrary;
 
 namespace MediCare.ArtsClient
 {
-    static class Program : ClientInterface
+    static class Program
     {
         /// <summary>
         /// The main entry point for the application.
@@ -22,10 +22,10 @@ namespace MediCare.ArtsClient
 
         }
 
-        public void sendPacket()
-        {
+        //public void sendPacket()
+        //{
 
-        }
+        //}
     }
 }
 
