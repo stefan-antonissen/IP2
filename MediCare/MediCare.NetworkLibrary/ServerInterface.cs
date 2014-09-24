@@ -9,6 +9,6 @@ namespace MediCare.NetworkLibrary
 {
     public interface ServerInterface
     {
-        void send(TcpClient client);
+        void SendPacket(TcpClient client, Packet p);
     }
 }

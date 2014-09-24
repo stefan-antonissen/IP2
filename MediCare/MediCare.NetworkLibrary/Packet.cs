@@ -10,21 +10,55 @@ namespace MediCare.NetworkLibrary
     [Serializable()]
     public class Packet
     {
-        private string data;
+        private string _id;
+        private string _type;
+        private string _destination;
+        private string _message;
 
-        public Packet(string data)
+        public Packet(string id, string type, string destination, string message)
         {
-            this.data = data;
+            this._id = id;
+            this._type = type;
+            this._destination = destination;
+            this._message = message;
+            //encoding blablabla
+        }
+        public Packet(string id, string type, string message)
+            : this(id, type, "", message)
+        {
+            //encoding blablabla
         }
 
-        public void handleServer(TcpClient tcpClient, ServerInterface server)
+        public void HandleServer(ServerInterface server)
         {
-            server.send(tcpClient);
+            //decoding and sending to server
+            //server.sendPacket(tcpClient, this);
         }
 
-        public void handleClient(ClientInterface client)
+        public void HandleClient(ClientInterface client)
         {
-            client.send(data);
+            //decoding and sending to client
+            //client.sendPacket(this);
+        }
+
+        public string GetMessage()
+        {
+            return _message;
+        }
+
+        public string GetDestination()
+        {
+            return _destination;
+        }
+
+        public string GetID()
+        {
+            return _id;
+        }
+
+        public string GetType()
+        {
+            return _type;
         }
     }
 }

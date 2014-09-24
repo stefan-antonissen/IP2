@@ -83,6 +83,7 @@ namespace MediCare.ArtsClient
             {
                 txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                 typeBox.Text = "";
+                
             }
         }
 

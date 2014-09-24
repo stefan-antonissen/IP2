@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace MediCare.NetworkLibrary
 {
-    class ClientInterface
+    public interface ClientInterface
     {
-        void send(string data);
+        void sendPacket(Packet p);
     }
 }
