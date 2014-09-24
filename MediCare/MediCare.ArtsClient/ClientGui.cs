@@ -23,6 +23,8 @@ namespace MediCare.ArtsClient
         public ClientGui()
         {
             InitializeComponent();
+            chart1.Series["RPM"].Points.AddXY(1,3);
+            chart1.Series["RPM"].Points.AddXY(1, 6);
             //Connect("");
             _timer = new System.Windows.Forms.Timer
             {
@@ -33,6 +35,7 @@ namespace MediCare.ArtsClient
 
         private void Form1_Load(object sender, EventArgs e) // Loads the windows //true story
         {
+            
             //String[] ports = c.GetPorts(); //gets list of all com ports
             Comport_ComboBox.Items.AddRange(SerialPort.GetPortNames());
             Comport_ComboBox.Items.Add("SIM");
@@ -151,6 +154,61 @@ namespace MediCare.ArtsClient
             string[] str = new string[] { "1", "2", "3", "4", "5", "6", "7", num };
             return str;
             //return c.GetStatus();
+        }
+
+        private void label7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label8_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label9_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label10_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
