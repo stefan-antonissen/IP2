@@ -17,44 +17,133 @@ namespace MediCare.ArtsClient
             InitializeComponent();
         }
 
-        private void label1_Click(object sender, EventArgs e)
+        /**
+         * When a client connects start a thread with that client (not here)
+         * 
+         * What should happen here is a new entry in the client list should be made so that the clientContainer (see design)
+         * updates the screen with the new connected client.
+         */
+        private void on_client_connect_event() // "Client client" Iets in die trend.
         {
 
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            this.tabControl1.Controls.Add(generateTab("Button1"));
+            clientTab tab = new clientTab("tab1");
+            tab.closeAllButThisButton.Click += new System.EventHandler(On_Tab_Close_All_Event);
+            tab.closeButton.Click += new System.EventHandler(On_Tab_Closed_Event);
+            this.tabControl1.Controls.Add(tab);
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            this.tabControl1.Controls.Add(generateTab("Button2"));
+            clientTab tab = new clientTab("tab2");
+            tab.closeAllButThisButton.Click += new System.EventHandler(On_Tab_Close_All_Event);
+            tab.closeButton.Click += new System.EventHandler(On_Tab_Closed_Event);
+            this.tabControl1.Controls.Add(tab);
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            this.tabControl1.Controls.Add(generateTab("Button3"));
+            clientTab tab = new clientTab("tab3");
+            tab.closeAllButThisButton.Click += new System.EventHandler(On_Tab_Close_All_Event);
+            tab.closeButton.Click += new System.EventHandler(On_Tab_Closed_Event);
+            this.tabControl1.Controls.Add(tab);
         }
 
-        private System.Windows.Forms.TabPage generateTab(string tabName) // Some more database values and or locations can be given in here.
+        # region TabControl Event Handlers
+        private void On_Tab_Closed_Event(Object Sender, EventArgs e)
         {
-            System.Windows.Forms.TabPage tabPage = new System.Windows.Forms.TabPage();
-            System.Windows.Forms.Button closeButton = new System.Windows.Forms.Button();
-            System.Windows.Forms.Button closeAllButThisButton = new System.Windows.Forms.Button();
-            System.Windows.Forms.TextBox chatBox = new System.Windows.Forms.TextBox();
-            System.Windows.Forms.TextBox typeBox = new System.Windows.Forms.TextBox();
-            System.Windows.Forms.Button sendButtonClient = new System.Windows.Forms.Button();
+            this.tabControl1.Controls.RemoveAt(tabControl1.SelectedIndex);
+        }
+
+        //Skip zero because that is our main screen. Also dont close the Current Tab
+        private void On_Tab_Close_All_Event(Object Sender, EventArgs e)
+        {
+            foreach (System.Windows.Forms.TabPage tab in this.tabControl1.TabPages)
+            {
+                if (!tab.Name.Equals("IndexTab"))
+                {
+                    this.tabControl1.Controls.Remove(tab);
+                }
+            }
+        }
+        # endregion
+
+        # region Chat Box
+        private void txtLog_TextChanged(object sender, EventArgs e)
+        {
+            //nonedonexD
+        }
+
+        private void sendButton_Click(object sender, EventArgs e)
+        {
+           if (typeBox.Text != "")
+            {
+                txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
+                typeBox.Text = "";
+            }
+        }
+
+        private void txtLog_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (typeBox.Text != "")
+                {
+                    txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
+                    txtLog_AlignTextToBottom();
+                    txtLog_ScrollToBottom();
+                    typeBox.Text = "";
+                }
+            }
+        }
+
+        private void txtLog_AlignTextToBottom()
+        {
+            int visibleLines = (int)(txtLog.Height / txtLog.Font.GetHeight()) - 1;
+            if (visibleLines > txtLog.Lines.Length)
+            {
+                int emptyLines = (visibleLines - txtLog.Lines.Length);
+                for (int i = 0; i < emptyLines; i++)
+                {
+                    txtLog.Text = (Environment.NewLine + txtLog.Text);
+                }
+            }
+        }
+
+        private void txtLog_ScrollToBottom()
+        {
+            txtLog.SelectionStart = txtLog.Text.Length;
+            txtLog.ScrollToCaret();
+        }
+
+# endregion
+    }
+
+    #region Tab generation
+
+    public class clientTab : System.Windows.Forms.TabPage
+    {
+        public  System.Windows.Forms.Button closeButton = new System.Windows.Forms.Button();
+        public  System.Windows.Forms.Button closeAllButThisButton = new System.Windows.Forms.Button();
+        private System.Windows.Forms.TextBox chatBox = new System.Windows.Forms.TextBox();
+        private System.Windows.Forms.TextBox typeBox = new System.Windows.Forms.TextBox();
+        private System.Windows.Forms.Button sendButtonClient = new System.Windows.Forms.Button();
+
+        public clientTab(string tabName) //loads of data etc... (joke)
+        {
+            //System.Windows.Forms.TabPage tabPage = new System.Windows.Forms.TabPage();
+
 
             //close button
             closeButton.Location = new System.Drawing.Point(20, 20);
             closeButton.Text = "Close";
-            closeButton.Click += new System.EventHandler(On_Tab_Closed_Event);
 
             //close all but this button
             closeAllButThisButton.Location = new System.Drawing.Point(20, 60);
             closeAllButThisButton.Text = "Close all";
-            closeAllButThisButton.Click += new System.EventHandler(On_Tab_Close_All_Event);
 
             //ChatBox
             chatBox.AllowDrop = true;
@@ -85,40 +174,21 @@ namespace MediCare.ArtsClient
             sendButtonClient.Click += new System.EventHandler(this.sendButton_Click);
 
             //add components
-            tabPage.Controls.Add(closeButton);
-            tabPage.Controls.Add(closeAllButThisButton);
-            tabPage.Controls.Add(chatBox);
-            tabPage.Controls.Add(typeBox);
-            tabPage.Controls.Add(sendButtonClient);
+            this.Controls.Add(closeButton);
+            this.Controls.Add(closeAllButThisButton);
+            this.Controls.Add(chatBox);
+            this.Controls.Add(typeBox);
+            this.Controls.Add(sendButtonClient);
 
             //set tab Settings
-            tabPage.Cursor = System.Windows.Forms.Cursors.Default;
-            tabPage.Location = new System.Drawing.Point(4, 22);
-            tabPage.Name = tabName;
-            tabPage.Padding = new System.Windows.Forms.Padding(3);
-            tabPage.Size = new System.Drawing.Size(1232, 631);
-            tabPage.TabIndex = this.tabControl1.TabCount + 1;
-            tabPage.Text = tabName;
-            tabPage.UseVisualStyleBackColor = true;
-
-            return tabPage;
-        }
-
-        private void On_Tab_Closed_Event(Object Sender, EventArgs e)
-        {
-            this.tabControl1.Controls.RemoveAt(tabControl1.SelectedIndex);
-        }
-
-        //Skip zero because that is our main screen. Also dont close the Current Tab
-        private void On_Tab_Close_All_Event(Object Sender, EventArgs e)
-        {
-            foreach (System.Windows.Forms.TabPage tab in this.tabControl1.TabPages)
-            {
-                if (!tab.Name.Equals("IndexTab"))
-                {
-                    this.tabControl1.Controls.Remove(tab);
-                }
-            }
+            this.Cursor = System.Windows.Forms.Cursors.Default;
+            this.Location = new System.Drawing.Point(4, 22);
+            this.Name = tabName;
+            this.Padding = new System.Windows.Forms.Padding(3);
+            this.Size = new System.Drawing.Size(1232, 631);
+            //this.TabIndex = this.tabControl1.TabCount + 1; NOT NEEDED???
+            this.Text = tabName;
+            this.UseVisualStyleBackColor = true;
         }
 
         # region Chat Box
@@ -131,10 +201,11 @@ namespace MediCare.ArtsClient
         {
             if (typeBox.Text != "")
             {
-                txtLog.AppendText("" + typeBox.Text + "\n");
+                chatBox.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                 typeBox.Text = "";
             }
         }
+
         private void txtLog_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
@@ -143,30 +214,34 @@ namespace MediCare.ArtsClient
                 {
 
                     //txtLog.AppendText("");
-                    txtLog.AppendText(Environment.NewLine + typeBox.Text);
-                    txtLog_AlignTextToBottom();
-                    txtLog_ScrollToBottom();
+                    chatBox.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
+                    chatBox_AlignTextToBottom();
+                    chatBox_ScrollToBottom();
                     typeBox.Text = "";
                 }
             }
         }
-        private void txtLog_AlignTextToBottom()
+
+        private void chatBox_AlignTextToBottom()
         {
-            int visibleLines = (int)(txtLog.Height / txtLog.Font.GetHeight()) - 1;
-            if (visibleLines > txtLog.Lines.Length)
+            int visibleLines = (int)(chatBox.Height / chatBox.Font.GetHeight()) - 1;
+            if (visibleLines > chatBox.Lines.Length)
             {
-                int emptyLines = (visibleLines - txtLog.Lines.Length);
+                int emptyLines = (visibleLines - chatBox.Lines.Length);
                 for (int i = 0; i < emptyLines; i++)
                 {
-                    txtLog.Text = (Environment.NewLine + txtLog.Text);
+                    chatBox.Text = (Environment.NewLine + chatBox.Text);
                 }
             }
         }
-        private void txtLog_ScrollToBottom()
+
+        private void chatBox_ScrollToBottom()
         {
-            txtLog.SelectionStart = txtLog.Text.Length;
-            txtLog.ScrollToCaret();
+            chatBox.SelectionStart = chatBox.Text.Length;
+            chatBox.ScrollToCaret();
         }
-# endregion
+
+        # endregion
     }
+# endregion
 }
