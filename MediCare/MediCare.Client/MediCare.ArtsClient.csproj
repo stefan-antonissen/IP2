@@ -82,6 +82,10 @@
       <Project>{6638429b-0183-478f-a7f0-8c44ece6cb9d}</Project>
       <Name>MediCare.Controller</Name>
     </ProjectReference>
+    <ProjectReference Include="..\MediCare.NetworkLibrary\MediCare.NetworkLibrary.csproj">
+      <Project>{fff27bbf-03c0-440e-b145-4ba7ff13cbac}</Project>
+      <Name>MediCare.NetworkLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
