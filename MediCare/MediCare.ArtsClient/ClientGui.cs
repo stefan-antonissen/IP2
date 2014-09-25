@@ -23,22 +23,12 @@ namespace MediCare.ArtsClient
         public ClientGui()
         {
             InitializeComponent();
-            chart1.Series["RPM"].Points.AddXY(1,3);
-            chart1.Series["RPM"].Points.AddXY(1, 6);
             //Connect("");
             _timer = new System.Windows.Forms.Timer
             {
                 Interval = 500 // 0.5 delay voor het updaten van de waarden, eventueel nog aanpassen
             };
             _timer.Tick += UpdateGUI;
-        }
-
-        private void Form1_Load(object sender, EventArgs e) // Loads the windows //true story
-        {
-            
-            //String[] ports = c.GetPorts(); //gets list of all com ports
-            Comport_ComboBox.Items.AddRange(SerialPort.GetPortNames());
-            Comport_ComboBox.Items.Add("SIM");
         }
 
         private void Connect(String SelectedPort)
@@ -50,30 +40,6 @@ namespace MediCare.ArtsClient
             else
             {
                 c = new BikeController(SelectedPort);
-            }
-        }
-
-        private void updatePowerButton_Click(object sender, EventArgs e)
-        {
-            //TODO: update de power, updatePowerButton.Text
-        }
-
-        // onderstaande twee methodes zijn voor het weergeven van de placeholder tekst
-        private void newPowerBox_GotFocus(object sender, EventArgs e)
-        {
-            if (newPowerBox.Text == "Enter new value")
-                newPowerBox.Text = "";
-        }
-
-        private void newPowerBox_Leave(object sender, EventArgs e)
-        {
-            if (newPowerBox.Text == "")
-            {
-                newPowerBox.Text = "Enter new value";
-            }
-            else
-            {
-                newPowerBox.Text = newPowerBox.Text;
             }
         }
 
@@ -93,22 +59,6 @@ namespace MediCare.ArtsClient
             }
         }
 
-        // veranderen van de combobox index
-        private void ComportComboBox_SelectedIndexChange(object sender, EventArgs e)
-        {
-            string selectedPort = Comport_ComboBox.SelectedItem.ToString();
-            if (currentPort.Equals(""))
-            {
-                currentPort = selectedPort;
-                Connect(selectedPort);
-                updateValues(c.GetStatus());
-            }
-            else if (!selectedPort.Equals(currentPort))
-            {
-                Connect(selectedPort);
-                updateValues(c.GetStatus());
-            }
-        }
 
         // onderstaande drie methodes zijn om de waarden in de GUI aan te passen
         private void updateValues(String[] data)
@@ -156,59 +106,54 @@ namespace MediCare.ArtsClient
             //return c.GetStatus();
         }
 
-        private void label7_Click(object sender, EventArgs e)
+        # region Chat Box
+        private void txtLog_TextChanged(object sender, EventArgs e)
         {
-
+            //nonedonexD
         }
 
-        private void label2_Click(object sender, EventArgs e)
+        private void sendButton_Click(object sender, EventArgs e)
         {
-
+            if (typeBox.Text != "")
+            {
+                txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
+                typeBox.Text = "";
+            }
         }
 
-        private void label6_Click(object sender, EventArgs e)
+        private void txtLog_KeyDown(object sender, KeyEventArgs e)
         {
-
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (typeBox.Text != "")
+                {
+                    txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
+                    txtLog_AlignTextToBottom();
+                    txtLog_ScrollToBottom();
+                    typeBox.Text = "";
+                }
+            }
         }
 
-        private void label5_Click(object sender, EventArgs e)
+        private void txtLog_AlignTextToBottom()
         {
-
+            int visibleLines = (int)(txtLog.Height / txtLog.Font.GetHeight()) - 1;
+            if (visibleLines > txtLog.Lines.Length)
+            {
+                int emptyLines = (visibleLines - txtLog.Lines.Length);
+                for (int i = 0; i < emptyLines; i++)
+                {
+                    txtLog.Text = (Environment.NewLine + txtLog.Text);
+                }
+            }
         }
 
-        private void label8_Click(object sender, EventArgs e)
+        private void txtLog_ScrollToBottom()
         {
-
+            txtLog.SelectionStart = txtLog.Text.Length;
+            txtLog.ScrollToCaret();
         }
 
-        private void label3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label4_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label9_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label10_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void tableLayoutPanel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
+        # endregion
     }
 }
