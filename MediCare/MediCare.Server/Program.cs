@@ -9,13 +9,15 @@ using System.Threading;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Net;
 using MediCare.NetworkLibrary;
+using System.Collections;
 
 namespace MediCare.Server
 {
-    class Program : ServerInterface
+    class Program //: ServerInterface
     {
         private IPAddress _localIP = IPAddress.Parse("127.0.0.1");
         private Dictionary<string, TcpClient> clients = new Dictionary<string, TcpClient>();
+
         static void Main(string[] args)
         {
             new Program();
@@ -26,25 +28,30 @@ namespace MediCare.Server
             TcpListener server = new TcpListener(_localIP, 11000);
 			server.Start();
             TcpClient incomingClient;
+            Console.WriteLine("Waiting for connection...");
 			while (true)
 			{
 				incomingClient = server.AcceptTcpClient();
 
 				new Thread(() =>
 				{
+                    Console.WriteLine("Connection found!");
 					BinaryFormatter formatter = new BinaryFormatter();
                     TcpClient temp = incomingClient;
 					while (true)
 					{
-                        Packet packet = (Packet)formatter.Deserialize(incomingClient.GetStream());
+                        //temp.GetStream().Position = 0;
+                        Packet packet = (Packet)formatter.Deserialize(temp.GetStream());
                         if (!clients.ContainsKey(packet.GetID()))
                         {
                             clients.Add(packet.GetID(), incomingClient);
                         }
-                        if (packet.GetType().Equals("Client"))
+                        if (ResolveID(packet.GetID()).Equals("Client"))
                         {
+                            Console.WriteLine("Client connected");
                             if (packet.GetType().Equals("chat"))
                             {
+                                Console.WriteLine(packet.toString());
                                 TcpClient dest = clients[packet.GetDestination()];
                                 SendPacket(dest, packet);
                             }
@@ -78,10 +85,8 @@ namespace MediCare.Server
             string temp = id.Substring(0,1);
             switch(temp)
             {
-                case "0": return "Doctor";
-                case "1": return "Client";
-                default: Console.WriteLine("ERROR, UNKNOWN ID"); 
-                    return "";
+                case "9": return "Doctor";
+                default: return "Client";
             }
         }
        }

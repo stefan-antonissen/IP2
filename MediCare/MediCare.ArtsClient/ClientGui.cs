@@ -10,6 +10,9 @@ using System.Windows.Forms;
 using System.Threading;
 using MediCare.Controller;
 using System.IO.Ports;
+using System.Net.Sockets;
+using System.Runtime.Serialization.Formatters.Binary;
+using MediCare.NetworkLibrary;
 
 namespace MediCare.ArtsClient
 {
@@ -19,6 +22,8 @@ namespace MediCare.ArtsClient
         private string currentPort = "";
         private bool _autoUpdate = false;
         private readonly System.Windows.Forms.Timer _timer;
+        TcpClient client = new TcpClient("127.0.0.1", 11000);
+        string ID = "5";
 
         public ClientGui()
         {
@@ -46,6 +51,7 @@ namespace MediCare.ArtsClient
         // auto update checkbox
         private void Update_CheckBox_Click(object sender, EventArgs e)
         {
+
             // auto update werkt
             if (_autoUpdate == false)
             {
@@ -118,6 +124,7 @@ namespace MediCare.ArtsClient
             {
                 txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                 typeBox.Text = "";
+
             }
         }
 
@@ -127,6 +134,8 @@ namespace MediCare.ArtsClient
             {
                 if (typeBox.Text != "")
                 {
+                    Packet p = new Packet("5", "chat", "9", typeBox.Text);
+                    SendMessageToServer(client, p);
                     txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                     txtLog_AlignTextToBottom();
                     txtLog_ScrollToBottom();
@@ -154,6 +163,31 @@ namespace MediCare.ArtsClient
             txtLog.ScrollToCaret();
         }
 
+        public void on_message_receive_event(string _message)
+        {
+            txtLog.AppendText(Environment.NewLine + "Other: " + typeBox.Text);
+            typeBox.Text = "";
+            txtLog_AlignTextToBottom();
+            txtLog_ScrollToBottom();
+        }
+
+        # endregion
+
+        #region TCPclient tools
+        private void SendMessageToServer(TcpClient client, Packet message)
+        {
+            BinaryFormatter formatter = new BinaryFormatter(); // the formatter that will serialize my object on my stream 
+
+            NetworkStream strm = client.GetStream(); // the stream 
+            formatter.Serialize(strm, message); // the serialization process 
+            //client.GetStream().Write(bytes, 0, bytes.Length);
+        }
+
+        private string ReadMessage(TcpClient client)
+        {
+            //packets uitlezen
+            return null;
+        }
         # endregion
     }
 }

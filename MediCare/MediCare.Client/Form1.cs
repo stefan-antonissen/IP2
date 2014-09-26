@@ -1,9 +1,13 @@
-﻿using System;
+﻿using MediCare.NetworkLibrary;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net.Sockets;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -12,6 +16,9 @@ namespace MediCare.ArtsClient
 {
     public partial class Form1 : Form
     {
+
+        TcpClient client = new TcpClient("127.0.0.1", 11000);
+
         public Form1()
         {
             InitializeComponent();
@@ -93,6 +100,8 @@ namespace MediCare.ArtsClient
             {
                 if (typeBox.Text != "")
                 {
+                    Packet p = new Packet("9", "chat", "5", typeBox.Text);
+                    SendMessageToServer(client, p);
                     txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                     txtLog_AlignTextToBottom();
                     txtLog_ScrollToBottom();
@@ -120,6 +129,39 @@ namespace MediCare.ArtsClient
             txtLog.ScrollToCaret();
         }
 
+        public void on_message_receive_event(string _message)
+        {
+            txtLog.AppendText(Environment.NewLine + "Other: " + typeBox.Text);
+            typeBox.Text = "";
+            txtLog_AlignTextToBottom();
+            txtLog_ScrollToBottom();
+        }
+
+        # endregion
+
+        #region TCPclient tools
+        private void SendMessageToServer(TcpClient client, Packet message)
+        {
+            BinaryFormatter formatter = new BinaryFormatter(); // the formatter that will serialize my object on my stream 
+
+            NetworkStream strm = client.GetStream(); // the stream 
+            formatter.Serialize(strm, message); // the serialization process 
+            //client.GetStream().Write(bytes, 0, bytes.Length);
+        }
+
+        private string ReadMessage(TcpClient client)
+        {
+            byte[] buffer = new byte[256];
+            int totalRead = 0;
+            //read bytes until stream indicates there are no more
+            do
+            {
+                int read = client.GetStream().Read(buffer, totalRead, buffer.Length - totalRead);
+                totalRead += read;
+            } while (client.GetStream().DataAvailable);
+
+            return Encoding.Unicode.GetString(buffer, 0, totalRead);
+        }
         # endregion
     }
 

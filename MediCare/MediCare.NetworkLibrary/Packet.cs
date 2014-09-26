@@ -60,5 +60,10 @@ namespace MediCare.NetworkLibrary
         {
             return _type;
         }
+
+        public string toString()
+        {
+            return "ID: " + _id + " Type: " + _type + " Destination: " + _destination + " \nMessage: " + _message; 
+        }
     }
 }
