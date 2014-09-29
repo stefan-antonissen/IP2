@@ -17,11 +17,12 @@ namespace MediCare.ArtsClient
     public partial class Form1 : Form
     {
 
-        TcpClient client = new TcpClient("127.0.0.1", 11000);
+        //TcpClient client = new TcpClient("127.0.0.1", 11000);
 
         public Form1()
         {
             InitializeComponent();
+            setVisibility(false);
         }
 
         /**
@@ -101,7 +102,7 @@ namespace MediCare.ArtsClient
                 if (typeBox.Text != "")
                 {
                     Packet p = new Packet("9", "chat", "5", typeBox.Text);
-                    SendMessageToServer(client, p);
+                    //SendMessageToServer(client, p);
                     txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                     txtLog_AlignTextToBottom();
                     txtLog_ScrollToBottom();
@@ -163,20 +164,87 @@ namespace MediCare.ArtsClient
             return Encoding.Unicode.GetString(buffer, 0, totalRead);
         }
         # endregion
+
+        #region login
+
+        private void setVisibility(bool v)
+        {
+            IndexTab.Visible = v;
+            button3.Visible = v;
+            button2.Visible = v;
+            button1.Visible = v;
+            label1.Visible = v;
+            tabControl1.Visible = v;
+            SendMessage.Visible = v;
+            typeBox.Visible = v;
+            txtLog.Visible = v;
+            listView1.Visible = v;
+            panel1.Visible = v;
+            Password_Box.Visible = v;
+            Username_Box.Visible = v;
+            Password_Label.Visible = v;
+            Username_label.Visible = v;
+            LoginButton.Visible = v;
+
+            Password_Box.Visible = !v;
+            Username_Box.Visible = !v;
+            Password_Label.Visible = !v;
+            Username_label.Visible = !v;
+            LoginButton.Visible = !v;
+            if (!v)
+            {
+                this.ActiveControl = Username_Box;
+            }
+            else
+            {
+                this.ActiveControl = typeBox;
+            }
+        }
+
+        private void on_username_box_enter(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter && Username_Box.Focused)
+            {
+                this.ActiveControl = Password_Box;
+            }
+        }
+
+        private void on_password_box_enter(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter && Password_Box.Focused)
+            {
+                // if username && password are true
+                if (true)
+                {
+                    setVisibility(true);
+                }
+            }
+        }
+
+        private void login(object sender, EventArgs e)
+        {
+            //Login to server bla bla bla
+            if (true)
+            {
+                setVisibility(true);
+            }
+        }
+        #endregion
     }
 
     #region Tab generation
 
     public class clientTab : System.Windows.Forms.TabPage
     {
-        public System.Windows.Forms.Button closeButton = new System.Windows.Forms.Button();
-        public System.Windows.Forms.Button closeAllButThisButton = new System.Windows.Forms.Button();
+        #region define Controls
+        public  System.Windows.Forms.Button closeButton = new System.Windows.Forms.Button();
+        public  System.Windows.Forms.Button closeAllButThisButton = new System.Windows.Forms.Button();
         private System.Windows.Forms.TextBox chatBox = new System.Windows.Forms.TextBox();
         private System.Windows.Forms.TextBox typeBox = new System.Windows.Forms.TextBox();
         private System.Windows.Forms.Button sendButtonClient = new System.Windows.Forms.Button();
 
         private System.Windows.Forms.Button updatePowerButton = new System.Windows.Forms.Button();
-        public System.Windows.Forms.TextBox newPowerBox = new System.Windows.Forms.TextBox();
+        public  System.Windows.Forms.TextBox newPowerBox = new System.Windows.Forms.TextBox();
         private System.Windows.Forms.Label newPowerLabel = new System.Windows.Forms.Label();
         private System.Windows.Forms.Label RPMLabel = new System.Windows.Forms.Label();
         private System.Windows.Forms.TextBox Speed_Box = new System.Windows.Forms.TextBox();
@@ -194,12 +262,11 @@ namespace MediCare.ArtsClient
         private System.Windows.Forms.Label distanceLabel = new System.Windows.Forms.Label();
         private System.Windows.Forms.TextBox TimeRunning_Box = new System.Windows.Forms.TextBox();
         private System.Windows.Forms.Label timeRunningLabel = new System.Windows.Forms.Label();
+        #endregion
 
         public clientTab(string tabName) //loads of data etc... (joke)
         {
-            //System.Windows.Forms.TabPage tabPage = new System.Windows.Forms.TabPage();
-
-
+            #region Close Buttons
             //close button
             closeButton.Location = new System.Drawing.Point(1070, 600);
             closeButton.Text = "Close";
@@ -207,7 +274,9 @@ namespace MediCare.ArtsClient
             //close all but this button
             closeAllButThisButton.Location = new System.Drawing.Point(1150, 600);
             closeAllButThisButton.Text = "Close all";
+            #endregion
 
+            #region chatbox
             //ChatBox
             chatBox.AllowDrop = true;
             chatBox.BackColor = System.Drawing.Color.WhiteSmoke;
@@ -235,7 +304,9 @@ namespace MediCare.ArtsClient
             sendButtonClient.Text = "Send";
             sendButtonClient.UseVisualStyleBackColor = true;
             sendButtonClient.Click += new System.EventHandler(this.sendButton_Click);
+                        #endregion
 
+            #region update Power Button
             // 
             // updatePowerButton
             // 
@@ -245,6 +316,9 @@ namespace MediCare.ArtsClient
             updatePowerButton.TabIndex = 38;
             updatePowerButton.Text = "Update";
             updatePowerButton.UseVisualStyleBackColor = true;
+            #endregion
+
+            #region TimeRunning
             // 
             // TIME
             // 
@@ -263,6 +337,9 @@ namespace MediCare.ArtsClient
             timeRunningLabel.Size = new System.Drawing.Size(200, 30);
             timeRunningLabel.TabIndex = 20;
             timeRunningLabel.Text = "Time Running";
+                        #endregion
+
+            #region speed
             // 
             // SPEED
             // 
@@ -279,7 +356,9 @@ namespace MediCare.ArtsClient
             Speed_Box.ReadOnly = true;
             Speed_Box.Size = new System.Drawing.Size(200, 30);
             Speed_Box.TabIndex = 34;
+                        #endregion
 
+            #region Distance
             // 
             // DISTANCE
             // 
@@ -296,7 +375,9 @@ namespace MediCare.ArtsClient
             Distance_Box.ReadOnly = true;
             Distance_Box.Size = new System.Drawing.Size(200, 30);
             Distance_Box.TabIndex = 33;
+                        #endregion
 
+            #region Brake
             //
             // BRAKE
             //
@@ -313,7 +394,9 @@ namespace MediCare.ArtsClient
             Brake_Box.ReadOnly = true;
             Brake_Box.Size = new System.Drawing.Size(200, 30);
             Brake_Box.TabIndex = 32;
+                        #endregion
 
+            #region Power
             // 
             // POWER
             // 
@@ -332,6 +415,9 @@ namespace MediCare.ArtsClient
             powerLabel.Size = new System.Drawing.Size(200, 30);
             powerLabel.TabIndex = 25;
             powerLabel.Text = "Power";
+                        #endregion
+
+            #region Eneergy
             //
             //   ENERGY
             //
@@ -348,7 +434,9 @@ namespace MediCare.ArtsClient
             energyLabel.Size = new System.Drawing.Size(200, 30);
             energyLabel.TabIndex = 23;
             energyLabel.Text = "Energy";
+                        #endregion
 
+            #region Heart Beats
             // 
             // HEARTBEATS
             // 
@@ -365,6 +453,9 @@ namespace MediCare.ArtsClient
             Heartbeats_Box.ReadOnly = true;
             Heartbeats_Box.Size = new System.Drawing.Size(200, 30);
             Heartbeats_Box.TabIndex = 29;
+                        #endregion
+
+            #region RPM
             //
             // RPM
             //
@@ -381,8 +472,9 @@ namespace MediCare.ArtsClient
             RPMLabel.Size = new System.Drawing.Size(200, 30);
             RPMLabel.TabIndex = 35;
             RPMLabel.Text = "RPM";
+            #endregion
 
-
+            #region New Powerbox
             // 
             // NEW POERRBOX
             // 
@@ -403,9 +495,9 @@ namespace MediCare.ArtsClient
             newPowerLabel.Size = new System.Drawing.Size(200, 30);
             newPowerLabel.TabIndex = 36;
             newPowerLabel.Text = "New power";
+            #endregion
 
-
-
+            #region add components
             //add components
             this.Controls.Add(closeButton);
             this.Controls.Add(closeAllButThisButton);
@@ -431,6 +523,7 @@ namespace MediCare.ArtsClient
             this.Controls.Add(distanceLabel);
             this.Controls.Add(TimeRunning_Box);
             this.Controls.Add(timeRunningLabel);
+#endregion
 
             //set tab Settings
             this.Cursor = System.Windows.Forms.Cursors.Default;
@@ -528,6 +621,7 @@ namespace MediCare.ArtsClient
                 }
             }
         }
+#endregion
+
     }
-    # endregion
 }

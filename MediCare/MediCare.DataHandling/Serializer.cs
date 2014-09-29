@@ -25,7 +25,7 @@ namespace MediCare.DataHandling
         {
         }
 
-        public void SerializeObject(string filename, ArrayList objectToSerialize)
+        public void SerializeObject(string filename, object objectToSerialize)
         {
             Stream stream = File.Open(filename, FileMode.Create);
             BinaryFormatter bFormatter = new BinaryFormatter();
@@ -33,12 +33,12 @@ namespace MediCare.DataHandling
             stream.Close();
         }
 
-        public ArrayList DeSerializeObject(string filename)
+        public object DeSerializeObject(string filename)
         {
-            ArrayList objectToSerialize;
+            object objectToSerialize;
             Stream stream = File.Open(filename, FileMode.Open);
             BinaryFormatter bFormatter = new BinaryFormatter();
-            objectToSerialize = (ArrayList)bFormatter.Deserialize(stream);
+            objectToSerialize = bFormatter.Deserialize(stream);
             stream.Close();
             return objectToSerialize;
         }

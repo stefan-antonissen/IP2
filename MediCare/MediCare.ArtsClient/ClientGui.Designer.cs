@@ -48,6 +48,11 @@
             this.typeBox = new System.Windows.Forms.TextBox();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.listView1 = new System.Windows.Forms.ListView();
+            this.Password_Box = new System.Windows.Forms.TextBox();
+            this.Username_Box = new System.Windows.Forms.TextBox();
+            this.Password_Label = new System.Windows.Forms.Label();
+            this.Username_label = new System.Windows.Forms.Label();
+            this.LoginButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -234,11 +239,61 @@
             this.listView1.TabIndex = 17;
             this.listView1.UseCompatibleStateImageBehavior = false;
             // 
+            // Password_Box
+            // 
+            this.Password_Box.Location = new System.Drawing.Point(612, 292);
+            this.Password_Box.Name = "Password_Box";
+            this.Password_Box.Size = new System.Drawing.Size(100, 20);
+            this.Password_Box.TabIndex = 25;
+            this.Password_Box.UseSystemPasswordChar = true;
+            this.Password_Box.KeyDown += new System.Windows.Forms.KeyEventHandler(this.on_password_box_enter);
+            // 
+            // Username_Box
+            // 
+            this.Username_Box.Location = new System.Drawing.Point(612, 266);
+            this.Username_Box.Name = "Username_Box";
+            this.Username_Box.Size = new System.Drawing.Size(100, 20);
+            this.Username_Box.TabIndex = 24;
+            this.Username_Box.KeyDown += new System.Windows.Forms.KeyEventHandler(this.on_username_box_enter);
+            // 
+            // Password_Label
+            // 
+            this.Password_Label.AutoSize = true;
+            this.Password_Label.Location = new System.Drawing.Point(543, 295);
+            this.Password_Label.Name = "Password_Label";
+            this.Password_Label.Size = new System.Drawing.Size(53, 13);
+            this.Password_Label.TabIndex = 23;
+            this.Password_Label.Text = "Password";
+            // 
+            // Username_label
+            // 
+            this.Username_label.AutoSize = true;
+            this.Username_label.Location = new System.Drawing.Point(543, 266);
+            this.Username_label.Name = "Username_label";
+            this.Username_label.Size = new System.Drawing.Size(55, 13);
+            this.Username_label.TabIndex = 22;
+            this.Username_label.Text = "Username";
+            // 
+            // LoginButton
+            // 
+            this.LoginButton.Location = new System.Drawing.Point(612, 318);
+            this.LoginButton.Name = "LoginButton";
+            this.LoginButton.Size = new System.Drawing.Size(100, 22);
+            this.LoginButton.TabIndex = 21;
+            this.LoginButton.Text = "Login";
+            this.LoginButton.UseVisualStyleBackColor = true;
+            this.LoginButton.Click += new System.EventHandler(this.login);
+            // 
             // ClientGui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1264, 682);
+            this.Controls.Add(this.Password_Box);
+            this.Controls.Add(this.Username_Box);
+            this.Controls.Add(this.Password_Label);
+            this.Controls.Add(this.Username_label);
+            this.Controls.Add(this.LoginButton);
             this.Controls.Add(this.SendMessage);
             this.Controls.Add(this.typeBox);
             this.Controls.Add(this.txtLog);
@@ -260,8 +315,8 @@
             this.Controls.Add(this.TimeRunning_Box);
             this.Controls.Add(this.label1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Name = "ClientGui";
-            this.Text = "MediCare GUI";
+            this.Name = "User Client";
+            this.Text = "User Client";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -289,6 +344,11 @@
         private System.Windows.Forms.TextBox typeBox;
         private System.Windows.Forms.TextBox txtLog;
         private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.TextBox Password_Box;
+        private System.Windows.Forms.TextBox Username_Box;
+        private System.Windows.Forms.Label Password_Label;
+        private System.Windows.Forms.Label Username_label;
+        private System.Windows.Forms.Button LoginButton;
     }
 }
 

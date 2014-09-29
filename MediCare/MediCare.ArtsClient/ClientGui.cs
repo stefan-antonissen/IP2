@@ -22,18 +22,20 @@ namespace MediCare.ArtsClient
         private string currentPort = "";
         private bool _autoUpdate = false;
         private readonly System.Windows.Forms.Timer _timer;
-        TcpClient client = new TcpClient("127.0.0.1", 11000);
+        //TcpClient client = new TcpClient("127.0.0.1", 11000);
         string ID = "5";
 
         public ClientGui()
         {
             InitializeComponent();
+            setVisibility(false);
             //Connect("");
             _timer = new System.Windows.Forms.Timer
             {
                 Interval = 500 // 0.5 delay voor het updaten van de waarden, eventueel nog aanpassen
             };
             _timer.Tick += UpdateGUI;
+
         }
 
         private void Connect(String SelectedPort)
@@ -135,7 +137,7 @@ namespace MediCare.ArtsClient
                 if (typeBox.Text != "")
                 {
                     Packet p = new Packet("5", "chat", "9", typeBox.Text);
-                    SendMessageToServer(client, p);
+                    //SendMessageToServer(client, p);
                     txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                     txtLog_AlignTextToBottom();
                     txtLog_ScrollToBottom();
@@ -189,5 +191,75 @@ namespace MediCare.ArtsClient
             return null;
         }
         # endregion
+
+        #region login
+        private void setVisibility(bool v)
+        {
+            label1.Visible = v;
+            TimeRunning_Box.Visible = v;
+            label2.Visible = v;
+            label3.Visible = v;
+            label4.Visible = v;
+            label5.Visible = v;
+            label6.Visible = v;
+            label7.Visible = v;
+            RPM_Box.Visible = v;
+            Heartbeats_Box.Visible = v;
+            Energy_Box.Visible = v;
+            Power_Box.Visible = v;
+            Brake_Box.Visible = v;
+            Distance_Box.Visible = v;
+            Speed_Box.Visible = v;
+            label8.Visible = v;
+            SendMessage.Visible = v;
+            typeBox.Visible = v;
+            txtLog.Visible = v;
+            listView1.Visible = v;
+
+            Password_Box.Visible = !v;
+            Username_Box.Visible = !v;
+            Password_Label.Visible = !v;
+            Username_label.Visible = !v;
+            LoginButton.Visible = !v;
+            if (!v)
+            {
+                this.ActiveControl = Username_Box;
+            }
+            else
+            {
+                this.ActiveControl = typeBox;
+            }
+        }
+
+        private void on_username_box_enter(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter && Username_Box.Focused)
+            {
+                this.ActiveControl = Password_Box;
+            }
+        }
+
+        private void on_password_box_enter(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter && Password_Box.Focused)
+            {
+                // if username && password are true
+                if (true)
+                {
+                    setVisibility(true);
+                }
+            }
+        }
+
+        private void login(object sender, EventArgs e)
+        {
+            //Login to server bla bla bla
+            if (true)
+            {
+                setVisibility(true);
+            }
+        }
+        #endregion
+
     }
 }

@@ -39,7 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="LoginIO.cs" />
     <Compile Include="ObjectIO.cs" />
     <Compile Include="Measurement.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

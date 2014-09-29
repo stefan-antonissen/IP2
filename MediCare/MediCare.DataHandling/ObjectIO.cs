@@ -73,7 +73,7 @@ namespace MediCare.DataHandling
         // load the arraylist of measurements from a file, returns the arraylist
         public ArrayList LoadMeasurements(string filename)
         {
-            ArrayList result = serializer.DeSerializeObject(filename);
+            ArrayList result = (ArrayList)serializer.DeSerializeObject(filename);
             return result;
         }
     }
