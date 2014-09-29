@@ -13,6 +13,7 @@ using System.IO.Ports;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using MediCare.NetworkLibrary;
+using System.Web.Script.Serialization;
 
 namespace MediCare.ArtsClient
 {
@@ -22,7 +23,7 @@ namespace MediCare.ArtsClient
         private string currentPort = "";
         private bool _autoUpdate = false;
         private readonly System.Windows.Forms.Timer _timer;
-        //TcpClient client = new TcpClient("127.0.0.1", 11000);
+        TcpClient client = new TcpClient("127.0.0.1", 11000);
         string ID = "5";
 
         public ClientGui()
@@ -137,7 +138,7 @@ namespace MediCare.ArtsClient
                 if (typeBox.Text != "")
                 {
                     Packet p = new Packet("5", "chat", "9", typeBox.Text);
-                    //SendMessageToServer(client, p);
+                    SendMessageToServer(client, p);
                     txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                     txtLog_AlignTextToBottom();
                     txtLog_ScrollToBottom();
@@ -180,7 +181,9 @@ namespace MediCare.ArtsClient
         {
             BinaryFormatter formatter = new BinaryFormatter(); // the formatter that will serialize my object on my stream 
             
-            NetworkStream strm = client.GetStream(); // the stream 
+            NetworkStream strm = client.GetStream(); // the stream
+            MessageBox.Show(message.toString());
+            MessageBox.Show(Utils.GetPacketString(message));
             formatter.Serialize(strm, Utils.GetPacketString(message)); // the serialization process 
             //client.GetStream().Write(bytes, 0, bytes.Length);
         }

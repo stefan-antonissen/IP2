@@ -58,6 +58,7 @@ namespace MediCare.Server
                         //temp.GetStream().Position = 0;
                         String dataString = (String)formatter.Deserialize(temp.GetStream());
                         Packet packet = Utils.GetPacket(dataString);
+                        Console.WriteLine(dataString);
                         if (!clients.ContainsKey(packet.GetID()))
                         {
                             clients.Add(packet.GetID(), incomingClient);
