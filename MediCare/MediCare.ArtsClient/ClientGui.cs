@@ -179,16 +179,17 @@ namespace MediCare.ArtsClient
         private void SendMessageToServer(TcpClient client, Packet message)
         {
             BinaryFormatter formatter = new BinaryFormatter(); // the formatter that will serialize my object on my stream 
-
+            
             NetworkStream strm = client.GetStream(); // the stream 
-            formatter.Serialize(strm, message); // the serialization process 
+            formatter.Serialize(strm, Utils.GetPacketString(message)); // the serialization process 
             //client.GetStream().Write(bytes, 0, bytes.Length);
         }
 
-        private string ReadMessage(TcpClient client)
+        private Packet ReadMessage(TcpClient client)
         {
-            //packets uitlezen
-            return null;
+            BinaryFormatter formatter = new BinaryFormatter();
+            String dataString = (String)formatter.Deserialize(client.GetStream());
+            return Utils.GetPacket(dataString);
         }
         # endregion
 

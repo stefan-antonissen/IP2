@@ -11,6 +11,7 @@ using System.Net;
 using MediCare.NetworkLibrary;
 using System.Collections;
 using MediCare.DataHandling;
+using System.Web.Script.Serialization;
 
 namespace MediCare.Server
 {
@@ -44,8 +45,10 @@ namespace MediCare.Server
                     TcpClient temp = incomingClient;
                     while (true)
                     {
+
                         //temp.GetStream().Position = 0;
-                        Packet packet = (Packet)formatter.Deserialize(temp.GetStream());
+                        String dataString = (String)formatter.Deserialize(temp.GetStream());
+                        Packet packet = Utils.GetPacket(dataString);
                         if (!clients.ContainsKey(packet.GetID()))
                         {
                             clients.Add(packet.GetID(), incomingClient);
@@ -68,7 +71,6 @@ namespace MediCare.Server
                         }
                         else
                         {
-                            //string packetString;   // create string out of packet with JSON
                             TcpClient dest = clients[packet.GetDestination()];
                             SendPacket(dest, packet);
                         }
@@ -81,7 +83,7 @@ namespace MediCare.Server
         private void SendPacket(TcpClient client, Packet p)
         {
             BinaryFormatter formatter = new BinaryFormatter();
-            formatter.Serialize(client.GetStream(), p);
+            formatter.Serialize(client.GetStream(), Utils.GetPacketString(p));
         }
 
         private string ResolveID(string id)

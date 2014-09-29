@@ -146,22 +146,15 @@ namespace MediCare.ArtsClient
             BinaryFormatter formatter = new BinaryFormatter(); // the formatter that will serialize my object on my stream 
 
             NetworkStream strm = client.GetStream(); // the stream 
-            formatter.Serialize(strm, message); // the serialization process 
+            formatter.Serialize(strm, Utils.GetPacketString(message)); // the serialization process 
             //client.GetStream().Write(bytes, 0, bytes.Length);
         }
 
-        private string ReadMessage(TcpClient client)
+        private Packet ReadMessage(TcpClient client)
         {
-            byte[] buffer = new byte[256];
-            int totalRead = 0;
-            //read bytes until stream indicates there are no more
-            do
-            {
-                int read = client.GetStream().Read(buffer, totalRead, buffer.Length - totalRead);
-                totalRead += read;
-            } while (client.GetStream().DataAvailable);
-
-            return Encoding.Unicode.GetString(buffer, 0, totalRead);
+            BinaryFormatter formatter = new BinaryFormatter();
+            String dataString = (String)formatter.Deserialize(client.GetStream());
+            return Utils.GetPacket(dataString);
         }
         # endregion
 

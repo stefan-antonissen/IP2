@@ -23,6 +23,12 @@ namespace MediCare.NetworkLibrary
             this._message = message;
             //encoding blablabla
         }
+
+        public Packet()
+        {
+
+        }
+
         public Packet(string id, string type, string message)
             : this(id, type, "", message)
         {
