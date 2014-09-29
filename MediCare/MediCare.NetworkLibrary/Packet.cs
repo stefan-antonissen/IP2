@@ -4,16 +4,17 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 
 namespace MediCare.NetworkLibrary
 {
     [Serializable()]
     public class Packet
     {
-        private string _id;
-        private string _type;
-        private string _destination;
-        private string _message;
+        public string _id;
+        public string _type;
+        public string _destination;
+        public string _message;
 
         public Packet(string id, string type, string destination, string message)
         {
@@ -65,6 +66,11 @@ namespace MediCare.NetworkLibrary
         public string GetType()
         {
             return _type;
+        }
+
+        public String GetDataString()
+        {
+            return new JavaScriptSerializer().Serialize(this);
         }
 
         public string toString()
