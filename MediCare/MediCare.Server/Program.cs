@@ -27,7 +27,16 @@ namespace MediCare.Server
 
         public Program()
         {
-            logins.LoadLogins();
+            try
+            {
+                logins.LoadLogins();
+            } catch(System.IO.FileNotFoundException e) {
+                logins.SaveLogins();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace);
+            }
 
             TcpListener server = new TcpListener(_localIP, 11000);
             server.Start();
