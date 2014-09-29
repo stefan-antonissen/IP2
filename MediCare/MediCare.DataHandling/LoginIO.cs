@@ -19,7 +19,6 @@ namespace MediCare.DataHandling
         {
             logins = new Dictionary<string, string>();
             serializer = new Serializer();
-            logins.Add("dummy", "dummy");
         }
 
         public void add(string name, string password)
