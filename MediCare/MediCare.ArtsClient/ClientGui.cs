@@ -378,6 +378,17 @@ namespace MediCare.ArtsClient
             }
         }
 
+        private void process_Graph_Data(String[] data)
+        {
+            if (data.Length != 1) // maybe not needed if called from updatevalues
+            {
+                for (int i = 0; i < data.Length; i++)
+                {
+                    ChartData[i].Points.Add(int.Parse(data[i]));
+                }
+            }
+        }
+
         #endregion
 
     }
