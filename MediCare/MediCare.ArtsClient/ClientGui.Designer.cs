@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.label1 = new System.Windows.Forms.Label();
             this.TimeRunning_Box = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -53,6 +55,16 @@
             this.Password_Label = new System.Windows.Forms.Label();
             this.Username_label = new System.Windows.Forms.Label();
             this.LoginButton = new System.Windows.Forms.Button();
+            this.Graph = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.Time_Running_CheckBox = new System.Windows.Forms.CheckBox();
+            this.Speed_CheckBox = new System.Windows.Forms.CheckBox();
+            this.Distance_CheckBox = new System.Windows.Forms.CheckBox();
+            this.Brake_CheckBox = new System.Windows.Forms.CheckBox();
+            this.Power_CheckBox = new System.Windows.Forms.CheckBox();
+            this.Energy_CheckBox = new System.Windows.Forms.CheckBox();
+            this.HeartBeats_CheckBox = new System.Windows.Forms.CheckBox();
+            this.RPM_CheckBox = new System.Windows.Forms.CheckBox();
+            ((System.ComponentModel.ISupportInitialize)(this.Graph)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -284,11 +296,109 @@
             this.LoginButton.UseVisualStyleBackColor = true;
             this.LoginButton.Click += new System.EventHandler(this.login);
             // 
+            // Graph
+            // 
+            chartArea3.AxisX.Maximum = 600D;
+            chartArea3.AxisX.Minimum = 0D;
+            chartArea3.AxisX.Title = "Time in seconds";
+            chartArea3.AxisY.Maximum = 300D;
+            chartArea3.AxisY.Minimum = 0D;
+            chartArea3.Name = "ChartArea1";
+            this.Graph.ChartAreas.Add(chartArea3);
+            legend3.Name = "Legend1";
+            this.Graph.Legends.Add(legend3);
+            this.Graph.Location = new System.Drawing.Point(500, 60);
+            this.Graph.Name = "Graph";
+            this.Graph.Size = new System.Drawing.Size(751, 323);
+            this.Graph.TabIndex = 26;
+            this.Graph.Text = "Graph";
+            // 
+            // Time_Running_CheckBox
+            // 
+            this.Time_Running_CheckBox.AutoSize = true;
+            this.Time_Running_CheckBox.Location = new System.Drawing.Point(480, 75);
+            this.Time_Running_CheckBox.Name = "Time_Running_CheckBox";
+            this.Time_Running_CheckBox.Size = new System.Drawing.Size(15, 14);
+            this.Time_Running_CheckBox.TabIndex = 27;
+            this.Time_Running_CheckBox.UseVisualStyleBackColor = true;
+            // 
+            // Speed_CheckBox
+            // 
+            this.Speed_CheckBox.AutoSize = true;
+            this.Speed_CheckBox.Location = new System.Drawing.Point(480, 115);
+            this.Speed_CheckBox.Name = "Speed_CheckBox";
+            this.Speed_CheckBox.Size = new System.Drawing.Size(15, 14);
+            this.Speed_CheckBox.TabIndex = 28;
+            this.Speed_CheckBox.UseVisualStyleBackColor = true;
+            // 
+            // Distance_CheckBox
+            // 
+            this.Distance_CheckBox.AutoSize = true;
+            this.Distance_CheckBox.Location = new System.Drawing.Point(480, 155);
+            this.Distance_CheckBox.Name = "Distance_CheckBox";
+            this.Distance_CheckBox.Size = new System.Drawing.Size(15, 14);
+            this.Distance_CheckBox.TabIndex = 29;
+            this.Distance_CheckBox.UseVisualStyleBackColor = true;
+            // 
+            // Brake_CheckBox
+            // 
+            this.Brake_CheckBox.AutoSize = true;
+            this.Brake_CheckBox.Location = new System.Drawing.Point(480, 195);
+            this.Brake_CheckBox.Name = "Brake_CheckBox";
+            this.Brake_CheckBox.Size = new System.Drawing.Size(15, 14);
+            this.Brake_CheckBox.TabIndex = 30;
+            this.Brake_CheckBox.UseVisualStyleBackColor = true;
+            // 
+            // Power_CheckBox
+            // 
+            this.Power_CheckBox.AutoSize = true;
+            this.Power_CheckBox.Location = new System.Drawing.Point(480, 235);
+            this.Power_CheckBox.Name = "Power_CheckBox";
+            this.Power_CheckBox.Size = new System.Drawing.Size(15, 14);
+            this.Power_CheckBox.TabIndex = 31;
+            this.Power_CheckBox.UseVisualStyleBackColor = true;
+            // 
+            // Energy_CheckBox
+            // 
+            this.Energy_CheckBox.AutoSize = true;
+            this.Energy_CheckBox.Location = new System.Drawing.Point(480, 275);
+            this.Energy_CheckBox.Name = "Energy_CheckBox";
+            this.Energy_CheckBox.Size = new System.Drawing.Size(15, 14);
+            this.Energy_CheckBox.TabIndex = 32;
+            this.Energy_CheckBox.UseVisualStyleBackColor = true;
+            // 
+            // HeartBeats_CheckBox
+            // 
+            this.HeartBeats_CheckBox.AutoSize = true;
+            this.HeartBeats_CheckBox.Location = new System.Drawing.Point(480, 315);
+            this.HeartBeats_CheckBox.Name = "HeartBeats_CheckBox";
+            this.HeartBeats_CheckBox.Size = new System.Drawing.Size(15, 14);
+            this.HeartBeats_CheckBox.TabIndex = 33;
+            this.HeartBeats_CheckBox.UseVisualStyleBackColor = true;
+            // 
+            // RPM_CheckBox
+            // 
+            this.RPM_CheckBox.AutoSize = true;
+            this.RPM_CheckBox.Location = new System.Drawing.Point(480, 355);
+            this.RPM_CheckBox.Name = "RPM_CheckBox";
+            this.RPM_CheckBox.Size = new System.Drawing.Size(15, 14);
+            this.RPM_CheckBox.TabIndex = 34;
+            this.RPM_CheckBox.UseVisualStyleBackColor = true;
+            // 
             // ClientGui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1264, 682);
+            this.ClientSize = new System.Drawing.Size(1264, 681);
+            this.Controls.Add(this.RPM_CheckBox);
+            this.Controls.Add(this.HeartBeats_CheckBox);
+            this.Controls.Add(this.Energy_CheckBox);
+            this.Controls.Add(this.Power_CheckBox);
+            this.Controls.Add(this.Brake_CheckBox);
+            this.Controls.Add(this.Distance_CheckBox);
+            this.Controls.Add(this.Speed_CheckBox);
+            this.Controls.Add(this.Time_Running_CheckBox);
+            this.Controls.Add(this.Graph);
             this.Controls.Add(this.Password_Box);
             this.Controls.Add(this.Username_Box);
             this.Controls.Add(this.Password_Label);
@@ -315,8 +425,12 @@
             this.Controls.Add(this.TimeRunning_Box);
             this.Controls.Add(this.label1);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Name = "User Client";
+            this.MaximizeBox = false;
+            this.MaximumSize = new System.Drawing.Size(1280, 720);
+            this.MinimumSize = new System.Drawing.Size(1280, 720);
+            this.Name = "ClientGui";
             this.Text = "User Client";
+            ((System.ComponentModel.ISupportInitialize)(this.Graph)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -349,6 +463,15 @@
         private System.Windows.Forms.Label Password_Label;
         private System.Windows.Forms.Label Username_label;
         private System.Windows.Forms.Button LoginButton;
+        private System.Windows.Forms.DataVisualization.Charting.Chart Graph;
+        private System.Windows.Forms.CheckBox Time_Running_CheckBox;
+        private System.Windows.Forms.CheckBox Speed_CheckBox;
+        private System.Windows.Forms.CheckBox Distance_CheckBox;
+        private System.Windows.Forms.CheckBox Brake_CheckBox;
+        private System.Windows.Forms.CheckBox Power_CheckBox;
+        private System.Windows.Forms.CheckBox Energy_CheckBox;
+        private System.Windows.Forms.CheckBox HeartBeats_CheckBox;
+        private System.Windows.Forms.CheckBox RPM_CheckBox;
     }
 }
 

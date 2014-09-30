@@ -219,6 +219,16 @@ namespace MediCare.ArtsClient
             typeBox.Visible = v;
             txtLog.Visible = v;
             listView1.Visible = v;
+            Graph.Visible = v;
+            Time_Running_CheckBox.Visible = v;
+            Speed_CheckBox.Visible = v;
+            Distance_CheckBox.Visible = v;
+            Brake_CheckBox.Visible = v;
+            Power_CheckBox.Visible = v;
+            Energy_CheckBox.Visible = v;
+            HeartBeats_CheckBox.Visible = v;
+            RPM_CheckBox.Visible = v;
+
 
             Password_Box.Visible = !v;
             Username_Box.Visible = !v;
