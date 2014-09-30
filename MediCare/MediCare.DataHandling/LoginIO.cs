@@ -25,14 +25,14 @@ namespace MediCare.DataHandling
         public void add(string message)
         {
             string[] splitted = message.Split(split, 2, System.StringSplitOptions.RemoveEmptyEntries);
-            logins.Add(splitted[0], splitted[1]);
+            logins.Add(splitted[0], EncryptPassword(splitted[1]));
         }
 
         public bool login(string name, string password)
         {
             string ActualPassword;
             return logins.TryGetValue(name, out ActualPassword) &&
-                       ActualPassword == password;
+                       ActualPassword == EncryptPassword(password);
         }
 
         public void del(string key)
