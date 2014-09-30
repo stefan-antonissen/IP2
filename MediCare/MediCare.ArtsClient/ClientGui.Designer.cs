@@ -64,6 +64,7 @@
             this.Energy_CheckBox = new System.Windows.Forms.CheckBox();
             this.HeartBeats_CheckBox = new System.Windows.Forms.CheckBox();
             this.RPM_CheckBox = new System.Windows.Forms.CheckBox();
+            this.Login_ERROR_Label = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.Graph)).BeginInit();
             this.SuspendLayout();
             // 
@@ -249,24 +250,6 @@
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(8, 33);
             this.listView1.TabIndex = 17;
-            this.listView1.UseCompatibleStateImageBehavior = false;
-            // 
-            // Password_Box
-            // 
-            this.Password_Box.Location = new System.Drawing.Point(612, 292);
-            this.Password_Box.Name = "Password_Box";
-            this.Password_Box.Size = new System.Drawing.Size(100, 20);
-            this.Password_Box.TabIndex = 25;
-            this.Password_Box.UseSystemPasswordChar = true;
-            this.Password_Box.KeyDown += new System.Windows.Forms.KeyEventHandler(this.on_password_box_enter);
-            // 
-            // Username_Box
-            // 
-            this.Username_Box.Location = new System.Drawing.Point(612, 266);
-            this.Username_Box.Name = "Username_Box";
-            this.Username_Box.Size = new System.Drawing.Size(100, 20);
-            this.Username_Box.TabIndex = 24;
-            this.Username_Box.KeyDown += new System.Windows.Forms.KeyEventHandler(this.on_username_box_enter);
             // 
             // Password_Label
             // 
@@ -285,6 +268,24 @@
             this.Username_label.Size = new System.Drawing.Size(55, 13);
             this.Username_label.TabIndex = 22;
             this.Username_label.Text = "Username";
+            this.listView1.UseCompatibleStateImageBehavior = false;
+            // 
+            // Password_Box
+            // 
+            this.Password_Box.Location = new System.Drawing.Point(612, 292);
+            this.Password_Box.Name = "Password_Box";
+            this.Password_Box.Size = new System.Drawing.Size(100, 20);
+            this.Password_Box.TabIndex = 25;
+            this.Password_Box.UseSystemPasswordChar = true;
+            this.Password_Box.KeyDown += new System.Windows.Forms.KeyEventHandler(this.on_password_box_enter);
+            // 
+            // Username_Box
+            // 
+            this.Username_Box.Location = new System.Drawing.Point(612, 266);
+            this.Username_Box.Name = "Username_Box";
+            this.Username_Box.Size = new System.Drawing.Size(100, 20);
+            this.Username_Box.TabIndex = 24;
+            this.Username_Box.KeyDown += new System.Windows.Forms.KeyEventHandler(this.on_username_box_enter);
             // 
             // LoginButton
             // 
@@ -307,9 +308,9 @@
             this.Graph.ChartAreas.Add(chartArea1);
             legend1.Name = "Legend1";
             this.Graph.Legends.Add(legend1);
-            this.Graph.Location = new System.Drawing.Point(500, 60);
+            this.Graph.Location = new System.Drawing.Point(501, 60);
             this.Graph.Name = "Graph";
-            this.Graph.Size = new System.Drawing.Size(751, 323);
+            this.Graph.Size = new System.Drawing.Size(737, 323);
             this.Graph.TabIndex = 26;
             this.Graph.Text = "Graph";
             // 
@@ -394,11 +395,21 @@
             this.RPM_CheckBox.UseVisualStyleBackColor = true;
             this.RPM_CheckBox.CheckedChanged += new System.EventHandler(this.on_RPM_CheckBox_Click);
             // 
+            // Login_ERROR_Label
+            // 
+            this.Login_ERROR_Label.AutoSize = true;
+            this.Login_ERROR_Label.ForeColor = System.Drawing.Color.DarkRed;
+            this.Login_ERROR_Label.Location = new System.Drawing.Point(579, 240);
+            this.Login_ERROR_Label.Name = "Login_ERROR_Label";
+            this.Login_ERROR_Label.Size = new System.Drawing.Size(0, 13);
+            this.Login_ERROR_Label.TabIndex = 35;
+            // 
             // ClientGui
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1264, 681);
+            this.Controls.Add(this.Login_ERROR_Label);
             this.Controls.Add(this.RPM_CheckBox);
             this.Controls.Add(this.HeartBeats_CheckBox);
             this.Controls.Add(this.Energy_CheckBox);
@@ -481,6 +492,7 @@
         private System.Windows.Forms.CheckBox Energy_CheckBox;
         private System.Windows.Forms.CheckBox HeartBeats_CheckBox;
         private System.Windows.Forms.CheckBox RPM_CheckBox;
+        private System.Windows.Forms.Label Login_ERROR_Label;
     }
 }
 

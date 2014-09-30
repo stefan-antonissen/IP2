@@ -16,6 +16,7 @@ namespace MediCare.NetworkLibrary
         public string _destination;
         public string _message;
 
+        // ID = id van sender; type = type bericht; destination = ID van ontvanger; message = bericht
         public Packet(string id, string type, string destination, string message)
         {
             this._id = id;

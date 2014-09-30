@@ -30,8 +30,9 @@ namespace MediCare.ArtsClient
 
         public ClientGui()
         {
-            InitializeGraph();
             InitializeComponent();
+            InitializeGraph();
+            this.FormClosing += on_Window_Closed_Event;
             setVisibility(false);
 
             //Connect("");
@@ -40,7 +41,7 @@ namespace MediCare.ArtsClient
                 Interval = 500 // 0.5 delay voor het updaten van de waarden, eventueel nog aanpassen
             };
             _timer.Tick += UpdateGUI;
-
+            //_timer.Start() // automatisch updaten van de waardes
         }
 
         private void Connect(String SelectedPort)
@@ -114,7 +115,7 @@ namespace MediCare.ArtsClient
             // hieronder test code om de update te testen, deze methode moet de string array returnen van c.getStatus()
             Random r = new Random();
             string num = r.Next(1, 100).ToString();
-            string[] str = new string[] { "1", "2", "3", "4", "5", "6", "7", num };
+            string[] str = new string[] { num, num, num, num, num, num, num, num };
             return str;
             //return c.GetStatus();
         }
@@ -122,16 +123,20 @@ namespace MediCare.ArtsClient
         # region Chat Box
         private void txtLog_TextChanged(object sender, EventArgs e)
         {
-            //nonedonexD
+            //kan weg?
         }
 
+        // ID = id van sender; type = type bericht; destination = ID van ontvanger; message = bericht
         private void sendButton_Click(object sender, EventArgs e)
         {
             if (typeBox.Text != "")
             {
+                Packet p = new Packet("53232323", "chat", "93238792", typeBox.Text);
+                SendMessageToServer(client, p);
                 txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
+                txtLog_AlignTextToBottom();
+                txtLog_ScrollToBottom();
                 typeBox.Text = "";
-
             }
         }
 
@@ -141,7 +146,7 @@ namespace MediCare.ArtsClient
             {
                 if (typeBox.Text != "")
                 {
-                    Packet p = new Packet("5", "chat", "9", typeBox.Text);
+                    Packet p = new Packet("53232323", "chat", "93238792", typeBox.Text);
                     SendMessageToServer(client, p);
                     txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                     txtLog_AlignTextToBottom();
@@ -198,6 +203,28 @@ namespace MediCare.ArtsClient
             String dataString = (String)formatter.Deserialize(client.GetStream());
             return Utils.GetPacket(dataString);
         }
+
+
+        private void on_Window_Closed_Event(object sender, FormClosingEventArgs e)
+        {
+            Packet p = new Packet("52323232", "Disconnect", "92378733", "Houdoe");
+            //send message to server that ur dying
+            if (client.Connected)
+            {
+                SendMessageToServer(client, p);
+                Packet p1 = ReadMessage(client);
+                if (p1._message.Equals("Houdoe"))
+                {
+                    client.Close();
+                }
+                else
+                {
+                    e.Cancel = true;
+                    //show popup that said no response from server (or not). Maybe u shoudnt even cancel the closing operation...
+                }
+            }
+        }
+
         # endregion
 
         #region login
@@ -234,11 +261,13 @@ namespace MediCare.ArtsClient
             RPM_CheckBox.Visible = v;
 
 
+
             Password_Box.Visible = !v;
             Username_Box.Visible = !v;
             Password_Label.Visible = !v;
             Username_label.Visible = !v;
             LoginButton.Visible = !v;
+            Login_ERROR_Label.Visible = !v;
             if (!v)
             {
                 this.ActiveControl = Username_Box;
@@ -261,20 +290,24 @@ namespace MediCare.ArtsClient
         {
             if (e.KeyCode == Keys.Enter && Password_Box.Focused)
             {
-                // if username && password are true
-                if (true)
-                {
-                    setVisibility(true);
-                }
+                login(sender, e); // pass it on to the follow up event
             }
         }
 
+        /**
+         * TODO: Logging in for real on the server
+         */
         private void login(object sender, EventArgs e)
         {
-            //Login to server bla bla bla
-            if (true)
+            if (!Password_Box.Text.Equals("") && !Username_Box.Text.Equals(""))
             {
+                //if (Username_Box.Text == ??? && Password_Box.Text == ???) {
                 setVisibility(true);
+            }
+            else
+            {
+                Login_ERROR_Label.Text = "Invalid username or password";
+                this.ActiveControl = Username_Box;
             }
         }
         #endregion

@@ -15,7 +15,7 @@ using System.Web.Script.Serialization;
 
 namespace MediCare.Server
 {
-    class Program //: ServerInterface
+    class Server //: ServerInterface
     {
         private IPAddress _localIP = IPAddress.Parse("127.0.0.1");
         private Dictionary<string, TcpClient> clients = new Dictionary<string, TcpClient>();
@@ -23,15 +23,17 @@ namespace MediCare.Server
 
         static void Main(string[] args)
         {
-            new Program();
+            new Server();
         }
 
-        public Program()
+        public Server()
         {
             try
             {
                 logins.LoadLogins();
-            } catch(System.IO.FileNotFoundException e) {
+            }
+            catch (System.IO.FileNotFoundException e)
+            {
                 logins.SaveLogins();
             }
             catch (Exception e)
@@ -51,44 +53,120 @@ namespace MediCare.Server
                 {
                     Console.WriteLine("Connection found!");
                     BinaryFormatter formatter = new BinaryFormatter();
-                    TcpClient temp = incomingClient;
+                    TcpClient sender = incomingClient;
                     while (true)
                     {
 
                         //temp.GetStream().Position = 0;
-                        String dataString = (String)formatter.Deserialize(temp.GetStream());
+                        String dataString = (String)formatter.Deserialize(sender.GetStream());
                         Packet packet = Utils.GetPacket(dataString);
                         Console.WriteLine(dataString);
+
                         if (!clients.ContainsKey(packet.GetID()))
                         {
                             clients.Add(packet.GetID(), incomingClient);
                         }
-                        if (ResolveID(packet.GetID()).Equals("Client"))
+
+                        Console.WriteLine("Client connected");
+                        switch (packet._type)
                         {
-                            Console.WriteLine("Client connected");
-                            if (packet.GetType().Equals("chat"))
-                            {
-                                Console.WriteLine(packet.toString());
-                                TcpClient dest = clients[packet.GetDestination()];
-                                SendPacket(dest, packet);
-                            }
-                            else
-                            {
-                                // save data to database
-                                TcpClient dest = clients[packet.GetDestination()];
-                                SendPacket(dest, packet);
-                            }
+                            case "Chat": HandleChatPacket(packet);
+                                break;
+                            case "FirstConnect": HandleFirstConnectPacket(packet, sender);
+                                break;
+                            case "Disconnect": HandleDisconnectPacket(packet, sender);
+                                break;
+                            case "Data": HandleDataPacket(packet, sender);
+                                break;
+                            case "Registration": HandleRegistrationPacket(packet, sender);
+                                break;
+                            case "Broadcast": HandleBroadcastMessagePacket(packet);
+                                break;
+                            default: //nothing
+                                break;
                         }
-                        else
-                        {
-                            TcpClient dest = clients[packet.GetDestination()];
-                            SendPacket(dest, packet);
-                        }
-                    }
+                    } // end While
                 }).Start();
             }
         }
 
+        /**
+         * Versturen van een chat, package blijft hetzelfde.
+         * Methode is er omdat het anders uit de toon valt met andere methodes.
+         */
+        private void HandleChatPacket(Packet packet)
+        {
+            try
+            {
+                TcpClient destination = clients[packet.GetDestination()];
+                SendPacket(destination, packet);
+            } catch(System.Net.Sockets.SocketException e) {
+                Console.WriteLine("Destination not Available. Chat ERROR.");
+            }
+        }
+
+        /**
+         * Zoeken in de *database* naar de juiste persoons gegevens en haal daar het correcte ID op
+         * 
+         */
+        private void HandleFirstConnectPacket(Packet p, TcpClient sender)
+        {
+            Packet response = new Packet("Server", "FirstConnect", p._id, "VERIFIED");
+            SendPacket(sender, response);
+        }
+
+        /**
+         * Stuur het sluit bericht terug naar de client en sluit de connectie. 
+         * Client doet hetzelfde na het ontvangen van het sluit bericht.
+         */
+        private void HandleDisconnectPacket(Packet p, TcpClient sender)
+        {
+            Packet response = new Packet("server", "Disconnect", p.GetID(), "LOGGED OFF");
+            SendPacket(sender, response);
+        }
+
+        /**
+         * Save de data die je binnen krijgt.
+         * Stuur de data door naar de DokorClient.
+         */
+        private void HandleDataPacket(Packet packet, TcpClient sender)
+        {
+            Packet response_Sender = new Packet("Server", "Data", packet._id, "Data Saved");
+            SendPacket(sender, response_Sender);
+
+            Packet response_receiver = new Packet(packet.GetDestination(), "data", packet.GetID(), packet.GetMessage());
+            try
+            {
+                TcpClient destination = clients[packet.GetDestination()];
+                SendPacket(destination, packet);
+            }
+            catch (System.Net.Sockets.SocketException e)
+            {
+                Console.WriteLine("Destination not Available. Data ERROR.");
+            } 
+
+            //TODO: save some data here locally on the server
+        }
+
+        /**
+         * Handel het registratie process af. genereer een uniek ID voeg toe aan bestand (zie LoginIO)
+         * Stuur een bericht terug dat de data is aangekomen.
+         */
+        private void HandleRegistrationPacket(Packet p, TcpClient sender)
+        {
+            logins.add(p.GetMessage());
+            Packet response = new Packet("server", "Registration", p.GetID(), "Registration attempt succeeded");
+            SendPacket(sender, response);
+        }
+
+        /**
+         * Handel een broadcast message af van de Doktor.
+         * 
+         */
+        private void HandleBroadcastMessagePacket(Packet p)
+        {
+            Packet response = new Packet();
+        }
 
         private void SendPacket(TcpClient client, Packet p)
         {
