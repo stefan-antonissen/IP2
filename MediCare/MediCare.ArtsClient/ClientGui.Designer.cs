@@ -316,11 +316,13 @@
             // Time_Running_CheckBox
             // 
             this.Time_Running_CheckBox.AutoSize = true;
+            this.Time_Running_CheckBox.ForeColor = System.Drawing.SystemColors.ControlText;
             this.Time_Running_CheckBox.Location = new System.Drawing.Point(480, 75);
             this.Time_Running_CheckBox.Name = "Time_Running_CheckBox";
             this.Time_Running_CheckBox.Size = new System.Drawing.Size(15, 14);
             this.Time_Running_CheckBox.TabIndex = 27;
             this.Time_Running_CheckBox.UseVisualStyleBackColor = true;
+            this.Time_Running_CheckBox.CheckedChanged += new System.EventHandler(this.on_Time_Running_CheckBox_Click);
             // 
             // Speed_CheckBox
             // 
@@ -330,6 +332,7 @@
             this.Speed_CheckBox.Size = new System.Drawing.Size(15, 14);
             this.Speed_CheckBox.TabIndex = 28;
             this.Speed_CheckBox.UseVisualStyleBackColor = true;
+            this.Speed_CheckBox.CheckedChanged += new System.EventHandler(this.on_Speed_CheckBox_Click);
             // 
             // Distance_CheckBox
             // 
@@ -339,6 +342,7 @@
             this.Distance_CheckBox.Size = new System.Drawing.Size(15, 14);
             this.Distance_CheckBox.TabIndex = 29;
             this.Distance_CheckBox.UseVisualStyleBackColor = true;
+            this.Distance_CheckBox.CheckedChanged += new System.EventHandler(this.on_Distance_CheckBox_Click);
             // 
             // Brake_CheckBox
             // 
@@ -348,6 +352,7 @@
             this.Brake_CheckBox.Size = new System.Drawing.Size(15, 14);
             this.Brake_CheckBox.TabIndex = 30;
             this.Brake_CheckBox.UseVisualStyleBackColor = true;
+            this.Brake_CheckBox.CheckedChanged += new System.EventHandler(this.on_Brake_CheckBox_Click);
             // 
             // Power_CheckBox
             // 
@@ -357,6 +362,7 @@
             this.Power_CheckBox.Size = new System.Drawing.Size(15, 14);
             this.Power_CheckBox.TabIndex = 31;
             this.Power_CheckBox.UseVisualStyleBackColor = true;
+            this.Power_CheckBox.CheckedChanged += new System.EventHandler(this.on_Power_CheckBox_Click);
             // 
             // Energy_CheckBox
             // 
@@ -366,6 +372,7 @@
             this.Energy_CheckBox.Size = new System.Drawing.Size(15, 14);
             this.Energy_CheckBox.TabIndex = 32;
             this.Energy_CheckBox.UseVisualStyleBackColor = true;
+            this.Energy_CheckBox.CheckedChanged += new System.EventHandler(this.on_Energy_CheckBox_Click);
             // 
             // HeartBeats_CheckBox
             // 
@@ -375,6 +382,7 @@
             this.HeartBeats_CheckBox.Size = new System.Drawing.Size(15, 14);
             this.HeartBeats_CheckBox.TabIndex = 33;
             this.HeartBeats_CheckBox.UseVisualStyleBackColor = true;
+            this.HeartBeats_CheckBox.CheckedChanged += new System.EventHandler(this.on_HeartBeats_CheckBox_Click);
             // 
             // RPM_CheckBox
             // 
@@ -384,6 +392,7 @@
             this.RPM_CheckBox.Size = new System.Drawing.Size(15, 14);
             this.RPM_CheckBox.TabIndex = 34;
             this.RPM_CheckBox.UseVisualStyleBackColor = true;
+            this.RPM_CheckBox.CheckedChanged += new System.EventHandler(this.on_RPM_CheckBox_Click);
             // 
             // ClientGui
             // 
