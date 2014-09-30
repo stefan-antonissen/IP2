@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea3 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend3 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.label1 = new System.Windows.Forms.Label();
             this.TimeRunning_Box = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -298,15 +298,15 @@
             // 
             // Graph
             // 
-            chartArea3.AxisX.Maximum = 600D;
-            chartArea3.AxisX.Minimum = 0D;
-            chartArea3.AxisX.Title = "Time in seconds";
-            chartArea3.AxisY.Maximum = 300D;
-            chartArea3.AxisY.Minimum = 0D;
-            chartArea3.Name = "ChartArea1";
-            this.Graph.ChartAreas.Add(chartArea3);
-            legend3.Name = "Legend1";
-            this.Graph.Legends.Add(legend3);
+            chartArea1.AxisX.Maximum = 600D;
+            chartArea1.AxisX.Minimum = 0D;
+            chartArea1.AxisX.Title = "Time in seconds";
+            chartArea1.AxisY.Maximum = 300D;
+            chartArea1.AxisY.Minimum = 0D;
+            chartArea1.Name = "ChartArea1";
+            this.Graph.ChartAreas.Add(chartArea1);
+            legend1.Name = "Legend1";
+            this.Graph.Legends.Add(legend1);
             this.Graph.Location = new System.Drawing.Point(500, 60);
             this.Graph.Name = "Graph";
             this.Graph.Size = new System.Drawing.Size(751, 323);

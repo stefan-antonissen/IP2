@@ -378,6 +378,9 @@ namespace MediCare.ArtsClient
             }
         }
 
+        /**************************************\
+        * TODO: Implement Small Cashing System *
+        \**************************************/
         private void process_Graph_Data(String[] data)
         {
             if (data.Length != 1) // maybe not needed if called from updatevalues

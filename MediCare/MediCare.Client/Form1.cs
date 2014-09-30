@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -171,7 +172,6 @@ namespace MediCare.ArtsClient
             SendMessage.Visible = v;
             typeBox.Visible = v;
             txtLog.Visible = v;
-            listView1.Visible = v;
             panel1.Visible = v;
             Password_Box.Visible = v;
             Username_Box.Visible = v;
@@ -223,6 +223,15 @@ namespace MediCare.ArtsClient
             }
         }
         #endregion
+
+        private void Signup_Button_Click(object sender, EventArgs e)
+        {
+            new Thread(() =>
+            {
+                Application.Run(new SignupTool());
+            }).Start();
+            
+        }
     }
 
     #region Tab generation
