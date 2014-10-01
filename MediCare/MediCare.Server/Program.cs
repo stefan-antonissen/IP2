@@ -35,10 +35,11 @@ namespace MediCare.Server
             catch (System.IO.FileNotFoundException e)
             {
                 logins.SaveLogins();
+                logins.LoadLogins();
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.StackTrace);
+                Console.WriteLine(e.Message);
             }
 
             TcpListener server = new TcpListener(_localIP, 11000);
@@ -116,9 +117,9 @@ namespace MediCare.Server
                 TcpClient destination = clients[packet.GetDestination()];
                 SendPacket(destination, packet);
             }
-            catch (System.Net.Sockets.SocketException e)
+            catch (Exception e)
             {
-                Console.WriteLine("Destination not Available. Chat ERROR.");
+                Console.WriteLine(e.Message);
             }
         }
 
@@ -159,9 +160,9 @@ namespace MediCare.Server
                 TcpClient destination = clients[packet.GetDestination()];
                 SendPacket(destination, packet);
             }
-            catch (System.Net.Sockets.SocketException e)
+            catch (Exception e)
             {
-                Console.WriteLine("Destination not Available. Data ERROR.");
+                Console.WriteLine(e.Message);
             }
 
             //TODO: save some data here locally on the server
