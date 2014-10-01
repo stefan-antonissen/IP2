@@ -26,7 +26,7 @@ namespace MediCare.ArtsClient
         private TcpClient client = new TcpClient("127.0.0.1", 11000);
         private bool[] checkbox_Status = { false, false, false, false, false, false, false, false };
         private System.Windows.Forms.DataVisualization.Charting.Series[] ChartData = new System.Windows.Forms.DataVisualization.Charting.Series[8];
-        //string ID = "5";
+        string ID;
 
         public ClientGui()
         {
@@ -131,7 +131,7 @@ namespace MediCare.ArtsClient
         {
             if (typeBox.Text != "")
             {
-                Packet p = new Packet("53232323", "Chat", "93238792", typeBox.Text);
+                Packet p = new Packet(ID, "Chat", "93238792", typeBox.Text);
                 SendMessageToServer(client, p);
                 txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                 txtLog_AlignTextToBottom();
@@ -146,7 +146,7 @@ namespace MediCare.ArtsClient
             {
                 if (typeBox.Text != "")
                 {
-                    Packet p = new Packet("53232323", "Chat", "93238792", typeBox.Text);
+                    Packet p = new Packet(ID, "Chat", "93238792", typeBox.Text);
                     SendMessageToServer(client, p);
                     txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                     txtLog_AlignTextToBottom();
@@ -204,7 +204,7 @@ namespace MediCare.ArtsClient
 
         private void on_Window_Closed_Event(object sender, FormClosingEventArgs e)
         {
-            Packet p = new Packet("52323232", "Disconnect", "92378733", "Disconnecting");
+            Packet p = new Packet(ID, "Disconnect", "92378733", "Disconnecting");
             //send message to server that ur dying
             if (client.Connected)
             {
@@ -299,6 +299,7 @@ namespace MediCare.ArtsClient
             if (!Password_Box.Text.Equals("") && !Username_Box.Text.Equals(""))
             {
                 //if (Username_Box.Text == ??? && Password_Box.Text == ???) {
+                ID = Username_Box.Text;
                 setVisibility(true);
             }
             else

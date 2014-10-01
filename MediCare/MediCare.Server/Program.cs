@@ -68,10 +68,18 @@ namespace MediCare.Server
 
                             //Console.WriteLine(dataString);
 
-                            // if (!clients.ContainsKey(packet.GetID()))
-                            //{
-                            //    clients.Add(packet.GetID(), incomingClient);
-                            // }
+                            if (!clients.ContainsKey(packet.GetID()))
+                            {
+                                clients.Add(packet.GetID(), incomingClient);
+                                #region DEBUG
+#if DEBUG
+                                Console.WriteLine("ID: " + packet.GetID() + "incomingClient: " + incomingClient.ToString());
+                                printClientList();
+#endif
+                                #endregion
+                            }
+
+
 
                             Console.WriteLine("Client connected");
                             switch (packet._type)
@@ -192,6 +200,17 @@ namespace MediCare.Server
         {
             BinaryFormatter formatter = new BinaryFormatter();
             formatter.Serialize(client.GetStream(), Utils.GetPacketString(p));
+        }
+
+        private void printClientList()
+        {
+            Console.WriteLine("\n############################################# ");
+            Console.WriteLine("content for clients dictionary: ");
+            foreach (KeyValuePair<string, TcpClient> entry in clients)
+            {
+                Console.WriteLine("ID: " + ((string)entry.Key) + " TcpClient: " + entry.Value.GetHashCode());
+            }
+            Console.WriteLine("#############################################\n");
         }
 
         private string ResolveID(string id)
