@@ -158,7 +158,7 @@ namespace MediCare.ArtsClient
 
         private void txtLog_AlignTextToBottom()
         {
-            int visibleLines = (int)(txtLog.Height / txtLog.Font.GetHeight()) - 1;
+            int visibleLines = (int)(txtLog.Height / txtLog.Font.GetHeight()) - 50;
             if (visibleLines > txtLog.Lines.Length)
             {
                 int emptyLines = (visibleLines - txtLog.Lines.Length);
