@@ -31,20 +31,8 @@ namespace MediCare.Controller
             cc.openConnection();
         }
 
-        public string[] GetPorts()
-        {
-            try
-            {
-                return cc.getAvailablePorts();
-            }
-            catch (Exception e)
-            {
-                string[] rawArray = new string[1];
-                rawArray[0] = e.Message.ToString();
-                Console.WriteLine(e.Message.ToString());
-                return rawArray; 
-            }
-        }
+
+        #region getters
 
         /**
          * AutoPort Detection.
@@ -64,8 +52,10 @@ namespace MediCare.Controller
             List<string> correctport = null;
             for (int i = 0; i < ports.Length; i++)
             {
-                if(ports[i].StartsWith("COM")) {
-                    try {
+                if (ports[i].StartsWith("COM"))
+                {
+                    try
+                    {
                         SerialController sc = new SerialController(ports[i]);
                         sc.openConnection(); // breaks on this line
                         sc.send(Enums.GetValue(Enums.BikeCommands.RESET)); // send reset to port
@@ -80,7 +70,9 @@ namespace MediCare.Controller
                         Console.WriteLine("Checked: " + ports[i]);
                         sc.closeConnection();
 
-                    } catch(System.IO.IOException) {
+                    }
+                    catch (System.IO.IOException)
+                    {
                         Console.WriteLine(ports[i] + " Failed to open. Trying next port");
                         // Should break here?
                     }
@@ -89,7 +81,21 @@ namespace MediCare.Controller
             return correctport;
         }
 
-        #region getters
+        public string[] GetPorts()
+        {
+            try
+            {
+                return cc.getAvailablePorts();
+            }
+            catch (Exception e)
+            {
+                string[] rawArray = new string[1];
+                rawArray[0] = e.Message.ToString();
+                Console.WriteLine(e.Message.ToString());
+                return rawArray;
+            }
+        }
+
 
         public string[] GetStatus()
         {
