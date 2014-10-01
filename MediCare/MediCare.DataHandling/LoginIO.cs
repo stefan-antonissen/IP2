@@ -23,7 +23,7 @@ namespace MediCare.DataHandling
 
         public void add(string credentials)
         {
-            string[] splitted = credentials.Split(' ');
+            string[] splitted = credentials.Split(new string[] { "\n", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             logins.Add(splitted[0], EncryptPassword(splitted[1]));
         }
 
