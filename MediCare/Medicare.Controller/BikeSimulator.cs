@@ -60,6 +60,11 @@ namespace MediCare.Controller
 	        }
         }
 
+        override public List<string> GetCorrectPort()
+        {
+            return new List<string> { "SIM" };
+        }
+
         override public string[] getAvailablePorts()
         {
             return new string[] {"SIM"};

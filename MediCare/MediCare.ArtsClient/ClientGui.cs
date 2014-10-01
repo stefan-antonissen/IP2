@@ -14,6 +14,7 @@ using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using MediCare.NetworkLibrary;
 using System.Web.Script.Serialization;
+using MediCare.Controller;
 
 namespace MediCare.ArtsClient
 {
@@ -42,11 +43,17 @@ namespace MediCare.ArtsClient
             };
             _timer.Tick += UpdateGUI;
             //_timer.Start() // automatisch updaten van de waardes
+
+            Connect("");
         }
 
         private void Connect(String SelectedPort)
         {
-            if (SelectedPort == "")
+            if (SelectedPort.Equals(""))
+            {
+                c = new BikeController("");
+            }
+            else if (SelectedPort.Equals("SIM"))
             {
                 c = new BikeController("SIM"); // sim is for testing methods
             }
