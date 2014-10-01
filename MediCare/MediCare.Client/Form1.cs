@@ -1,4 +1,5 @@
-﻿using MediCare.NetworkLibrary;
+﻿using MediCare.DataHandling;
+using MediCare.NetworkLibrary;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,15 +16,30 @@ using System.Windows.Forms;
 
 namespace MediCare.ArtsClient
 {
-    public partial class Form1 : Form
+    public partial class DoctorClient : Form
     {
 
-        //TcpClient client = new TcpClient("127.0.0.1", 11000);
+        TcpClient client = new TcpClient("127.0.0.1", 11000);
+        private LoginIO logins = new LoginIO();
 
-        public Form1()
+        public DoctorClient()
         {
+            try
+            {
+                logins.LoadLogins();
+            }
+            catch (System.IO.FileNotFoundException e)
+            {
+                logins.SaveLogins();
+                logins.LoadLogins();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
             InitializeComponent();
             setVisibility(false);
+            this.FormClosing += on_Window_Closed_Event;
         }
 
         /**
@@ -102,8 +118,8 @@ namespace MediCare.ArtsClient
             {
                 if (typeBox.Text != "")
                 {
-                    Packet p = new Packet("9", "chat", "5", typeBox.Text);
-                    //SendMessageToServer(client, p);
+                    Packet p = new Packet("9", "Broadcast", "5", typeBox.Text);
+                    SendMessageToServer(client, p);
                     txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                     txtLog_AlignTextToBottom();
                     txtLog_ScrollToBottom();
@@ -223,6 +239,28 @@ namespace MediCare.ArtsClient
             }
         }
         #endregion
+
+        private void on_Window_Closed_Event(object sender, FormClosingEventArgs e)
+        {
+            Packet p = new Packet("9784334", "Disconnect", "24378733", "Disconnecting");
+            //send message to server that ur dying
+            if (client.Connected)
+            {
+                SendMessageToServer(client, p);
+                Packet p1 = ReadMessage(client);
+                if (p1._message.Equals("LOGGED OFF") && (p1.GetDestination() == "9784334"))
+                {
+                    logins.SaveLogins();
+                    client.Close();
+
+                }
+                else
+                {
+                    e.Cancel = true;
+                    //show popup that said no response from server (or not). Maybe u shoudnt even cancel the closing operation...
+                }
+            }
+        }
 
         private void Signup_Button_Click(object sender, EventArgs e)
         {
