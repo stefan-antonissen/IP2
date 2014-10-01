@@ -57,37 +57,52 @@ namespace MediCare.Server
                     while (true)
                     {
 
-                        //temp.GetStream().Position = 0;
-                        String dataString = (String)formatter.Deserialize(sender.GetStream());
-                        Packet packet = Utils.GetPacket(dataString);
-                        Console.WriteLine(dataString);
-
-                        if (!clients.ContainsKey(packet.GetID()))
+                        String dataString = "";
+                        Packet packet = null;
+                        ;
+                        if (sender.Connected)
                         {
-                            clients.Add(packet.GetID(), incomingClient);
-                        }
+                            dataString = (String)formatter.Deserialize(sender.GetStream());
+                            packet = Utils.GetPacket(dataString);
 
-                        Console.WriteLine("Client connected");
-                        switch (packet._type)
-                        {
-                            case "Chat": HandleChatPacket(packet);
+                            //Console.WriteLine(dataString);
+
+                            // if (!clients.ContainsKey(packet.GetID()))
+                            //{
+                            //    clients.Add(packet.GetID(), incomingClient);
+                            // }
+
+                            Console.WriteLine("Client connected");
+                            switch (packet._type)
+                            {
+                                //sender = incoming client
+                                //packet = data van de client
+                                case "Chat":
+                                HandleChatPacket(packet);
                                 break;
-                            case "FirstConnect": HandleFirstConnectPacket(packet, sender);
+                                case "FirstConnect":
+                                HandleFirstConnectPacket(packet, sender);
                                 break;
-                            case "Disconnect": HandleDisconnectPacket(packet, sender);
+                                case "Disconnect":
+                                HandleDisconnectPacket(packet, sender);
                                 break;
-                            case "Data": HandleDataPacket(packet, sender);
+                                case "Data":
+                                HandleDataPacket(packet, sender);
                                 break;
-                            case "Registration": HandleRegistrationPacket(packet, sender);
+                                case "Registration":
+                                HandleRegistrationPacket(packet, sender);
                                 break;
-                            case "Broadcast": HandleBroadcastMessagePacket(packet);
+                                case "Broadcast":
+                                HandleBroadcastMessagePacket(packet);
                                 break;
-                            default: //nothing
+                                default: //nothing
                                 break;
+                            }
                         }
                     } // end While
                 }).Start();
             }
+
         }
 
         /**
@@ -100,7 +115,9 @@ namespace MediCare.Server
             {
                 TcpClient destination = clients[packet.GetDestination()];
                 SendPacket(destination, packet);
-            } catch(System.Net.Sockets.SocketException e) {
+            }
+            catch (System.Net.Sockets.SocketException e)
+            {
                 Console.WriteLine("Destination not Available. Chat ERROR.");
             }
         }
@@ -123,6 +140,8 @@ namespace MediCare.Server
         {
             Packet response = new Packet("server", "Disconnect", p.GetID(), "LOGGED OFF");
             SendPacket(sender, response);
+            Console.WriteLine("Client " + p.GetID() + " has disconnected");
+            sender.Close();
         }
 
         /**
@@ -143,7 +162,7 @@ namespace MediCare.Server
             catch (System.Net.Sockets.SocketException e)
             {
                 Console.WriteLine("Destination not Available. Data ERROR.");
-            } 
+            }
 
             //TODO: save some data here locally on the server
         }
@@ -179,8 +198,10 @@ namespace MediCare.Server
             string temp = id.Substring(0, 1);
             switch (temp)
             {
-                case "9": return "Doctor";
-                default: return "Client";
+                case "9":
+                return "Doctor";
+                default:
+                return "Client";
             }
         }
     }

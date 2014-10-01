@@ -92,7 +92,7 @@ namespace MediCare.ArtsClient
             {
                 txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                 typeBox.Text = "";
-                
+
             }
         }
 
@@ -230,7 +230,7 @@ namespace MediCare.ArtsClient
             {
                 Application.Run(new SignupTool());
             }).Start();
-            
+
         }
     }
 
@@ -239,14 +239,14 @@ namespace MediCare.ArtsClient
     public class clientTab : System.Windows.Forms.TabPage
     {
         #region define Controls
-        public  System.Windows.Forms.Button closeButton = new System.Windows.Forms.Button();
-        public  System.Windows.Forms.Button closeAllButThisButton = new System.Windows.Forms.Button();
+        public System.Windows.Forms.Button closeButton = new System.Windows.Forms.Button();
+        public System.Windows.Forms.Button closeAllButThisButton = new System.Windows.Forms.Button();
         private System.Windows.Forms.TextBox chatBox = new System.Windows.Forms.TextBox();
         private System.Windows.Forms.TextBox typeBox = new System.Windows.Forms.TextBox();
         private System.Windows.Forms.Button sendButtonClient = new System.Windows.Forms.Button();
 
         private System.Windows.Forms.Button updatePowerButton = new System.Windows.Forms.Button();
-        public  System.Windows.Forms.TextBox newPowerBox = new System.Windows.Forms.TextBox();
+        public System.Windows.Forms.TextBox newPowerBox = new System.Windows.Forms.TextBox();
         private System.Windows.Forms.Label newPowerLabel = new System.Windows.Forms.Label();
         private System.Windows.Forms.Label RPMLabel = new System.Windows.Forms.Label();
         private System.Windows.Forms.TextBox Speed_Box = new System.Windows.Forms.TextBox();
@@ -306,7 +306,7 @@ namespace MediCare.ArtsClient
             sendButtonClient.Text = "Send";
             sendButtonClient.UseVisualStyleBackColor = true;
             sendButtonClient.Click += new System.EventHandler(this.sendButton_Click);
-                        #endregion
+            #endregion
 
             #region update Power Button
             // 
@@ -339,7 +339,7 @@ namespace MediCare.ArtsClient
             timeRunningLabel.Size = new System.Drawing.Size(200, 30);
             timeRunningLabel.TabIndex = 20;
             timeRunningLabel.Text = "Time Running";
-                        #endregion
+            #endregion
 
             #region speed
             // 
@@ -358,7 +358,7 @@ namespace MediCare.ArtsClient
             Speed_Box.ReadOnly = true;
             Speed_Box.Size = new System.Drawing.Size(200, 30);
             Speed_Box.TabIndex = 34;
-                        #endregion
+            #endregion
 
             #region Distance
             // 
@@ -377,7 +377,7 @@ namespace MediCare.ArtsClient
             Distance_Box.ReadOnly = true;
             Distance_Box.Size = new System.Drawing.Size(200, 30);
             Distance_Box.TabIndex = 33;
-                        #endregion
+            #endregion
 
             #region Brake
             //
@@ -396,7 +396,7 @@ namespace MediCare.ArtsClient
             Brake_Box.ReadOnly = true;
             Brake_Box.Size = new System.Drawing.Size(200, 30);
             Brake_Box.TabIndex = 32;
-                        #endregion
+            #endregion
 
             #region Power
             // 
@@ -417,7 +417,7 @@ namespace MediCare.ArtsClient
             powerLabel.Size = new System.Drawing.Size(200, 30);
             powerLabel.TabIndex = 25;
             powerLabel.Text = "Power";
-                        #endregion
+            #endregion
 
             #region Eneergy
             //
@@ -436,7 +436,7 @@ namespace MediCare.ArtsClient
             energyLabel.Size = new System.Drawing.Size(200, 30);
             energyLabel.TabIndex = 23;
             energyLabel.Text = "Energy";
-                        #endregion
+            #endregion
 
             #region Heart Beats
             // 
@@ -455,7 +455,7 @@ namespace MediCare.ArtsClient
             Heartbeats_Box.ReadOnly = true;
             Heartbeats_Box.Size = new System.Drawing.Size(200, 30);
             Heartbeats_Box.TabIndex = 29;
-                        #endregion
+            #endregion
 
             #region RPM
             //
@@ -525,7 +525,7 @@ namespace MediCare.ArtsClient
             this.Controls.Add(distanceLabel);
             this.Controls.Add(TimeRunning_Box);
             this.Controls.Add(timeRunningLabel);
-#endregion
+            #endregion
 
             //set tab Settings
             this.Cursor = System.Windows.Forms.Cursors.Default;
@@ -623,7 +623,7 @@ namespace MediCare.ArtsClient
                 }
             }
         }
-#endregion
+    #endregion
 
     }
 }

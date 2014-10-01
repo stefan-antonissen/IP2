@@ -14,7 +14,6 @@ namespace MediCare.DataHandling
     {
         public Dictionary<string, string> logins { get; set; }
         Serializer serializer;
-        private const string[] split = { "\n" };
 
         public LoginIO()
         {
@@ -22,9 +21,9 @@ namespace MediCare.DataHandling
             serializer = new Serializer();
         }
 
-        public void add(string message)
+        public void add(string credentials)
         {
-            string[] splitted = message.Split(split, 2, System.StringSplitOptions.RemoveEmptyEntries);
+            string[] splitted = credentials.Split(' ');
             logins.Add(splitted[0], EncryptPassword(splitted[1]));
         }
 

@@ -64,7 +64,7 @@ namespace MediCare.NetworkLibrary
             return _id;
         }
 
-        public string GetType()
+        public string Get_Type()
         {
             return _type;
         }
