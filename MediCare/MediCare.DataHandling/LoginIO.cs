@@ -19,6 +19,7 @@ namespace MediCare.DataHandling
         {
             logins = new Dictionary<string, string>();
             serializer = new Serializer();
+            LoadLogins();
         }
 
         public void add(string credentials)
@@ -33,8 +34,8 @@ namespace MediCare.DataHandling
             return logins.TryGetValue(name, out ActualPassword) &&
                        ActualPassword == EncryptPassword(password);
         }
-        public string GetValue(string key) {
-            return logins[key];
+        public bool KeyExist(string key) {
+            return logins.ContainsKey(key);
         }
         public void del(string key)
         {

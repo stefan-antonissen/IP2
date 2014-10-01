@@ -1,4 +1,5 @@
-﻿using MediCare.NetworkLibrary;
+﻿using MediCare.DataHandling;
+using MediCare.NetworkLibrary;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -15,9 +17,12 @@ namespace MediCare
 {
     public partial class SignupTool : Form
     {
+        private LoginIO logins;
+
         public SignupTool()
         {
             InitializeComponent();
+            logins = new LoginIO();
         }
 
         #region Key events
@@ -52,6 +57,7 @@ namespace MediCare
          */
         private void login(object sender, EventArgs e)
         {
+            Regex r = new Regex("^[0-9]{8}$");
             if (Username_TextBox.Text.Equals("") || Password_TextBox.Text.Equals("") || Password_Verify_TextBox.Equals(""))
             {
                 Error_Label.Text = "One or more fields are blank!";
@@ -62,15 +68,30 @@ namespace MediCare
                 Error_Label.Text = "Passwords do not match!";
                 this.ActiveControl = Password_TextBox;
             }
+            else if (logins.KeyExist(Username_TextBox.Text))
+            {
+                Error_Label.Text = "User aleady exists!";
+                this.ActiveControl = Username_TextBox;
+            }
+            else if ((!r.IsMatch(Username_TextBox.Text) || Int32.Parse(Username_TextBox.Text.Substring(0,1)) == 9))
+            {
+                Error_Label.Text = "Username must start with 1-8 \n and are 8 characters long";
+                this.ActiveControl = Username_TextBox;
+            }
             else if (Username_TextBox.Text != "" && Password_TextBox.Text != "" && Password_TextBox.Text.Equals(Password_Verify_TextBox.Text))
             {
-                //if (Username_Box.Text == ??? && Password_Box.Text == ???) {
                 string name = Username_TextBox.Text;
                 string pass = Password_TextBox.Text;
                 Username_TextBox.Text = "";
                 Password_TextBox.Text = "";
                 Password_Verify_TextBox.Text = "";
-                MessageBox.Show("Logging in...");
+
+                logins.add(name + "\n" + pass);
+
+                MessageBox.Show("Registered user " + name + "! " + logins.getSize());
+
+                logins.SaveLogins();
+                this.Close();
             }
             else
             {

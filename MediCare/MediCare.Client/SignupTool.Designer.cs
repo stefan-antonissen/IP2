@@ -72,16 +72,6 @@
             this.Password_TextBox.TabIndex = 1;
             this.Password_TextBox.UseSystemPasswordChar = true;
             this.Password_TextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.on_password_box_enter);
-          
-            // 
-            // Password_Verify_TextBox
-            // 
-            this.Password_Verify_TextBox.Location = new System.Drawing.Point(106, 89);
-            this.Password_Verify_TextBox.Name = "Password_Verify_TextBox";
-            this.Password_Verify_TextBox.Size = new System.Drawing.Size(100, 20);
-            this.Password_Verify_TextBox.TabIndex = 2;
-            this.Password_Verify_TextBox.UseSystemPasswordChar = true;
-            this.Password_Verify_TextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.on_verify_password_box_enter);
             // 
             // Submit_Button
             // 
@@ -102,11 +92,20 @@
             this.label1.TabIndex = 6;
             this.label1.Text = "Password Again:";
             // 
+            // Password_Verify_TextBox
+            // 
+            this.Password_Verify_TextBox.Location = new System.Drawing.Point(106, 89);
+            this.Password_Verify_TextBox.Name = "Password_Verify_TextBox";
+            this.Password_Verify_TextBox.Size = new System.Drawing.Size(100, 20);
+            this.Password_Verify_TextBox.TabIndex = 2;
+            this.Password_Verify_TextBox.UseSystemPasswordChar = true;
+            this.Password_Verify_TextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.on_verify_password_box_enter);
+            // 
             // Error_Label
             // 
             this.Error_Label.AutoSize = true;
             this.Error_Label.ForeColor = System.Drawing.Color.DarkRed;
-            this.Error_Label.Location = new System.Drawing.Point(106, 13);
+            this.Error_Label.Location = new System.Drawing.Point(86, 9);
             this.Error_Label.Name = "Error_Label";
             this.Error_Label.Size = new System.Drawing.Size(0, 13);
             this.Error_Label.TabIndex = 7;
