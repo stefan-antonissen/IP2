@@ -33,7 +33,9 @@ namespace MediCare.DataHandling
             return logins.TryGetValue(name, out ActualPassword) &&
                        ActualPassword == EncryptPassword(password);
         }
-
+        public string GetValue(string key) {
+            return logins[key];
+        }
         public void del(string key)
         {
             logins.Remove(key);

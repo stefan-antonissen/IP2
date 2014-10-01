@@ -15,7 +15,7 @@ using System.Web.Script.Serialization;
 
 namespace MediCare.Server
 {
-    class Server //: ServerInterface
+    class Server
     {
         private IPAddress _localIP = IPAddress.Parse("127.0.0.1");
         private Dictionary<string, TcpClient> clients = new Dictionary<string, TcpClient>();
@@ -30,11 +30,6 @@ namespace MediCare.Server
         {
             try
             {
-                logins.LoadLogins();
-            }
-            catch (System.IO.FileNotFoundException e)
-            {
-                logins.SaveLogins();
                 logins.LoadLogins();
             }
             catch (Exception e)
@@ -141,7 +136,7 @@ namespace MediCare.Server
         {
             Packet response = new Packet("server", "Disconnect", p.GetID(), "LOGGED OFF");
             SendPacket(sender, response);
-            Console.WriteLine("Client " + p.GetID() + " has disconnected");
+            Console.WriteLine(p.GetID() + " has disconnected");
             sender.Close();
         }
 

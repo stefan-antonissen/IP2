@@ -1,33 +1,21 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Threading;
 using MediCare.Controller;
-using System.IO.Ports;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using MediCare.NetworkLibrary;
-using System.Web.Script.Serialization;
-using MediCare.Controller;
 
 namespace MediCare.ArtsClient
 {
     public partial class ClientGui : Form
     {
         private Controller.BikeController c;
-        private string currentPort = "";
-        private bool _autoUpdate = false;
         private readonly System.Windows.Forms.Timer _timer;
         private TcpClient client = new TcpClient("127.0.0.1", 11000);
         private bool[] checkbox_Status = { false, false, false, false, false, false, false, false };
         private System.Windows.Forms.DataVisualization.Charting.Series[] ChartData = new System.Windows.Forms.DataVisualization.Charting.Series[8];
-        //string ID = "5";
 
         public ClientGui()
         {
@@ -36,14 +24,11 @@ namespace MediCare.ArtsClient
             this.FormClosing += on_Window_Closed_Event;
             setVisibility(false);
 
-            //Connect("");
             _timer = new System.Windows.Forms.Timer
             {
                 Interval = 500 // 0.5 delay voor het updaten van de waarden, eventueel nog aanpassen
             };
             _timer.Tick += UpdateGUI;
-            //_timer.Start() // automatisch updaten van de waardes
-
             Connect("SIM");
         }
 
@@ -63,29 +48,11 @@ namespace MediCare.ArtsClient
             }
         }
 
-        // auto update checkbox
-        private void Update_CheckBox_Click(object sender, EventArgs e)
-        {
-
-            // auto update werkt
-            if (_autoUpdate == false)
-            {
-                _timer.Start();
-                _autoUpdate = !_autoUpdate;
-            }
-            else if (_autoUpdate == true)
-            {
-                _timer.Stop();
-                _autoUpdate = !_autoUpdate;
-            }
-        }
-
-
         // onderstaande drie methodes zijn om de waarden in de GUI aan te passen
         private void updateValues(String[] data)
         {
             // als de lengte van de data array één is (error), dan zet je alles op 0
-            if (data.Length == 1)
+            if (data.Length <= 8)
             {
                 Heartbeats_Box.Text = "0";
                 RPM_Box.Text = "0";
@@ -120,11 +87,11 @@ namespace MediCare.ArtsClient
         {
             await Task.Delay(100); // 0.1s delay voor het starten van de update, ook eventueel nog aanpassen
             // hieronder test code om de update te testen, deze methode moet de string array returnen van c.getStatus()
-            Random r = new Random();
-            string num = r.Next(1, 100).ToString();
-            string[] str = new string[] { num, num, num, num, num, num, num, num };
-            return str;
-            //return c.GetStatus();
+            //Random r = new Random();
+            //string num = r.Next(1, 100).ToString();
+            //string[] str = new string[] { num, num, num, num, num, num, num, num };
+            // return str;
+            return c.GetStatus();
         }
 
         # region Chat Box
@@ -211,7 +178,7 @@ namespace MediCare.ArtsClient
 
         private void on_Window_Closed_Event(object sender, FormClosingEventArgs e)
         {
-            Packet p = new Packet("52323232", "Disconnect", "92378733", "Disconnecting");
+            Packet p = new Packet("52323232", "Disconnect", "server", "Disconnecting");
             //send message to server that ur dying
             if (client.Connected)
             {
@@ -232,6 +199,40 @@ namespace MediCare.ArtsClient
         # endregion
 
         #region login
+
+        private void on_username_box_enter(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter && Username_Box.Focused)
+            {
+                this.ActiveControl = Password_Box;
+            }
+        }
+
+        private void on_password_box_enter(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter && Password_Box.Focused)
+            {
+                login(sender, e); // pass it on to the follow up event
+            }
+        }
+
+        /**
+         * TODO: Logging in for real on the server
+         */
+        private void login(object sender, EventArgs e)
+        {
+            if (!Password_Box.Text.Equals("") && !Username_Box.Text.Equals(""))
+            {
+                //if (Username_Box.Text == ??? && Password_Box.Text == ???) {
+                setVisibility(true);
+                _timer.Start(); // automatisch updaten van de waardes
+            }
+            else
+            {
+                Login_ERROR_Label.Text = "Invalid username or password";
+                this.ActiveControl = Username_Box;
+            }
+        }
         private void setVisibility(bool v)
         {
             label1.Visible = v;
@@ -282,38 +283,7 @@ namespace MediCare.ArtsClient
             }
         }
 
-        private void on_username_box_enter(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter && Username_Box.Focused)
-            {
-                this.ActiveControl = Password_Box;
-            }
-        }
 
-        private void on_password_box_enter(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter && Password_Box.Focused)
-            {
-                login(sender, e); // pass it on to the follow up event
-            }
-        }
-
-        /**
-         * TODO: Logging in for real on the server
-         */
-        private void login(object sender, EventArgs e)
-        {
-            if (!Password_Box.Text.Equals("") && !Username_Box.Text.Equals(""))
-            {
-                //if (Username_Box.Text == ??? && Password_Box.Text == ???) {
-                setVisibility(true);
-            }
-            else
-            {
-                Login_ERROR_Label.Text = "Invalid username or password";
-                this.ActiveControl = Username_Box;
-            }
-        }
         #endregion
 
         # region Graph Datahandlers and EventListeners
