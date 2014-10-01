@@ -44,7 +44,7 @@ namespace MediCare.ArtsClient
             _timer.Tick += UpdateGUI;
             //_timer.Start() // automatisch updaten van de waardes
 
-            Connect("");
+            Connect("SIM");
         }
 
         private void Connect(String SelectedPort)
