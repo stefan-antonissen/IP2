@@ -59,7 +59,6 @@ namespace MediCare.Server
 
                         String dataString = "";
                         Packet packet = null;
-                        ;
                         if (sender.Connected)
                         {
                             dataString = (String)formatter.Deserialize(sender.GetStream());
@@ -116,9 +115,9 @@ namespace MediCare.Server
                 TcpClient destination = clients[packet.GetDestination()];
                 SendPacket(destination, packet);
             }
-            catch (System.Net.Sockets.SocketException e)
+            catch (System.Exception e)
             {
-                Console.WriteLine("Destination not Available. Chat ERROR.");
+                Console.WriteLine(e.Message);
             }
         }
 
@@ -142,6 +141,7 @@ namespace MediCare.Server
             SendPacket(sender, response);
             Console.WriteLine("Client " + p.GetID() + " has disconnected");
             sender.Close();
+            
         }
 
         /**
