@@ -12,7 +12,8 @@ namespace MediCare.ArtsClient
     public partial class ClientGui : Form
     {
         private Controller.BikeController c;
-        private readonly System.Windows.Forms.Timer _timer;
+        private readonly Timer updateDataTimer;
+        private readonly Timer labelRemoveTimer;
         private TcpClient client = new TcpClient("127.0.0.1", 11000);
         private bool[] checkbox_Status = { false, false, false, false, false, false, false, false };
         private System.Windows.Forms.DataVisualization.Charting.Series[] ChartData = new System.Windows.Forms.DataVisualization.Charting.Series[8];
@@ -25,11 +26,16 @@ namespace MediCare.ArtsClient
             this.FormClosing += on_Window_Closed_Event;
             setVisibility(false);
 
-            _timer = new System.Windows.Forms.Timer
-            {
-                Interval = 500 // 0.5 delay voor het updaten van de waarden, eventueel nog aanpassen
-            };
-            _timer.Tick += UpdateGUI;
+            // update waarden met de data van de fiets
+            updateDataTimer = new Timer();
+            updateDataTimer.Interval = 500;
+            updateDataTimer.Tick += UpdateGUI;
+
+            // timer voor het verwijderen van de errortekst, 'cosmetisch'
+            labelRemoveTimer = new Timer();
+            labelRemoveTimer.Interval = 3000;
+            labelRemoveTimer.Tick += UpdateGUI;
+
             Connect("SIM");
         }
 
@@ -227,7 +233,7 @@ namespace MediCare.ArtsClient
                 //if (Username_Box.Text == ??? && Password_Box.Text == ???) {
                 ID = Username_Box.Text;
                 setVisibility(true);
-                _timer.Start(); // automatisch updaten van de waardes
+                updateDataTimer.Start(); // automatisch updaten van de waardes
             }
             else
             {
@@ -283,6 +289,12 @@ namespace MediCare.ArtsClient
             {
                 this.ActiveControl = typeBox;
             }
+
+        }
+        private void UpdateLabel(object sender, EventArgs e)
+        {
+            Login_ERROR_Label.Text = "";
+            labelRemoveTimer.Stop();
         }
         #endregion
 
