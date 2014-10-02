@@ -35,6 +35,7 @@
             this.Submit_Button = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.Password_Verify_TextBox = new System.Windows.Forms.TextBox();
+            this.Error_Label = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // Username_TextBox
@@ -43,6 +44,7 @@
             this.Username_TextBox.Name = "Username_TextBox";
             this.Username_TextBox.Size = new System.Drawing.Size(100, 20);
             this.Username_TextBox.TabIndex = 0;
+            this.Username_TextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.on_username_box_enter);
             // 
             // Name_Label
             // 
@@ -69,6 +71,7 @@
             this.Password_TextBox.Size = new System.Drawing.Size(100, 20);
             this.Password_TextBox.TabIndex = 1;
             this.Password_TextBox.UseSystemPasswordChar = true;
+            this.Password_TextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.on_password_box_enter);
             // 
             // Submit_Button
             // 
@@ -78,7 +81,7 @@
             this.Submit_Button.TabIndex = 3;
             this.Submit_Button.Text = "Submit";
             this.Submit_Button.UseVisualStyleBackColor = true;
-            this.Submit_Button.Click += new System.EventHandler(this.on_Submit_Event);
+            this.Submit_Button.Click += new System.EventHandler(this.login);
             // 
             // label1
             // 
@@ -96,12 +99,23 @@
             this.Password_Verify_TextBox.Size = new System.Drawing.Size(100, 20);
             this.Password_Verify_TextBox.TabIndex = 2;
             this.Password_Verify_TextBox.UseSystemPasswordChar = true;
+            this.Password_Verify_TextBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.on_verify_password_box_enter);
+            // 
+            // Error_Label
+            // 
+            this.Error_Label.AutoSize = true;
+            this.Error_Label.ForeColor = System.Drawing.Color.DarkRed;
+            this.Error_Label.Location = new System.Drawing.Point(86, 9);
+            this.Error_Label.Name = "Error_Label";
+            this.Error_Label.Size = new System.Drawing.Size(0, 13);
+            this.Error_Label.TabIndex = 7;
             // 
             // SignupTool
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(240, 174);
+            this.Controls.Add(this.Error_Label);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.Password_Verify_TextBox);
             this.Controls.Add(this.Submit_Button);
@@ -125,5 +139,6 @@
         private System.Windows.Forms.Button Submit_Button;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox Password_Verify_TextBox;
+        private System.Windows.Forms.Label Error_Label;
     }
 }

@@ -31,6 +31,9 @@ namespace MediCare.Controller
             cc.openConnection();
         }
 
+
+        #region getters
+
         public string[] GetPorts()
         {
             try
@@ -42,54 +45,10 @@ namespace MediCare.Controller
                 string[] rawArray = new string[1];
                 rawArray[0] = e.Message.ToString();
                 Console.WriteLine(e.Message.ToString());
-                return rawArray; 
+                return rawArray;
             }
         }
 
-        /**
-         * AutoPort Detection.
-         * 
-         * Note: In the SerialController is a TRY > CATCH clausule in order for this to work you have to comment out / remove that.
-         * 
-         * It may be necessary to do some cleanup i dont know if all SerialControllers are left over in the memory or not.
-         * 
-         * @Author: Frank van Veen
-         * @corrector: Collin Baden
-         * @Version: 1.0 
-         * @Return: The correct port as string
-         */
-        public List<string> GetCorrectPort()
-        {
-            string[] ports = cc.getAvailablePorts();
-            List<string> correctport = null;
-            for (int i = 0; i < ports.Length; i++)
-            {
-                if(ports[i].StartsWith("COM")) {
-                    try {
-                        SerialController sc = new SerialController(ports[i]);
-                        sc.openConnection(); // breaks on this line
-                        sc.send(Enums.GetValue(Enums.BikeCommands.RESET)); // send reset to port
-                        string result = sc.read();
-                        if (result != null && result != "" && !result.ToLower().Contains("err"))
-                        {
-                            if (result.ToLower().Contains("ac"))
-                            {
-                                correctport.Add(ports[i]); //add the correct port to string
-                            }
-                        }
-                        Console.WriteLine("Checked: " + ports[i]);
-                        sc.closeConnection();
-
-                    } catch(System.IO.IOException) {
-                        Console.WriteLine(ports[i] + " Failed to open. Trying next port");
-                        // Should break here?
-                    }
-                }
-            }
-            return correctport;
-        }
-
-        #region getters
 
         public string[] GetStatus()
         {

@@ -15,7 +15,7 @@ using System.Web.Script.Serialization;
 
 namespace MediCare.Server
 {
-    class Server //: ServerInterface
+    class Server
     {
         private IPAddress _localIP = IPAddress.Parse("127.0.0.1");
         private Dictionary<string, TcpClient> clients = new Dictionary<string, TcpClient>();
@@ -32,13 +32,9 @@ namespace MediCare.Server
             {
                 logins.LoadLogins();
             }
-            catch (System.IO.FileNotFoundException e)
-            {
-                logins.SaveLogins();
-            }
             catch (Exception e)
             {
-                Console.WriteLine(e.StackTrace);
+                Console.WriteLine(e.Message);
             }
 
             TcpListener server = new TcpListener(_localIP, 11000);
@@ -66,10 +62,18 @@ namespace MediCare.Server
 
                             //Console.WriteLine(dataString);
 
-                            // if (!clients.ContainsKey(packet.GetID()))
-                            //{
-                            //    clients.Add(packet.GetID(), incomingClient);
-                            // }
+                            if (!clients.ContainsKey(packet.GetID()))
+                            {
+                                clients.Add(packet.GetID(), incomingClient);
+                                #region DEBUG
+#if DEBUG
+                                Console.WriteLine("ID: " + packet.GetID() + "incomingClient: " + incomingClient.ToString());
+                                printClientList();
+#endif
+                                #endregion
+                            }
+
+
 
                             Console.WriteLine("Client connected");
                             switch (packet._type)
@@ -115,7 +119,7 @@ namespace MediCare.Server
                 TcpClient destination = clients[packet.GetDestination()];
                 SendPacket(destination, packet);
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
@@ -139,7 +143,7 @@ namespace MediCare.Server
         {
             Packet response = new Packet("server", "Disconnect", p.GetID(), "LOGGED OFF");
             SendPacket(sender, response);
-            Console.WriteLine("Client " + p.GetID() + " has disconnected");
+            Console.WriteLine(p.GetID() + " has disconnected");
             sender.Close();
             
         }
@@ -159,9 +163,9 @@ namespace MediCare.Server
                 TcpClient destination = clients[packet.GetDestination()];
                 SendPacket(destination, packet);
             }
-            catch (System.Net.Sockets.SocketException e)
+            catch (Exception e)
             {
-                Console.WriteLine("Destination not Available. Data ERROR.");
+                Console.WriteLine(e.Message);
             }
 
             //TODO: save some data here locally on the server
@@ -191,6 +195,17 @@ namespace MediCare.Server
         {
             BinaryFormatter formatter = new BinaryFormatter();
             formatter.Serialize(client.GetStream(), Utils.GetPacketString(p));
+        }
+
+        private void printClientList()
+        {
+            Console.WriteLine("\n############################################# ");
+            Console.WriteLine("content for clients dictionary: ");
+            foreach (KeyValuePair<string, TcpClient> entry in clients)
+            {
+                Console.WriteLine("ID: " + ((string)entry.Key) + " TcpClient: " + entry.Value.GetHashCode());
+            }
+            Console.WriteLine("#############################################\n");
         }
 
         private string ResolveID(string id)

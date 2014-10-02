@@ -19,11 +19,12 @@ namespace MediCare.DataHandling
         {
             logins = new Dictionary<string, string>();
             serializer = new Serializer();
+            LoadLogins();
         }
 
         public void add(string credentials)
         {
-            string[] splitted = credentials.Split(' ');
+            string[] splitted = credentials.Split(new string[] { "\n", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             logins.Add(splitted[0], EncryptPassword(splitted[1]));
         }
 
@@ -33,7 +34,9 @@ namespace MediCare.DataHandling
             return logins.TryGetValue(name, out ActualPassword) &&
                        ActualPassword.Equals(EncryptPassword(password));
         }
-
+        public bool KeyExist(string key) {
+            return logins.ContainsKey(key);
+        }
         public void del(string key)
         {
             logins.Remove(key);
