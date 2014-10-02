@@ -104,8 +104,8 @@
             // Error_Label
             // 
             this.Error_Label.AutoSize = true;
-            this.Error_Label.ForeColor = System.Drawing.Color.DarkRed;
-            this.Error_Label.Location = new System.Drawing.Point(86, 9);
+            this.Error_Label.ForeColor = System.Drawing.Color.Red;
+            this.Error_Label.Location = new System.Drawing.Point(65, 9);
             this.Error_Label.Name = "Error_Label";
             this.Error_Label.Size = new System.Drawing.Size(0, 13);
             this.Error_Label.TabIndex = 7;
@@ -124,7 +124,7 @@
             this.Controls.Add(this.Name_Label);
             this.Controls.Add(this.Username_TextBox);
             this.Name = "SignupTool";
-            this.Text = "Signup Tool";
+            this.Text = "Add new user";
             this.ResumeLayout(false);
             this.PerformLayout();
 

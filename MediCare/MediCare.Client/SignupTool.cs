@@ -18,11 +18,16 @@ namespace MediCare
     public partial class SignupTool : Form
     {
         private LoginIO logins;
+        private readonly System.Windows.Forms.Timer timer;
+        private int i = 255;
 
         public SignupTool()
         {
             InitializeComponent();
             logins = new LoginIO();
+            timer = new Timer();
+            timer.Interval = 3000;
+            timer.Tick += UpdateLabel;
         }
 
         #region Key events
@@ -62,21 +67,25 @@ namespace MediCare
             {
                 Error_Label.Text = "One or more fields are blank!";
                 this.ActiveControl = Username_TextBox;
+                timer.Start();
             }
             else if (!Password_TextBox.Text.Equals(Password_Verify_TextBox.Text))
             {
                 Error_Label.Text = "Passwords do not match!";
                 this.ActiveControl = Password_TextBox;
+                timer.Start();
             }
             else if (logins.KeyExist(Username_TextBox.Text))
             {
                 Error_Label.Text = "User aleady exists!";
                 this.ActiveControl = Username_TextBox;
+                timer.Start();
             }
-            else if ((!r.IsMatch(Username_TextBox.Text) || Int32.Parse(Username_TextBox.Text.Substring(0,1)) == 9))
+            else if ((!r.IsMatch(Username_TextBox.Text) || Int32.Parse(Username_TextBox.Text.Substring(0, 1)) == 9))
             {
                 Error_Label.Text = "Username must start with 1-8 \n and are 8 characters long";
                 this.ActiveControl = Username_TextBox;
+                timer.Start();
             }
             else if (Username_TextBox.Text != "" && Password_TextBox.Text != "" && Password_TextBox.Text.Equals(Password_Verify_TextBox.Text))
             {
@@ -124,6 +133,12 @@ namespace MediCare
             return Utils.GetPacket(dataString);
         }
         #endregion
+
+        private void UpdateLabel(object sender, EventArgs e)
+        {
+            Error_Label.Text = "";
+            timer.Stop();
+        }
     }
 
 }

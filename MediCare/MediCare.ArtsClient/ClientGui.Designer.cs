@@ -250,24 +250,6 @@
             this.listView1.Name = "listView1";
             this.listView1.Size = new System.Drawing.Size(8, 33);
             this.listView1.TabIndex = 17;
-            // 
-            // Password_Label
-            // 
-            this.Password_Label.AutoSize = true;
-            this.Password_Label.Location = new System.Drawing.Point(543, 295);
-            this.Password_Label.Name = "Password_Label";
-            this.Password_Label.Size = new System.Drawing.Size(53, 13);
-            this.Password_Label.TabIndex = 23;
-            this.Password_Label.Text = "Password";
-            // 
-            // Username_label
-            // 
-            this.Username_label.AutoSize = true;
-            this.Username_label.Location = new System.Drawing.Point(543, 266);
-            this.Username_label.Name = "Username_label";
-            this.Username_label.Size = new System.Drawing.Size(55, 13);
-            this.Username_label.TabIndex = 22;
-            this.Username_label.Text = "Username";
             this.listView1.UseCompatibleStateImageBehavior = false;
             // 
             // Password_Box
@@ -286,6 +268,24 @@
             this.Username_Box.Size = new System.Drawing.Size(100, 20);
             this.Username_Box.TabIndex = 24;
             this.Username_Box.KeyDown += new System.Windows.Forms.KeyEventHandler(this.on_username_box_enter);
+            // 
+            // Password_Label
+            // 
+            this.Password_Label.AutoSize = true;
+            this.Password_Label.Location = new System.Drawing.Point(543, 295);
+            this.Password_Label.Name = "Password_Label";
+            this.Password_Label.Size = new System.Drawing.Size(53, 13);
+            this.Password_Label.TabIndex = 23;
+            this.Password_Label.Text = "Password";
+            // 
+            // Username_label
+            // 
+            this.Username_label.AutoSize = true;
+            this.Username_label.Location = new System.Drawing.Point(543, 266);
+            this.Username_label.Name = "Username_label";
+            this.Username_label.Size = new System.Drawing.Size(55, 13);
+            this.Username_label.TabIndex = 22;
+            this.Username_label.Text = "Username";
             // 
             // LoginButton
             // 
