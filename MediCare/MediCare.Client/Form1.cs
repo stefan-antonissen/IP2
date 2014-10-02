@@ -648,8 +648,6 @@ namespace MediCare.ArtsClient
             }
         }
 
-        # endregion
-
         // 'Actionlistener' voor de new power textbox
         private void newPowerBox_KeyDown(object sender, KeyEventArgs e)
         {
@@ -661,6 +659,11 @@ namespace MediCare.ArtsClient
                 }
             }
         }
+
+        # endregion
+
+
+
     #endregion
 
     }
