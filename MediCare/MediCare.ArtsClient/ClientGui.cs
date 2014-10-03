@@ -69,8 +69,9 @@ namespace MediCare.ArtsClient
         // onderstaande drie methodes zijn om de waarden in de GUI aan te passen
         private void updateValues(String[] data)
         {
+            // TODO: data versturen naar de server
             // als de lengte van de data array één is (error), dan zet je alles op 0
-            if (data.Length <= 8)
+            if (data.Length < 8)
             {
                 Heartbeats_Box.Text = "0";
                 RPM_Box.Text = "0";

@@ -24,19 +24,6 @@ namespace MediCare.ArtsClient
 
         public DoctorClient()
         {
-            try
-            {
-                logins.LoadLogins();
-            }
-            catch (System.IO.FileNotFoundException e)
-            {
-                logins.SaveLogins();
-                logins.LoadLogins();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
             InitializeComponent();
             setVisibility(false);
             this.FormClosing += on_Window_Closed_Event;
