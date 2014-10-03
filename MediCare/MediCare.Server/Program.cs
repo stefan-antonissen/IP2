@@ -12,6 +12,8 @@ using MediCare.NetworkLibrary;
 using System.Collections;
 using MediCare.DataHandling;
 using System.Web.Script.Serialization;
+using System.Security.Cryptography.X509Certificates;
+using System.Net.Security;
 
 namespace MediCare.Server
 {
@@ -39,17 +41,23 @@ namespace MediCare.Server
 
             TcpListener server = new TcpListener(_localIP, 11000);
             server.Start();
+
             TcpClient incomingClient;
             Console.WriteLine("Waiting for connection...");
             while (true)
             {
                 incomingClient = server.AcceptTcpClient();
+                //README!!! - SSL certificate needs to be coppied from MediCare.Server\ssl_cert.pfx to C:\Windows\Temp\
+                X509Certificate certificate = new X509Certificate(@"C:\Windows\Temp\ssl_cert.pfx", "medicare");
 
                 new Thread(() =>
                 {
                     Console.WriteLine("Connection found!");
                     BinaryFormatter formatter = new BinaryFormatter();
                     TcpClient sender = incomingClient;
+                    SslStream sslStream = new SslStream(incomingClient.GetStream());
+                    sslStream.AuthenticateAsServer(certificate);
+
                     while (true)
                     {
 
@@ -57,7 +65,8 @@ namespace MediCare.Server
                         Packet packet = null;
                         if (sender.Connected)
                         {
-                            dataString = (String)formatter.Deserialize(sender.GetStream());
+                            dataString = (String)formatter.Deserialize(sslStream);
+                            //dataString = (String)formatter.Deserialize(sender.GetStream());
                             packet = Utils.GetPacket(dataString);
 
                             //Console.WriteLine(dataString);
@@ -80,19 +89,19 @@ namespace MediCare.Server
                                 //sender = incoming client
                                 //packet = data van de client
                                 case "Chat":
-                                HandleChatPacket(packet);
+                                HandleChatPacket(packet, sslStream);
                                 break;
                                 case "FirstConnect":
-                                HandleFirstConnectPacket(packet, sender);
+                                HandleFirstConnectPacket(packet, sslStream);
                                 break;
                                 case "Disconnect":
-                                HandleDisconnectPacket(packet, sender);
+                                HandleDisconnectPacket(packet, sslStream);
                                 break;
                                 case "Data":
-                                HandleDataPacket(packet, sender);
+                                HandleDataPacket(packet, sslStream);
                                 break;
                                 case "Registration":
-                                HandleRegistrationPacket(packet, sender);
+                                HandleRegistrationPacket(packet, sslStream);
                                 break;
                                 case "Broadcast":
                                 HandleBroadcastMessagePacket(packet);
@@ -107,16 +116,23 @@ namespace MediCare.Server
 
         }
 
+        //get dataString from the ssl socket
+        private string ReadStream(SslStream stream)
+        {
+            String jsonString = "";
+
+            return jsonString;
+        }
+
         /**
          * Versturen van een chat, package blijft hetzelfde.
          * Methode is er omdat het anders uit de toon valt met andere methodes.
          */
-        private void HandleChatPacket(Packet packet)
+        private void HandleChatPacket(Packet packet, SslStream stream)
         {
             try
             {
-                TcpClient destination = clients[packet.GetDestination()];
-                SendPacket(destination, packet);
+                SendPacket(stream, packet);
             }
             catch (Exception e)
             {
@@ -128,39 +144,39 @@ namespace MediCare.Server
          * Zoeken in de *database* naar de juiste persoons gegevens en haal daar het correcte ID op
          * 
          */
-        private void HandleFirstConnectPacket(Packet p, TcpClient sender)
+        private void HandleFirstConnectPacket(Packet p, SslStream stream)
         {
             Packet response = new Packet("Server", "FirstConnect", p._id, "VERIFIED");
-            SendPacket(sender, response);
+            SendPacket(stream, response);
         }
 
         /**
          * Stuur het sluit bericht terug naar de client en sluit de connectie. 
          * Client doet hetzelfde na het ontvangen van het sluit bericht.
          */
-        private void HandleDisconnectPacket(Packet p, TcpClient sender)
+        private void HandleDisconnectPacket(Packet p, SslStream stream)
         {
             Packet response = new Packet("server", "Disconnect", p.GetID(), "LOGGED OFF");
-            SendPacket(sender, response);
+            SendPacket(stream, response);
             Console.WriteLine(p.GetID() + " has disconnected");
+            TcpClient sender = clients[p.GetDestination()];
             sender.Close();
-            
         }
 
         /**
          * Save de data die je binnen krijgt.
          * Stuur de data door naar de DokorClient.
          */
-        private void HandleDataPacket(Packet packet, TcpClient sender)
+        private void HandleDataPacket(Packet packet, SslStream stream)
         {
             Packet response_Sender = new Packet("Server", "Data", packet._id, "Data Saved");
-            SendPacket(sender, response_Sender);
+            SendPacket(stream, response_Sender);
 
             Packet response_receiver = new Packet(packet.GetDestination(), "data", packet.GetID(), packet.GetMessage());
             try
             {
                 TcpClient destination = clients[packet.GetDestination()];
-                SendPacket(destination, packet);
+                SendPacket(stream, packet);
             }
             catch (Exception e)
             {
@@ -174,11 +190,11 @@ namespace MediCare.Server
          * Handel het registratie process af. genereer een uniek ID voeg toe aan bestand (zie LoginIO)
          * Stuur een bericht terug dat de data is aangekomen.
          */
-        private void HandleRegistrationPacket(Packet p, TcpClient sender)
+        private void HandleRegistrationPacket(Packet p, SslStream stream)
         {
             logins.add(p.GetMessage());
             Packet response = new Packet("server", "Registration", p.GetID(), "Registration attempt succeeded");
-            SendPacket(sender, response);
+            SendPacket(stream, response);
         }
 
         /**
@@ -190,10 +206,10 @@ namespace MediCare.Server
             Packet response = new Packet();
         }
 
-        private void SendPacket(TcpClient client, Packet p)
+        private void SendPacket(SslStream stream, Packet p)
         {
             BinaryFormatter formatter = new BinaryFormatter();
-            formatter.Serialize(client.GetStream(), Utils.GetPacketString(p));
+            formatter.Serialize(stream, Utils.GetPacketString(p));
         }
 
         private void printClientList()

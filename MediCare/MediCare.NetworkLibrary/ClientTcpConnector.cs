@@ -15,45 +15,33 @@ namespace MediCare.NetworkLibrary
         TcpClient _client;
         String _server;
 
-        NetworkStream strm;
-        private TcpClient client;
-        private string server;
+        SslStream stream;
 
         public ClientTcpConnector(TcpClient client, String server)
         {
             this._client = client;
             this._server = server;
 
-            //Non ssl stream
-            strm = client.GetStream(); // the stream
+            //SSL Stream
+            stream = new SslStream(client.GetStream() , false ,
+            new RemoteCertificateValidationCallback(ValidateServerCertificate), null );
+            stream.AuthenticateAsClient(server);
         }
 
         //Method for clients to use to send messages to the server
         //First part of the method is old code. second part is new to be used when SSL is working
         public void sendMessage(Packet packet)
         {
-            //legacy mode
+            //SSL Stream
             BinaryFormatter formatter = new BinaryFormatter();
-            formatter.Serialize(strm, Utils.GetPacketString(packet)); // the serialization process 
-
-
-            //ssl stream
-    //        using (SslStream sslStream = new SslStream(_client.GetStream(), false,
-    //new RemoteCertificateValidationCallback(ValidateServerCertificate), null))
-    //        {
-    //            sslStream.AuthenticateAsClient(_server);
-    //            byte[] byeArray = Encoding.UTF8.GetBytes(Utils.GetPacketString(packet));
-    //            sslStream.Write(byeArray);
-    //        }
-            //endof sslstream
+            formatter.Serialize(stream, Utils.GetPacketString(packet)); // the serialization process
         }
 
         public Packet ReadMessage()
         {
             BinaryFormatter formatter = new BinaryFormatter();
-            String dataString = (String)formatter.Deserialize(client.GetStream());
+            String dataString = (String)formatter.Deserialize(stream);
             return Utils.GetPacket(dataString);
-
 
             //ssl stream
     //        using (SslStream sslStream = new SslStream(_client.GetStream(), false,
@@ -67,12 +55,12 @@ namespace MediCare.NetworkLibrary
 
         public void Close()
         {
-            client.Close();
+           _client.Close();
         }
 
         public Boolean isConnected()
         {
-            return client.Connected;
+            return _client.Connected;
         }
 
         #region ssl validator
