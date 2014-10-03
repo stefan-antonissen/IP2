@@ -34,7 +34,8 @@ namespace MediCare.DataHandling
             return logins.TryGetValue(name, out ActualPassword) &&
                        ActualPassword.Equals(EncryptPassword(password));
         }
-        public bool KeyExist(string key) {
+        public bool KeyExist(string key)
+        {
             return logins.ContainsKey(key);
         }
         public void del(string key)
@@ -61,7 +62,8 @@ namespace MediCare.DataHandling
         // load the arraylist of measurements from a file, returns the arraylist
         public void LoadLogins()
         {
-            this.logins = (Dictionary<string, string>)serializer.DeSerializeObject("USERDATA.STATIC");
+            if (File.Exists("USERDATA.STATIC"))
+                this.logins = (Dictionary<string, string>)serializer.DeSerializeObject("USERDATA.STATIC");
         }
 
         /**

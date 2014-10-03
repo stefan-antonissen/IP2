@@ -28,15 +28,6 @@ namespace MediCare.Server
 
         public Server()
         {
-            try
-            {
-                logins.LoadLogins();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
-            }
-
             TcpListener server = new TcpListener(_localIP, 11000);
             server.Start();
             TcpClient incomingClient;
