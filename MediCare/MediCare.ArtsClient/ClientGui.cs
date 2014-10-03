@@ -6,6 +6,9 @@ using MediCare.Controller;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
 using MediCare.NetworkLibrary;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
 namespace MediCare.ArtsClient
 {
@@ -14,7 +17,9 @@ namespace MediCare.ArtsClient
         private Controller.BikeController c;
         private readonly Timer updateDataTimer;
         private readonly Timer labelRemoveTimer;
-        private TcpClient client = new TcpClient("127.0.0.1", 11000);
+        private static string server = "127.0.0.1";
+        private static int port = 11000;
+        private ClientTcpConnector client;
         private bool[] checkbox_Status = { false, false, false, false, false, false, false, false };
         private System.Windows.Forms.DataVisualization.Charting.Series[] ChartData = new System.Windows.Forms.DataVisualization.Charting.Series[8];
         string ID;
@@ -37,6 +42,10 @@ namespace MediCare.ArtsClient
             labelRemoveTimer.Tick += UpdateGUI;
 
             Connect("SIM");
+
+            //opzetten tcp connectie
+            TcpClient TcpClient = new TcpClient(server, port);
+            client = new ClientTcpConnector(TcpClient, server);
         }
 
         private void Connect(String SelectedPort)
@@ -113,7 +122,7 @@ namespace MediCare.ArtsClient
             if (typeBox.Text != "")
             {
                 Packet p = new Packet(ID, "Chat", "93238792", typeBox.Text);
-                SendMessageToServer(client, p);
+                client.sendMessage(p);
                 txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                 txtLog_AlignTextToBottom();
                 txtLog_ScrollToBottom();
@@ -128,7 +137,7 @@ namespace MediCare.ArtsClient
                 if (typeBox.Text != "")
                 {
                     Packet p = new Packet(ID, "Chat", "93238792", typeBox.Text);
-                    SendMessageToServer(client, p);
+                    client.sendMessage(p);
                     txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                     txtLog_AlignTextToBottom();
                     txtLog_ScrollToBottom();
@@ -167,30 +176,30 @@ namespace MediCare.ArtsClient
         # endregion
 
         #region TCPclient tools
-        private void SendMessageToServer(TcpClient client, Packet message)
-        {
-            BinaryFormatter formatter = new BinaryFormatter(); // the formatter that will serialize my object on my stream 
-            NetworkStream strm = client.GetStream(); // the stream
-            formatter.Serialize(strm, Utils.GetPacketString(message)); // the serialization process 
-            //client.GetStream().Write(bytes, 0, bytes.Length);
-        }
+        //SENDMESSAGE TO SERVER
+        //to send messages to the server use object client. of type TcpClientConnector declared as attribute to send messages to the server
+        //usage client.sendmessage(packet);
 
-        private Packet ReadMessage(TcpClient client)
-        {
-            BinaryFormatter formatter = new BinaryFormatter();
-            String dataString = (String)formatter.Deserialize(client.GetStream());
-            return Utils.GetPacket(dataString);
-        }
+        //READMESSAGE
+        //use client of type TcpClientConnector defined as attribute.
+        //usage client.ReadMessage()
+
+        //private Packet ReadMessage(TcpClient client)
+        //{
+        //    BinaryFormatter formatter = new BinaryFormatter();
+        //    String dataString = (String)formatter.Deserialize(client.GetStream());
+        //    return Utils.GetPacket(dataString);
+        //}
 
 
         private void on_Window_Closed_Event(object sender, FormClosingEventArgs e)
         {
             Packet p = new Packet(ID, "Disconnect", "92378733", "Disconnecting");
             //send message to server that ur dying
-            if (client.Connected)
+            if (client.isConnected())
             {
-                SendMessageToServer(client, p);
-                Packet p1 = ReadMessage(client);
+                client.sendMessage(p);
+                Packet p1 = client.ReadMessage();
                 if (p1._message.Equals("LOGGED OFF") && (p1.GetDestination() == "52323232"))
                 {
                     client.Close();
