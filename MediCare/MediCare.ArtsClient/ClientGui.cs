@@ -15,14 +15,16 @@ namespace MediCare.ArtsClient
     public partial class ClientGui : Form
     {
         private Controller.BikeController c;
-        private readonly Timer updateDataTimer;
-        private readonly Timer labelRemoveTimer;
+
         private static string server = "127.0.0.1";
         private static int port = 11000;
         private ClientTcpConnector client;
+        string ID;
+
+        private readonly Timer updateDataTimer;
+        private readonly Timer labelRemoveTimer;
         private bool[] checkbox_Status = { false, false, false, false, false, false, false, false };
         private System.Windows.Forms.DataVisualization.Charting.Series[] ChartData = new System.Windows.Forms.DataVisualization.Charting.Series[8];
-        string ID;
 
         public ClientGui()
         {
@@ -183,14 +185,6 @@ namespace MediCare.ArtsClient
         //READMESSAGE
         //use client of type TcpClientConnector defined as attribute.
         //usage client.ReadMessage()
-
-        //private Packet ReadMessage(TcpClient client)
-        //{
-        //    BinaryFormatter formatter = new BinaryFormatter();
-        //    String dataString = (String)formatter.Deserialize(client.GetStream());
-        //    return Utils.GetPacket(dataString);
-        //}
-
 
         private void on_Window_Closed_Event(object sender, FormClosingEventArgs e)
         {

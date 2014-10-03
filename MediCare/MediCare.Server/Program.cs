@@ -74,7 +74,6 @@ namespace MediCare.Server
                             }
 
 
-
                             Console.WriteLine("Client connected");
                             switch (packet._type)
                             {
