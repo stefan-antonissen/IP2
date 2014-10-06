@@ -174,8 +174,7 @@ namespace MediCare.Server
                 Console.WriteLine(e.Message);
             }
 
-            string[] data = (packet.GetMessage().Split(' '));
-            SaveMeasurement(data);
+            SaveMeasurement(packet);
         }
 
         /**
@@ -204,7 +203,7 @@ namespace MediCare.Server
             formatter.Serialize(stream, Utils.GetPacketString(p));
         }
 
-        private void SaveMeasurement(string[] data)
+        private void SaveMeasurement(Packet p)
         {
             /*
              * 7 strings in de array:
@@ -217,6 +216,7 @@ namespace MediCare.Server
                 TimeRunning = data[6];
                 Brake = data[7];
             */
+            string[] data = (p.GetMessage().Split(' '));
             Console.WriteLine("\nHeartbeat: " + data[0] + "\nRPM 1: " + data[1] + "\nSpeed 2: " + data[2] + "\nDistance 3: " + data[3] +
                 "\nPower 4: " + data[4] + "\nEnergy 5: " + data[5] + "\nTimeRunning 6: " + data[6] + "\nBrake 7: " + data[7]);
         }

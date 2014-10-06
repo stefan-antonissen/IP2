@@ -555,6 +555,32 @@ namespace MediCare.ArtsClient
             this.UseVisualStyleBackColor = true;
         }
 
+        public void UpdateValues(string[] data)
+        {
+            if (data.Length < 8)
+            {
+                Heartbeats_Box.Text = "0";
+                RPM_Box.Text = "0";
+                Speed_Box.Text = "0";
+                Distance_Box.Text = "0";
+                Power_Box.Text = "0";
+                Energy_Box.Text = "0";
+                TimeRunning_Box.Text = "0";
+                Brake_Box.Text = "0";
+            }
+            else
+            {
+                Heartbeats_Box.Text = data[0];
+                RPM_Box.Text = data[1];
+                Speed_Box.Text = data[2];
+                Distance_Box.Text = data[3];
+                Power_Box.Text = data[4];
+                Energy_Box.Text = data[5];
+                TimeRunning_Box.Text = data[6];
+                Brake_Box.Text = data[7];
+            }
+        }
+
         # region Chat Box
         private void txtLog_TextChanged(object sender, EventArgs e)
         {
