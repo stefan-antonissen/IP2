@@ -68,6 +68,11 @@ namespace MediCare.Controller
                     }
                 }
             }
+            if (correctport == null || correctport.Count == 0)
+            {
+                System.Windows.Forms.MessageBox.Show("no compatible device found");
+                return null;
+            }
             return correctport;
         }
 
