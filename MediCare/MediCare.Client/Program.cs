@@ -3,13 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using MediCare.Controller;
-using MediCare.NetworkLibrary;
 
-namespace MediCare.ArtsClient
+namespace MediCare.Client
 {
     static class Program
     {
+        
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -18,14 +17,7 @@ namespace MediCare.ArtsClient
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new DoctorClient());
-
+            Application.Run(new ClientGui());
         }
-
-        //public void sendPacket()
-        //{
-
-        //}
     }
 }
-
