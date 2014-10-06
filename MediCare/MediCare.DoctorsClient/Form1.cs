@@ -48,10 +48,20 @@ namespace MediCare.ArtsClient
 
         private void button1_Click(object sender, EventArgs e)
         {
-            clientTab tab = new clientTab("tab1");
-            tab.closeAllButThisButton.Click += new System.EventHandler(On_Tab_Close_All_Event);
-            tab.closeButton.Click += new System.EventHandler(On_Tab_Closed_Event);
-            this.tabControl1.Controls.Add(tab);
+            if (client.isConnected())
+            {
+                clientTab tab = new clientTab("tab1");
+                tab.closeAllButThisButton.Click += new System.EventHandler(On_Tab_Close_All_Event);
+                tab.closeButton.Click += new System.EventHandler(On_Tab_Closed_Event);
+                this.tabControl1.Controls.Add(tab);
+                new Thread(() =>
+                {
+                    while (true)
+                    {
+                        Console.WriteLine(client.ReadMessage());
+                    }
+                }).Start();
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)

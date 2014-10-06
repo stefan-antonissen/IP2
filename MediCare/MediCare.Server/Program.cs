@@ -97,6 +97,9 @@ namespace MediCare.Server
                                 case "Broadcast":
                                 HandleBroadcastMessagePacket(packet);
                                 break;
+                                case "Timestamp":
+                                HandleTimestampPacket(packet);
+                                break;
                                 default: //nothing
                                 break;
                             }
@@ -156,7 +159,7 @@ namespace MediCare.Server
 
         /**
          * Save de data die je binnen krijgt.
-         * Stuur de data door naar de DokorClient.
+         * Stuur de data door naar de DoktorClient.
          */
         private void HandleDataPacket(Packet packet, SslStream stream)
         {
@@ -177,6 +180,14 @@ namespace MediCare.Server
             SaveMeasurement(packet);
         }
 
+        /**
+        * Handel het registratie process af. genereer een uniek ID voeg toe aan bestand (zie LoginIO)
+        * Stuur een bericht terug dat de data is aangekomen.
+        */
+        private void HandleTimestampPacket(Packet p)
+        {
+            SaveMeasurement(p);
+        }
         /**
          * Handel het registratie process af. genereer een uniek ID voeg toe aan bestand (zie LoginIO)
          * Stuur een bericht terug dat de data is aangekomen.
@@ -206,6 +217,8 @@ namespace MediCare.Server
         private void SaveMeasurement(Packet p)
         {
             /*
+             * eerste packet is altijd een timestamp
+             * daarna:
              * 7 strings in de array:
                 Heartbeat = data[0];
                 RPM = data[1];
@@ -217,8 +230,15 @@ namespace MediCare.Server
                 Brake = data[7];
             */
             string[] data = (p.GetMessage().Split(' '));
-            Console.WriteLine("\nHeartbeat: " + data[0] + "\nRPM 1: " + data[1] + "\nSpeed 2: " + data[2] + "\nDistance 3: " + data[3] +
-                "\nPower 4: " + data[4] + "\nEnergy 5: " + data[5] + "\nTimeRunning 6: " + data[6] + "\nBrake 7: " + data[7]);
+            if (data.Length < 8)
+            {
+                Console.WriteLine("\nTimestamp: " + data[0] + " " + data[1]);
+            }
+            else
+            {
+                Console.WriteLine("\nHeartbeat: " + data[0] + "\nRPM 1: " + data[1] + "\nSpeed 2: " + data[2] + "\nDistance 3: " + data[3] +
+                    "\nPower 4: " + data[4] + "\nEnergy 5: " + data[5] + "\nTimeRunning 6: " + data[6] + "\nBrake 7: " + data[7]);
+            }
         }
 
         private void printClientList()

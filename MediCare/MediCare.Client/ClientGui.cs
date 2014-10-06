@@ -26,6 +26,7 @@ namespace MediCare.Client
         private bool[] checkbox_Status = { false, false, false, false, false, false, false, false };
         private System.Windows.Forms.DataVisualization.Charting.Series[] ChartData = new System.Windows.Forms.DataVisualization.Charting.Series[8];
 
+        private bool first = true;
         public ClientGui()
         {
             InitializeComponent();
@@ -69,7 +70,13 @@ namespace MediCare.Client
         // onderstaande drie methodes zijn om de waarden in de GUI aan te passen
         private void updateValues(String[] data)
         {
-            // TODO: data versturen naar de server
+            if(first)
+            {
+                string[] timestamp = { DateTime.Now.ToString(), DateTime.Now.ToString("h:mm:ss tt") };
+                SendMeasurementData(timestamp, "Timestamp");
+                first = false;
+            }
+
             // als de lengte van de data array één is (error), dan zet je alles op 0
             if (data.Length < 8)
             {
@@ -93,15 +100,23 @@ namespace MediCare.Client
                 Energy_Box.Text = data[5];
                 TimeRunning_Box.Text = data[6];
                 Brake_Box.Text = data[7];
-                SendMeasurementData(data);
+                SendMeasurementData(data, "Data");
             }
         }
 
         //TODO Destination is hard-coded
-        private void SendMeasurementData(string[] data)
+        private void SendMeasurementData(string[] data, string type)
         {
-            string s = data[0] + " " + data[1] + " " + data[2] + " " + data[3] + " " + data[4] + " " + data[5] + " " + data[6] + " " + data[7];
-            Packet p = new Packet(ID, "Data", "93238792", s);
+            string s;
+            if (data.Length < 8)
+            {
+                s = data[0] + " " + data[1];
+            }
+            else
+            {
+                s = data[0] + " " + data[1] + " " + data[2] + " " + data[3] + " " + data[4] + " " + data[5] + " " + data[6] + " " + data[7];
+            }
+           Packet p = new Packet(ID, type, "93238792", s);
             if (client.isConnected())
             {
                 client.sendMessage(p);
