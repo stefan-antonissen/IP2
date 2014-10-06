@@ -42,7 +42,7 @@ namespace MediCare.Client
             // timer voor het verwijderen van de errortekst, 'cosmetisch'
             labelRemoveTimer = new Timer();
             labelRemoveTimer.Interval = 3000;
-            labelRemoveTimer.Tick += UpdateGUI;
+            labelRemoveTimer.Tick += UpdateLabel;
 
             Connect("SIM");
 
@@ -259,17 +259,21 @@ namespace MediCare.Client
          */
         private void login(object sender, EventArgs e)
         {
-            if (!Password_Box.Text.Equals("") && !Username_Box.Text.Equals(""))
+            string value = Username_Box.Text.Substring(0, 1);
+            int id;
+            bool isNum = int.TryParse(value, out id);
+
+            if ((!isNum) || (id < 1) || (id > 8))
             {
-                //if (Username_Box.Text == ??? && Password_Box.Text == ???) {
-                ID = Username_Box.Text;
-                setVisibility(true);
-                updateDataTimer.Start(); // automatisch updaten van de waardes
+                Login_ERROR_Label.Text = "Client ID must start with 1-8!";
+                labelRemoveTimer.Start();
+                this.ActiveControl = Username_Box;
             }
             else
             {
-                Login_ERROR_Label.Text = "Invalid username or password";
-                this.ActiveControl = Username_Box;
+                ID = Username_Box.Text;
+                setVisibility(true);
+                updateDataTimer.Start(); // automatisch updaten van de waardes
             }
         }
         private void setVisibility(bool v)

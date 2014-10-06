@@ -49,6 +49,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
+            this.Error_Label = new System.Windows.Forms.Label();
             this.IndexTab.SuspendLayout();
             this.panel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -262,11 +263,21 @@
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.login);
             // 
+            // Error_Label
+            // 
+            this.Error_Label.AutoSize = true;
+            this.Error_Label.ForeColor = System.Drawing.Color.Red;
+            this.Error_Label.Location = new System.Drawing.Point(457, 9);
+            this.Error_Label.Name = "Error_Label";
+            this.Error_Label.Size = new System.Drawing.Size(0, 13);
+            this.Error_Label.TabIndex = 26;
+            // 
             // DoctorClient
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1264, 681);
+            this.Controls.Add(this.Error_Label);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.Password_Box);
             this.Controls.Add(this.Username_Box);
@@ -307,6 +318,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button Signup_Button;
+        private System.Windows.Forms.Label Error_Label;
 
     }
 }

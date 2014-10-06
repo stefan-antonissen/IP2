@@ -19,6 +19,8 @@ namespace MediCare.ArtsClient
     public partial class DoctorClient : Form
     {
         private readonly System.Windows.Forms.Timer getActiveClientsTimer;
+        private readonly System.Windows.Forms.Timer labelRemoveTimer;
+
         private static string server = "127.0.0.1";
         private static int port = 11000;
         private ClientTcpConnector client;
@@ -41,6 +43,11 @@ namespace MediCare.ArtsClient
             getActiveClientsTimer = new System.Windows.Forms.Timer();
             getActiveClientsTimer.Interval = 1000;
             getActiveClientsTimer.Tick += updateActiveClients;
+
+            // timer voor het verwijderen van de errortekst, 'cosmetisch'
+            labelRemoveTimer = new System.Windows.Forms.Timer();
+            labelRemoveTimer.Interval = 3000;
+            labelRemoveTimer.Tick += UpdateLabel;
         }
 
         /**
@@ -209,6 +216,7 @@ namespace MediCare.ArtsClient
             Password_Label.Visible = !v;
             Username_label.Visible = !v;
             LoginButton.Visible = !v;
+            Error_Label.Visible = !v;
             if (!v)
             {
                 this.ActiveControl = Username_Box;
@@ -244,11 +252,24 @@ namespace MediCare.ArtsClient
             //Login to server bla bla bla
             if (true)
             {
-                _ID = Username_Box.Text;
-
-                setVisibility(true);
-                getActiveClientsTimer.Start();
+                if (!Username_Box.Text.Substring(0, 1).Equals("9"))
+                {
+                    Error_Label.Text = "Doctor ID must start with a 9!";
+                    labelRemoveTimer.Start();
+                    this.ActiveControl = Username_Box;
+                }
+                else
+                {
+                    _ID = Username_Box.Text;
+                    setVisibility(true);
+                    getActiveClientsTimer.Start();
+                }
             }
+        }
+        private void UpdateLabel(object sender, EventArgs e)
+        {
+            Error_Label.Text = "";
+            labelRemoveTimer.Stop();
         }
         #endregion
 
