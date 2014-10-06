@@ -18,8 +18,10 @@ namespace MediCare.ArtsClient
 {
     public partial class DoctorClient : Form
     {
+        private static string server = "127.0.0.1";
+        private static int port = 11000;
+        private ClientTcpConnector client;
 
-        TcpClient client = new TcpClient("127.0.0.1", 11000);
         private LoginIO logins = new LoginIO();
 
         public DoctorClient()
@@ -27,6 +29,10 @@ namespace MediCare.ArtsClient
             InitializeComponent();
             setVisibility(false);
             this.FormClosing += on_Window_Closed_Event;
+
+            //opzetten tcp connectie
+            TcpClient TcpClient = new TcpClient(server, port);
+            client = new ClientTcpConnector(TcpClient, server);
         }
 
         /**
@@ -106,7 +112,7 @@ namespace MediCare.ArtsClient
                 if (typeBox.Text != "")
                 {
                     Packet p = new Packet("9", "Broadcast", "5", typeBox.Text);
-                    SendMessageToServer(client, p);
+                    client.sendMessage(p);
                     txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                     txtLog_AlignTextToBottom();
                     txtLog_ScrollToBottom();
@@ -145,21 +151,7 @@ namespace MediCare.ArtsClient
         # endregion
 
         #region TCPclient tools
-        private void SendMessageToServer(TcpClient client, Packet message)
-        {
-            BinaryFormatter formatter = new BinaryFormatter(); // the formatter that will serialize my object on my stream 
-
-            NetworkStream strm = client.GetStream(); // the stream 
-            formatter.Serialize(strm, Utils.GetPacketString(message)); // the serialization process 
-            //client.GetStream().Write(bytes, 0, bytes.Length);
-        }
-
-        private Packet ReadMessage(TcpClient client)
-        {
-            BinaryFormatter formatter = new BinaryFormatter();
-            String dataString = (String)formatter.Deserialize(client.GetStream());
-            return Utils.GetPacket(dataString);
-        }
+        //Depricated read and send methods should not be used.. use the ClientTcpConnector instead
         # endregion
 
         #region login
@@ -231,10 +223,10 @@ namespace MediCare.ArtsClient
         {
             Packet p = new Packet("9784334", "Disconnect", "24378733", "Disconnecting");
             //send message to server that ur dying
-            if (client.Connected)
+            if (client.isConnected())
             {
-                SendMessageToServer(client, p);
-                Packet p1 = ReadMessage(client);
+                client.sendMessage(p);
+                Packet p1 = client.ReadMessage();
                 if (p1._message.Equals("LOGGED OFF") && (p1.GetDestination() == "9784334"))
                 {
                     logins.SaveLogins();
