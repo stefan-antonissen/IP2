@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
@@ -40,6 +41,26 @@ namespace MediCare.DataHandling
             this.energy = energy;
             this.time = time;
             this.currentPower = currentPower;
+        }
+
+        public Measurement(string s)
+        {
+            try
+            {
+                string[] data = s.Split(' ');
+                this.heartRate = int.Parse(data[0]);
+                this.rpm = int.Parse(data[1]);
+                this.speed = int.Parse(data[2]);
+                this.distance = int.Parse(data[3]);
+                this.power = int.Parse(data[4]);
+                this.energy = int.Parse(data[5]);
+                this.time = int.Parse(data[6]);
+                this.currentPower = int.Parse(data[7]);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         public Measurement()

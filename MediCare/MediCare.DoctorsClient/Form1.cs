@@ -18,11 +18,13 @@ namespace MediCare.ArtsClient
 {
     public partial class DoctorClient : Form
     {
+        private readonly System.Windows.Forms.Timer getActiveClientsTimer;
         private static string server = "127.0.0.1";
         private static int port = 11000;
         private ClientTcpConnector client;
 
         private LoginIO logins = new LoginIO();
+        private string connectedIDs = "";
 
         public DoctorClient()
         {
@@ -33,6 +35,11 @@ namespace MediCare.ArtsClient
             //opzetten tcp connectie
             TcpClient TcpClient = new TcpClient(server, port);
             client = new ClientTcpConnector(TcpClient, server);
+
+            // haalt de de actieve clients op
+            getActiveClientsTimer = new System.Windows.Forms.Timer();
+            getActiveClientsTimer.Interval = 1000;
+            getActiveClientsTimer.Tick += updateActiveClients;
         }
 
         /**
@@ -46,6 +53,18 @@ namespace MediCare.ArtsClient
 
         }
 
+        private void updateActiveClients(object sender, EventArgs e)
+        {
+            Packet response = new Packet("98767654", "ActiveClients", "Server", "Get active clients");
+            client.sendMessage(response);
+
+            Packet p1 = client.ReadMessage();
+            connectedIDs = p1.GetMessage();
+        }
+        private string getActiveClients()
+        {
+            return connectedIDs;
+        }
         private void button1_Click(object sender, EventArgs e)
         {
             if (client.isConnected())
@@ -214,7 +233,7 @@ namespace MediCare.ArtsClient
                 // if username && password are true
                 if (true)
                 {
-                    setVisibility(true);
+                    login(sender, e);
                 }
             }
         }
@@ -225,6 +244,7 @@ namespace MediCare.ArtsClient
             if (true)
             {
                 setVisibility(true);
+                getActiveClientsTimer.Start();
             }
         }
         #endregion

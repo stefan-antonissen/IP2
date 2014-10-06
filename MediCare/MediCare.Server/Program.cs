@@ -100,6 +100,9 @@ namespace MediCare.Server
                                 case "Timestamp":
                                 HandleTimestampPacket(packet);
                                 break;
+                                case "ActiveClients":
+                                HandleActiveClients(packet, sslStream);
+                                break;
                                 default: //nothing
                                 break;
                             }
@@ -206,6 +209,21 @@ namespace MediCare.Server
         private void HandleBroadcastMessagePacket(Packet p)
         {
             Packet response = new Packet();
+        }
+        /*
+         * Geeft het aantal actieve clients
+         * 
+         */
+        private void HandleActiveClients(Packet p, SslStream stream)
+        {
+            string ids = "";
+            foreach (string key in clients.Keys)
+            {
+                ids += key + " ";
+            }
+            Console.WriteLine("Active clients: " + clients.Count.ToString());
+            Packet response = new Packet("Server", "Data", p._id, ids);
+            SendPacket(stream, response);
         }
 
         private void SendPacket(SslStream stream, Packet p)
