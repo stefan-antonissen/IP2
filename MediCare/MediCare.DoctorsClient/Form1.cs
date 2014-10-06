@@ -10,6 +10,7 @@ using System.Net.Sockets;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -39,12 +40,12 @@ namespace MediCare.ArtsClient
             TcpClient TcpClient = new TcpClient(server, port);
             client = new ClientTcpConnector(TcpClient, server);
 
-            // haalt de de actieve clients op
+            // haalt de de actieve clients op elke 1s
             getActiveClientsTimer = new System.Windows.Forms.Timer();
             getActiveClientsTimer.Interval = 1000;
             getActiveClientsTimer.Tick += updateActiveClients;
 
-            // timer voor het verwijderen van de errortekst, 'cosmetisch'
+            // timer voor het verwijderen van de errortekst na 3s, 'cosmetisch'
             labelRemoveTimer = new System.Windows.Forms.Timer();
             labelRemoveTimer.Interval = 3000;
             labelRemoveTimer.Tick += UpdateLabel;
@@ -239,31 +240,32 @@ namespace MediCare.ArtsClient
         {
             if (e.KeyCode == Keys.Enter && Password_Box.Focused)
             {
-                // if username && password are true
-                if (true)
-                {
-                    login(sender, e);
-                }
+                login(sender, e);
             }
         }
 
         private void login(object sender, EventArgs e)
         {
             //Login to server bla bla bla
-            if (true)
+            Regex r = new Regex(@"^[0-9]{8}");
+            if (String.IsNullOrEmpty(Username_Box.Text) || String.IsNullOrEmpty(Password_Box.Text))
             {
-                if (!Username_Box.Text.Substring(0, 1).Equals("9"))
-                {
-                    Error_Label.Text = "Doctor ID must start with a 9!";
-                    labelRemoveTimer.Start();
-                    this.ActiveControl = Username_Box;
-                }
-                else
-                {
-                    _ID = Username_Box.Text;
-                    setVisibility(true);
-                    getActiveClientsTimer.Start();
-                }
+                Error_Label.Text = "One or more fields are blank!";
+                labelRemoveTimer.Start();
+                this.ActiveControl = Username_Box;
+            }
+            else if (!Username_Box.Text.Substring(0, 1).Equals("9") || (!r.IsMatch(Username_Box.Text)))
+            {
+                Error_Label.Text = "Doctor ID must start with a 9 and is 8 digits long!";
+                labelRemoveTimer.Start();
+                this.ActiveControl = Username_Box;
+            }
+            //TODO: else if (logins are correct), ipv else (denk ik)
+            else
+            {
+                _ID = Username_Box.Text;
+                setVisibility(true);
+                getActiveClientsTimer.Start(); // automatisch ophalen van de actieve verbindingen      
             }
         }
         private void UpdateLabel(object sender, EventArgs e)

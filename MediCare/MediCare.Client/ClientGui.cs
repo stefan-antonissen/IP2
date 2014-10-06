@@ -9,6 +9,7 @@ using MediCare.NetworkLibrary;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace MediCare.Client
 {
@@ -70,7 +71,7 @@ namespace MediCare.Client
         // onderstaande drie methodes zijn om de waarden in de GUI aan te passen
         private void updateValues(String[] data)
         {
-            if(first)
+            if (first)
             {
                 string[] timestamp = { DateTime.Now.ToString(), DateTime.Now.ToString("h:mm:ss tt") };
                 SendMeasurementData(timestamp, "Timestamp");
@@ -116,7 +117,7 @@ namespace MediCare.Client
             {
                 s = data[0] + " " + data[1] + " " + data[2] + " " + data[3] + " " + data[4] + " " + data[5] + " " + data[6] + " " + data[7];
             }
-           Packet p = new Packet(ID, type, "93238792", s);
+            Packet p = new Packet(ID, type, "93238792", s);
             if (client.isConnected())
             {
                 client.sendMessage(p);
@@ -259,21 +260,31 @@ namespace MediCare.Client
          */
         private void login(object sender, EventArgs e)
         {
-            string value = Username_Box.Text.Substring(0, 1);
-            int id;
-            bool isNum = int.TryParse(value, out id);
-
-            if ((!isNum) || (id < 1) || (id > 8))
+            if (String.IsNullOrEmpty(Username_Box.Text) || String.IsNullOrEmpty(Password_Box.Text))
             {
-                Login_ERROR_Label.Text = "Client ID must start with 1-8!";
+                Login_ERROR_Label.Text = "One or more fields are blank!";
                 labelRemoveTimer.Start();
                 this.ActiveControl = Username_Box;
             }
             else
             {
-                ID = Username_Box.Text;
-                setVisibility(true);
-                updateDataTimer.Start(); // automatisch updaten van de waardes
+                string value = Username_Box.Text.Substring(0, 1);
+                int id;
+                bool isNum = int.TryParse(value, out id);
+                Regex r = new Regex(@"^[0-9]{8}");
+                if ((!isNum) || (id < 1) || (id > 8) || (!r.IsMatch(Username_Box.Text)))
+                {
+                    Login_ERROR_Label.Text = "Client ID must start with 1-8 and is 8 digits long!";
+                    labelRemoveTimer.Start();
+                    this.ActiveControl = Username_Box;
+                }
+                //TODO: else if (logins are correct), ipv else (denk ik)
+                else
+                {
+                    ID = Username_Box.Text;
+                    setVisibility(true);
+                    updateDataTimer.Start(); // automatisch updaten van de waardes
+                }
             }
         }
         private void setVisibility(bool v)
