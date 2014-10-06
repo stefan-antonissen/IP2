@@ -93,6 +93,18 @@ namespace MediCare.Client
                 Energy_Box.Text = data[5];
                 TimeRunning_Box.Text = data[6];
                 Brake_Box.Text = data[7];
+                SendMeasurementData(data);
+            }
+        }
+
+        //TODO Destination is hard-coded
+        private void SendMeasurementData(string[] data)
+        {
+            string s = data[0] + " " + data[1] + " " + data[2] + " " + data[3] + " " + data[4] + " " + data[5] + " " + data[6] + " " + data[7];
+            Packet p = new Packet(ID, "Data", "93238792", s);
+            if (client.isConnected())
+            {
+                client.sendMessage(p);
             }
         }
 

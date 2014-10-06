@@ -163,18 +163,19 @@ namespace MediCare.Server
             Packet response_Sender = new Packet("Server", "Data", packet._id, "Data Saved");
             SendPacket(stream, response_Sender);
 
-            Packet response_receiver = new Packet(packet.GetDestination(), "data", packet.GetID(), packet.GetMessage());
+            Packet response_receiver = new Packet(packet.GetDestination(), "Data", packet.GetID(), packet.GetMessage());
+
             try
             {
-                TcpClient destination = clients[packet.GetDestination()];
-                SendPacket(stream, packet);
+                SendPacket(stream, response_receiver);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
 
-            //TODO: save some data here locally on the server
+            string[] data = (packet.GetMessage().Split(' '));
+            SaveMeasurement(data);
         }
 
         /**
@@ -201,6 +202,23 @@ namespace MediCare.Server
         {
             BinaryFormatter formatter = new BinaryFormatter();
             formatter.Serialize(stream, Utils.GetPacketString(p));
+        }
+
+        private void SaveMeasurement(string[] data)
+        {
+            /*
+             * 7 strings in de array:
+                Heartbeat = data[0];
+                RPM = data[1];
+                Speed = data[2];
+                Distance = data[3];
+                Power = data[4];
+                Energy = data[5];
+                TimeRunning = data[6];
+                Brake = data[7];
+            */
+            Console.WriteLine("\nHeartbeat: " + data[0] + "\nRPM 1: " + data[1] + "\nSpeed 2: " + data[2] + "\nDistance 3: " + data[3] +
+                "\nPower 4: " + data[4] + "\nEnergy 5: " + data[5] + "\nTimeRunning 6: " + data[6] + "\nBrake 7: " + data[7]);
         }
 
         private void printClientList()
