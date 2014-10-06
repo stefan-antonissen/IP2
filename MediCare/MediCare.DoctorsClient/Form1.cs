@@ -25,6 +25,7 @@ namespace MediCare.ArtsClient
 
         private LoginIO logins = new LoginIO();
         private string connectedIDs = "";
+        private string _ID;
 
         public DoctorClient()
         {
@@ -55,7 +56,7 @@ namespace MediCare.ArtsClient
 
         private void updateActiveClients(object sender, EventArgs e)
         {
-            Packet response = new Packet("98767654", "ActiveClients", "Server", "Get active clients");
+            Packet response = new Packet(_ID, "ActiveClients", "Server", "Get active clients");
             client.sendMessage(response);
 
             Packet p1 = client.ReadMessage();
@@ -130,7 +131,7 @@ namespace MediCare.ArtsClient
             {
                 if (typeBox.Text != "")
                 {
-                    Packet p = new Packet("9", "Broadcast", "5", typeBox.Text);
+                    Packet p = new Packet(_ID, "Broadcast", "5", typeBox.Text);
                     client.sendMessage(p);
                     txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                     txtLog_AlignTextToBottom();
@@ -233,6 +234,8 @@ namespace MediCare.ArtsClient
             //Login to server bla bla bla
             if (true)
             {
+                _ID = Username_Box.Text;
+
                 setVisibility(true);
                 getActiveClientsTimer.Start();
             }
@@ -241,7 +244,7 @@ namespace MediCare.ArtsClient
 
         private void on_Window_Closed_Event(object sender, FormClosingEventArgs e)
         {
-            Packet p = new Packet("9784334", "Disconnect", "24378733", "Disconnecting");
+            Packet p = new Packet(_ID, "Disconnect", "24378733", "Disconnecting");
             //send message to server that ur dying
             if (client.isConnected())
             {

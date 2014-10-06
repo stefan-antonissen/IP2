@@ -42,15 +42,6 @@ namespace MediCare.NetworkLibrary
             BinaryFormatter formatter = new BinaryFormatter();
             String dataString = (String)formatter.Deserialize(stream);
             return Utils.GetPacket(dataString);
-
-            //ssl stream
-    //        using (SslStream sslStream = new SslStream(_client.GetStream(), false,
-    //new RemoteCertificateValidationCallback(ValidateServerCertificate), null))
-    //        {
-    //            sslStream.AuthenticateAsClient(_server);
-    //            //TODO read bytes put to string and get packet from json string
-    //        }
-            //endof sslstream
         }
 
         public void Close()

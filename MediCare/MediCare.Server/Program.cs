@@ -21,7 +21,13 @@ namespace MediCare.Server
     {
         private IPAddress _localIP = IPAddress.Parse("127.0.0.1");
         private Dictionary<string, TcpClient> clients = new Dictionary<string, TcpClient>();
+        private Dictionary<string, SslStream> clientsStreams = new Dictionary<string, SslStream>();
+        
         private LoginIO logins = new LoginIO();
+
+        //README!!! - SSL certificate needs to be coppied from MediCare.Server\ssl_cert.pfx to C:\Windows\Temp\
+        private X509Certificate certificate = new X509Certificate(@"C:\Windows\Temp\ssl_cert.pfx", "medicare");
+
 
         static void Main(string[] args)
         {
@@ -38,9 +44,7 @@ namespace MediCare.Server
             while (true)
             {
                 incomingClient = server.AcceptTcpClient();
-                //README!!! - SSL certificate needs to be coppied from MediCare.Server\ssl_cert.pfx to C:\Windows\Temp\
-                X509Certificate certificate = new X509Certificate(@"C:\Windows\Temp\ssl_cert.pfx", "medicare");
-
+                
                 new Thread(() =>
                 {
                     Console.WriteLine("Connection found!");
@@ -65,6 +69,8 @@ namespace MediCare.Server
                             if (!clients.ContainsKey(packet.GetID()))
                             {
                                 clients.Add(packet.GetID(), incomingClient);
+                                clientsStreams.Add(packet.GetID(), sslStream);
+                                
                                 #region DEBUG
 #if DEBUG
                                 Console.WriteLine("ID: " + packet.GetID() + "incomingClient: " + incomingClient.ToString());
@@ -73,14 +79,13 @@ namespace MediCare.Server
                                 #endregion
                             }
 
-
                             Console.WriteLine("Client connected");
                             switch (packet._type)
                             {
                                 //sender = incoming client
                                 //packet = data van de client
                                 case "Chat":
-                                HandleChatPacket(packet, sslStream);
+                                HandleChatPacket(packet);
                                 break;
                                 case "FirstConnect":
                                 HandleFirstConnectPacket(packet, sslStream);
@@ -122,16 +127,32 @@ namespace MediCare.Server
          * Versturen van een chat, package blijft hetzelfde.
          * Methode is er omdat het anders uit de toon valt met andere methodes.
          */
-        private void HandleChatPacket(Packet packet, SslStream stream)
+        private void HandleChatPacket(Packet packet)
         {
-            try
+            if (sourceIsDoctor(packet))
             {
-                SendPacket(stream, packet);
+                SslStream sslStream;
+                clientsStreams.TryGetValue(packet._destination, out sslStream);
+                SendPacket(sslStream, packet);
             }
-            catch (Exception e)
+            else
             {
-                Console.WriteLine(e.Message);
+                //source is client. send to doctor
+                foreach (KeyValuePair<string, SslStream> entry in clientsStreams)
+                {
+                    if (entry.Key.Substring(0, 1).Contains("9"))
+                    {
+                        SslStream sslStream = entry.Value;
+                        SendPacket(sslStream, packet);
+                        //Console.WriteLine("packetMessage: " + packet._message);
+                    }
+                }
             }
+        }
+
+        private bool sourceIsDoctor(Packet packet)
+        {
+            return packet._id.Substring(0, 1).Contains("9");
         }
 
         /**
