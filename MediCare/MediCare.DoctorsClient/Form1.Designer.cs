@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.IndexTab = new System.Windows.Forms.TabPage();
+            this.Signup_Button = new System.Windows.Forms.Button();
             this.typeBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -48,7 +49,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
-            this.Signup_Button = new System.Windows.Forms.Button();
             this.IndexTab.SuspendLayout();
             this.panel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -70,6 +70,16 @@
             this.IndexTab.TabIndex = 0;
             this.IndexTab.Text = "Overview";
             this.IndexTab.UseVisualStyleBackColor = true;
+            // 
+            // Signup_Button
+            // 
+            this.Signup_Button.Location = new System.Drawing.Point(1131, 600);
+            this.Signup_Button.Name = "Signup_Button";
+            this.Signup_Button.Size = new System.Drawing.Size(95, 23);
+            this.Signup_Button.TabIndex = 12;
+            this.Signup_Button.Text = "Signup new user";
+            this.Signup_Button.UseVisualStyleBackColor = true;
+            this.Signup_Button.Click += new System.EventHandler(this.Signup_Button_Click);
             // 
             // typeBox
             // 
@@ -252,17 +262,7 @@
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.login);
             // 
-            // Signup_Button
-            // 
-            this.Signup_Button.Location = new System.Drawing.Point(1131, 600);
-            this.Signup_Button.Name = "Signup_Button";
-            this.Signup_Button.Size = new System.Drawing.Size(95, 23);
-            this.Signup_Button.TabIndex = 12;
-            this.Signup_Button.Text = "Signup new user";
-            this.Signup_Button.UseVisualStyleBackColor = true;
-            this.Signup_Button.Click += new System.EventHandler(this.Signup_Button_Click);
-            // 
-            // Form1
+            // DoctorClient
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -273,7 +273,7 @@
             this.Controls.Add(this.Password_Label);
             this.Controls.Add(this.Username_label);
             this.Controls.Add(this.LoginButton);
-            this.Name = "Form1";
+            this.Name = "DoctorClient";
             this.Text = "Doctor Client";
             this.IndexTab.ResumeLayout(false);
             this.IndexTab.PerformLayout();
