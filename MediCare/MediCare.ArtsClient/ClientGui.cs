@@ -10,7 +10,7 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
-namespace MediCare.ArtsClient
+namespace MediCare.Client
 {
     public partial class ClientGui : Form
     {

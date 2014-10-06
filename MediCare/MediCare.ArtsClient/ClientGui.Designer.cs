@@ -1,4 +1,4 @@
-﻿namespace MediCare.ArtsClient
+﻿namespace MediCare.Client
 {
     partial class ClientGui
     {
