@@ -6,6 +6,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net.Security;
 using System.Net.Sockets;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -30,6 +31,9 @@ namespace MediCare.ArtsClient
         private string connectedIDs = "";
         private string _ID;
 
+        private Dictionary<string, clientTab> _tabIdDict = new Dictionary<string, clientTab>();
+        private List<clientTab> _tabs = new List<clientTab>();
+
         public DoctorClient()
         {
             InitializeComponent();
@@ -41,16 +45,78 @@ namespace MediCare.ArtsClient
             //opzetten tcp connectie
             TcpClient TcpClient = new TcpClient(server, port);
             client = new ClientTcpConnector(TcpClient, server);
-
+            
+            
             // haalt de de actieve clients op elke 1s
             getActiveClientsTimer = new System.Windows.Forms.Timer();
             getActiveClientsTimer.Interval = 1000;
             getActiveClientsTimer.Tick += updateActiveClients;
-
+            
+ 
             // timer voor het verwijderen van de errortekst na 3s, 'cosmetisch'
             labelRemoveTimer = new System.Windows.Forms.Timer();
             labelRemoveTimer.Interval = 3000;
             labelRemoveTimer.Tick += UpdateLabel;
+
+            new Thread(() =>
+            {
+                while (true)
+                {
+                    Packet packet = null;
+                    if (client.isConnected())
+                    {
+                        Console.WriteLine("Reading message\n");
+                        packet = client.ReadMessage();
+
+                        if (packet != null)
+                        {
+                            processPacket(packet);
+                        }
+                    }
+                }
+            }).Start();
+        }
+
+        private void processPacket(Packet p)
+        {
+            Console.WriteLine("Received packet with message: " + p._message);
+             switch (p._type)
+                            {
+                                //sender = incoming client
+                                //packet = data van de client
+                                case "Chat":
+                                HandleChatPacket(p);
+                                break;
+                                case "Data":
+                                HandleDataPacket(p);
+                                break;
+                                case "ActiveClients":
+                                HandleActiveClientsPacket(p);
+                                break;
+                                default: //nothing
+                                break;
+                            }
+         }
+
+        private void HandleChatPacket(Packet p)
+        {
+            on_message_receive_event(p._message);
+        }
+
+        //TODO invulling geven
+        private void HandleDataPacket(Packet p)
+        {
+            string[] data = p._message.Split(' ');
+            Console.WriteLine("MESSAGE: " + p._message);
+            if (_tabIdDict.ContainsKey(p._id))
+            {
+                _tabIdDict[p._id].UpdateValues(data);
+            }
+        }
+
+        private void HandleActiveClientsPacket(Packet p)
+        {
+            connectedIDs = p.GetMessage();
         }
 
         /**
@@ -69,8 +135,7 @@ namespace MediCare.ArtsClient
             Packet response = new Packet(_ID, "ActiveClients", "Server", "Get active clients");
             client.sendMessage(response);
 
-            Packet p1 = client.ReadMessage();
-            connectedIDs = p1.GetMessage();
+            //Packet p1 = client.ReadMessage();
         }
         private string getActiveClients()
         {
@@ -80,7 +145,11 @@ namespace MediCare.ArtsClient
         {
             if (client.isConnected())
             {
-                clientTab tab = new clientTab("tab1");
+                string[] ids = connectedIDs.Split(' ');
+                clientTab tab = new clientTab(ids[0]);
+                _tabs.Add(tab);
+                _tabIdDict.Add(ids[0], _tabs[0]);
+
                 tab.closeAllButThisButton.Click += new System.EventHandler(On_Tab_Close_All_Event);
                 tab.closeButton.Click += new System.EventHandler(On_Tab_Closed_Event);
                 this.tabControl1.Controls.Add(tab);
@@ -88,7 +157,7 @@ namespace MediCare.ArtsClient
                 {
                     while (true)
                     {
-                        Console.WriteLine(client.ReadMessage());
+                        //Console.WriteLine(client.ReadMessage());
                     }
                 }).Start();
             }
@@ -620,6 +689,8 @@ namespace MediCare.ArtsClient
             this.UseVisualStyleBackColor = true;
         }
 
+        delegate void UpdateValueCallback(string[] text);
+
         public void UpdateValues(string[] data)
         {
             if (data.Length < 8)
@@ -635,14 +706,24 @@ namespace MediCare.ArtsClient
             }
             else
             {
-                Heartbeats_Box.Text = data[0];
-                RPM_Box.Text = data[1];
-                Speed_Box.Text = data[2];
-                Distance_Box.Text = data[3];
-                Power_Box.Text = data[4];
-                Energy_Box.Text = data[5];
-                TimeRunning_Box.Text = data[6];
-                Brake_Box.Text = data[7];
+                if (this.Heartbeats_Box.InvokeRequired && this.RPM_Box.InvokeRequired && this.Speed_Box.InvokeRequired && this.Distance_Box.InvokeRequired &&
+                     this.Power_Box.InvokeRequired && this.Energy_Box.InvokeRequired && this.TimeRunning_Box.InvokeRequired && this.Brake_Box.InvokeRequired)
+                {
+                    Console.WriteLine("invoking!");
+                    UpdateValueCallback d = new UpdateValueCallback(UpdateValues);
+                    this.Invoke(d, new object[] { data });
+                }
+                else
+                {
+                    Heartbeats_Box.Text = data[0];
+                    RPM_Box.Text = data[1];
+                    Speed_Box.Text = data[2];
+                    Distance_Box.Text = data[3];
+                    Power_Box.Text = data[4];
+                    Energy_Box.Text = data[5];
+                    TimeRunning_Box.Text = data[6];
+                    Brake_Box.Text = data[7];
+                }
             }
         }
 

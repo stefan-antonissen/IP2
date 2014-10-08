@@ -188,12 +188,12 @@ namespace MediCare.Server
         {
             Packet response_Sender = new Packet("Server", "Data", packet._id, "Data Saved");
             SendPacket(stream, response_Sender);
-
-            Packet response_receiver = new Packet(packet.GetDestination(), "Data", packet.GetID(), packet.GetMessage());
-
+            SslStream sslStream;
+            clientsStreams.TryGetValue(packet._destination, out sslStream);
+            Console.WriteLine("Destination: " + packet._destination + " packet id destination: ");// + sslStream.ToString());
             try
             {
-                SendPacket(stream, response_receiver);
+                SendPacket(sslStream, packet);
             }
             catch (Exception e)
             {
@@ -242,7 +242,7 @@ namespace MediCare.Server
                 ids += key + " ";
             }
             Console.WriteLine("Active clients: " + clients.Count.ToString());
-            Packet response = new Packet("Server", "Data", p._id, ids);
+            Packet response = new Packet("Server", "ActiveClients", p._id, ids);
             SendPacket(stream, response);
         }
 
