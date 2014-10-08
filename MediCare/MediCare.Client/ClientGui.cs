@@ -10,12 +10,13 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace MediCare.Client
 {
     public partial class ClientGui : Form
     {
-        private Controller.BikeController c;
+        private Controller.BikeController bikeController;
 
         private static string server = "127.0.0.1";
         private static int port = 11000;
@@ -25,7 +26,7 @@ namespace MediCare.Client
         private readonly Timer updateDataTimer;
         private readonly Timer labelRemoveTimer;
         private bool[] checkbox_Status = { false, false, false, false, false, false, false, false };
-        private System.Windows.Forms.DataVisualization.Charting.Series[] ChartData = new System.Windows.Forms.DataVisualization.Charting.Series[8];
+        private Series[] ChartData = new Series[8];
 
         private bool first = true;
         public ClientGui()
@@ -56,15 +57,15 @@ namespace MediCare.Client
         {
             if (SelectedPort.Equals(""))
             {
-                c = new BikeController("");
+                bikeController = new BikeController("");
             }
             else if (SelectedPort.Equals("SIM"))
             {
-                c = new BikeController("SIM"); // sim is for testing methods
+                bikeController = new BikeController("SIM"); // sim is for testing methods
             }
             else
             {
-                c = new BikeController(SelectedPort);
+                bikeController = new BikeController(SelectedPort);
             }
         }
 
@@ -138,7 +139,7 @@ namespace MediCare.Client
             //string num = r.Next(1, 100).ToString();
             //string[] str = new string[] { num, num, num, num, num, num, num, num };
             // return str;
-            return c.GetStatus();
+            return bikeController.GetStatus();
         }
 
         # region Chat Box
@@ -414,8 +415,8 @@ namespace MediCare.Client
         {
             for (int i = 0; i < ChartData.Length; i++)
             {
-                System.Windows.Forms.DataVisualization.Charting.Series s = new System.Windows.Forms.DataVisualization.Charting.Series();
-                s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+                Series s = new Series();
+                s.ChartType = SeriesChartType.Line;
 
                 switch (i)
                 {
