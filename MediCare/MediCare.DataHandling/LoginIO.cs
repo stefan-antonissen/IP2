@@ -37,7 +37,7 @@ namespace MediCare.DataHandling
             return logins.TryGetValue(name, out ActualPassword) &&
                        ActualPassword.Equals(EncryptPassword(password));
         }
-        public bool KeyExist(string key)
+        public bool UserExist(string key)
         {
             return logins.ContainsKey(key);
         }

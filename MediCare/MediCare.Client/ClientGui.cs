@@ -10,12 +10,14 @@ using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using MediCare.DataHandling;
+using System.Text.RegularExpressions;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace MediCare.Client
 {
     public partial class ClientGui : Form
     {
-        private Controller.BikeController c;
+        private Controller.BikeController bikeController;
         Graph graph;
         private static string server = "127.0.0.1";
         private static int port = 11000;
@@ -24,7 +26,9 @@ namespace MediCare.Client
 
         private readonly Timer updateDataTimer;
         private readonly Timer labelRemoveTimer;
+        private Series[] ChartData = new Series[8];
 
+        private bool first = true;
         public ClientGui()
         {
             InitializeComponent();
@@ -45,7 +49,7 @@ namespace MediCare.Client
             // timer voor het verwijderen van de errortekst, 'cosmetisch'
             labelRemoveTimer = new Timer();
             labelRemoveTimer.Interval = 3000;
-            labelRemoveTimer.Tick += UpdateGUI;
+            labelRemoveTimer.Tick += UpdateLabel;
 
             Connect("SIM");
 
@@ -58,22 +62,28 @@ namespace MediCare.Client
         {
             if (SelectedPort.Equals(""))
             {
-                c = new BikeController("");
+                bikeController = new BikeController("");
             }
             else if (SelectedPort.Equals("SIM"))
             {
-                c = new BikeController("SIM"); // sim is for testing methods
+                bikeController = new BikeController("SIM"); // sim is for testing methods
             }
             else
             {
-                c = new BikeController(SelectedPort);
+                bikeController = new BikeController(SelectedPort);
             }
         }
 
         // onderstaande drie methodes zijn om de waarden in de GUI aan te passen
         private void updateValues(String[] data)
         {
-            // TODO: data versturen naar de server
+            if (first)
+            {
+                string[] timestamp = { DateTime.Now.ToString(), DateTime.Now.ToString("h:mm:ss tt") };
+                SendMeasurementData(timestamp, "Timestamp");
+                first = false;
+            }
+
             // als de lengte van de data array één is (error), dan zet je alles op 0
             if (data.Length < 8)
             {
@@ -97,7 +107,27 @@ namespace MediCare.Client
                 Energy_Box.Text = data[5];
                 TimeRunning_Box.Text = data[6];
                 Brake_Box.Text = data[7];
+                SendMeasurementData(data, "Data");
                 graph.process_Graph_Data(data);
+            }
+        }
+
+        //TODO Destination is hard-coded
+        private void SendMeasurementData(string[] data, string type)
+        {
+            string s;
+            if (data.Length < 8)
+            {
+                s = data[0] + " " + data[1];
+            }
+            else
+            {
+                s = data[0] + " " + data[1] + " " + data[2] + " " + data[3] + " " + data[4] + " " + data[5] + " " + data[6] + " " + data[7];
+            }
+            Packet p = new Packet(ID, type, "93238792", s);
+            if (client.isConnected())
+            {
+                client.sendMessage(p);
             }
         }
 
@@ -115,7 +145,7 @@ namespace MediCare.Client
             //string num = r.Next(1, 100).ToString();
             //string[] str = new string[] { num, num, num, num, num, num, num, num };
             // return str;
-            return c.GetStatus();
+            return bikeController.GetStatus();
         }
 
         # region Chat Box
@@ -237,17 +267,31 @@ namespace MediCare.Client
          */
         private void login(object sender, EventArgs e)
         {
-            if (!Password_Box.Text.Equals("") && !Username_Box.Text.Equals(""))
+            if (String.IsNullOrEmpty(Username_Box.Text) || String.IsNullOrEmpty(Password_Box.Text))
             {
-                //if (Username_Box.Text == ??? && Password_Box.Text == ???) {
-                ID = Username_Box.Text;
-                setVisibility(true);
-                updateDataTimer.Start(); // automatisch updaten van de waardes
+                Login_ERROR_Label.Text = "One or more fields are blank!";
+                labelRemoveTimer.Start();
+                this.ActiveControl = Username_Box;
             }
             else
             {
-                Login_ERROR_Label.Text = "Invalid username or password";
-                this.ActiveControl = Username_Box;
+                string value = Username_Box.Text.Substring(0, 1);
+                int id;
+                bool isNum = int.TryParse(value, out id);
+                Regex r = new Regex(@"^[0-9]{8}");
+                if ((!isNum) || (id < 1) || (id > 8) || (!r.IsMatch(Username_Box.Text)))
+                {
+                    Login_ERROR_Label.Text = "Client ID must start with 1-8 and is 8 digits long!";
+                    labelRemoveTimer.Start();
+                    this.ActiveControl = Username_Box;
+                }
+                //TODO: else if (logins are correct), ipv else (denk ik)
+                else
+                {
+                    ID = Username_Box.Text;
+                    setVisibility(true);
+                    updateDataTimer.Start(); // automatisch updaten van de waardes
+                }
             }
         }
         private void setVisibility(bool v)
@@ -304,6 +348,8 @@ namespace MediCare.Client
             object[] data = graph.getComponents();
             this.Controls.Add((System.Windows.Forms.DataVisualization.Charting.Chart) data[0]);
             for (int i = 1; i < data.Length; i++)
+                Series s = new Series();
+                s.ChartType = SeriesChartType.Line;
             {
                 this.Controls.Add((System.Windows.Forms.CheckBox) data[i]);
 

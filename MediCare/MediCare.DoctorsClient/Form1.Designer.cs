@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.IndexTab = new System.Windows.Forms.TabPage();
+            this.Signup_Button = new System.Windows.Forms.Button();
             this.typeBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -48,7 +49,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
-            this.Signup_Button = new System.Windows.Forms.Button();
+            this.Error_Label = new System.Windows.Forms.Label();
             this.IndexTab.SuspendLayout();
             this.panel1.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -70,6 +71,16 @@
             this.IndexTab.TabIndex = 0;
             this.IndexTab.Text = "Overview";
             this.IndexTab.UseVisualStyleBackColor = true;
+            // 
+            // Signup_Button
+            // 
+            this.Signup_Button.Location = new System.Drawing.Point(1131, 600);
+            this.Signup_Button.Name = "Signup_Button";
+            this.Signup_Button.Size = new System.Drawing.Size(95, 23);
+            this.Signup_Button.TabIndex = 12;
+            this.Signup_Button.Text = "Signup new user";
+            this.Signup_Button.UseVisualStyleBackColor = true;
+            this.Signup_Button.Click += new System.EventHandler(this.Signup_Button_Click);
             // 
             // typeBox
             // 
@@ -252,28 +263,28 @@
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.login);
             // 
-            // Signup_Button
+            // Error_Label
             // 
-            this.Signup_Button.Location = new System.Drawing.Point(1131, 600);
-            this.Signup_Button.Name = "Signup_Button";
-            this.Signup_Button.Size = new System.Drawing.Size(95, 23);
-            this.Signup_Button.TabIndex = 12;
-            this.Signup_Button.Text = "Signup new user";
-            this.Signup_Button.UseVisualStyleBackColor = true;
-            this.Signup_Button.Click += new System.EventHandler(this.Signup_Button_Click);
+            this.Error_Label.AutoSize = true;
+            this.Error_Label.ForeColor = System.Drawing.Color.Red;
+            this.Error_Label.Location = new System.Drawing.Point(457, 9);
+            this.Error_Label.Name = "Error_Label";
+            this.Error_Label.Size = new System.Drawing.Size(0, 13);
+            this.Error_Label.TabIndex = 26;
             // 
-            // Form1
+            // DoctorClient
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1264, 681);
+            this.Controls.Add(this.Error_Label);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.Password_Box);
             this.Controls.Add(this.Username_Box);
             this.Controls.Add(this.Password_Label);
             this.Controls.Add(this.Username_label);
             this.Controls.Add(this.LoginButton);
-            this.Name = "Form1";
+            this.Name = "DoctorClient";
             this.Text = "Doctor Client";
             this.IndexTab.ResumeLayout(false);
             this.IndexTab.PerformLayout();
@@ -307,6 +318,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button Signup_Button;
+        private System.Windows.Forms.Label Error_Label;
 
     }
 }

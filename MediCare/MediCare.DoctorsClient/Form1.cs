@@ -10,6 +10,7 @@ using System.Net.Sockets;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,9 +19,16 @@ namespace MediCare.ArtsClient
 {
     public partial class DoctorClient : Form
     {
+        private readonly System.Windows.Forms.Timer getActiveClientsTimer;
+        private readonly System.Windows.Forms.Timer labelRemoveTimer;
 
-        TcpClient client = new TcpClient("127.0.0.1", 11000);
+        private static string server = "127.0.0.1";
+        private static int port = 11000;
+        private ClientTcpConnector client;
+
         private LoginIO logins = new LoginIO();
+        private string connectedIDs = "";
+        private string _ID;
 
         public DoctorClient()
         {
@@ -29,6 +37,20 @@ namespace MediCare.ArtsClient
 
             setVisibility(false);
             this.FormClosing += on_Window_Closed_Event;
+
+            //opzetten tcp connectie
+            TcpClient TcpClient = new TcpClient(server, port);
+            client = new ClientTcpConnector(TcpClient, server);
+
+            // haalt de de actieve clients op elke 1s
+            getActiveClientsTimer = new System.Windows.Forms.Timer();
+            getActiveClientsTimer.Interval = 1000;
+            getActiveClientsTimer.Tick += updateActiveClients;
+
+            // timer voor het verwijderen van de errortekst na 3s, 'cosmetisch'
+            labelRemoveTimer = new System.Windows.Forms.Timer();
+            labelRemoveTimer.Interval = 3000;
+            labelRemoveTimer.Tick += UpdateLabel;
         }
 
         /**
@@ -42,12 +64,34 @@ namespace MediCare.ArtsClient
 
         }
 
+        private void updateActiveClients(object sender, EventArgs e)
+        {
+            Packet response = new Packet(_ID, "ActiveClients", "Server", "Get active clients");
+            client.sendMessage(response);
+
+            Packet p1 = client.ReadMessage();
+            connectedIDs = p1.GetMessage();
+        }
+        private string getActiveClients()
+        {
+            return connectedIDs;
+        }
         private void button1_Click(object sender, EventArgs e)
         {
-            clientTab tab = new clientTab("tab1");
-            tab.closeAllButThisButton.Click += new System.EventHandler(On_Tab_Close_All_Event);
-            tab.closeButton.Click += new System.EventHandler(On_Tab_Closed_Event);
-            this.tabControl1.Controls.Add(tab);
+            if (client.isConnected())
+            {
+                clientTab tab = new clientTab("tab1");
+                tab.closeAllButThisButton.Click += new System.EventHandler(On_Tab_Close_All_Event);
+                tab.closeButton.Click += new System.EventHandler(On_Tab_Closed_Event);
+                this.tabControl1.Controls.Add(tab);
+                new Thread(() =>
+                {
+                    while (true)
+                    {
+                        Console.WriteLine(client.ReadMessage());
+                    }
+                }).Start();
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -107,8 +151,8 @@ namespace MediCare.ArtsClient
             {
                 if (typeBox.Text != "")
                 {
-                    Packet p = new Packet("9", "Broadcast", "5", typeBox.Text);
-                    SendMessageToServer(client, p);
+                    Packet p = new Packet(_ID, "Broadcast", "5", typeBox.Text);
+                    client.sendMessage(p);
                     txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                     txtLog_AlignTextToBottom();
                     txtLog_ScrollToBottom();
@@ -147,21 +191,7 @@ namespace MediCare.ArtsClient
         # endregion
 
         #region TCPclient tools
-        private void SendMessageToServer(TcpClient client, Packet message)
-        {
-            BinaryFormatter formatter = new BinaryFormatter(); // the formatter that will serialize my object on my stream 
-
-            NetworkStream strm = client.GetStream(); // the stream 
-            formatter.Serialize(strm, Utils.GetPacketString(message)); // the serialization process 
-            //client.GetStream().Write(bytes, 0, bytes.Length);
-        }
-
-        private Packet ReadMessage(TcpClient client)
-        {
-            BinaryFormatter formatter = new BinaryFormatter();
-            String dataString = (String)formatter.Deserialize(client.GetStream());
-            return Utils.GetPacket(dataString);
-        }
+        //Depricated read and send methods should not be used.. use the ClientTcpConnector instead
         # endregion
 
         #region login
@@ -189,6 +219,7 @@ namespace MediCare.ArtsClient
             Password_Label.Visible = !v;
             Username_label.Visible = !v;
             LoginButton.Visible = !v;
+            Error_Label.Visible = !v;
             if (!v)
             {
                 this.ActiveControl = Username_Box;
@@ -211,32 +242,49 @@ namespace MediCare.ArtsClient
         {
             if (e.KeyCode == Keys.Enter && Password_Box.Focused)
             {
-                // if username && password are true
-                if (true)
-                {
-                    setVisibility(true);
-                }
+                login(sender, e);
             }
         }
 
         private void login(object sender, EventArgs e)
         {
             //Login to server bla bla bla
-            if (true)
+            Regex r = new Regex(@"^[0-9]{8}");
+            if (String.IsNullOrEmpty(Username_Box.Text) || String.IsNullOrEmpty(Password_Box.Text))
             {
-                setVisibility(true);
+                Error_Label.Text = "One or more fields are blank!";
+                labelRemoveTimer.Start();
+                this.ActiveControl = Username_Box;
             }
+            else if (!Username_Box.Text.Substring(0, 1).Equals("9") || (!r.IsMatch(Username_Box.Text)))
+            {
+                Error_Label.Text = "Doctor ID must start with a 9 and is 8 digits long!";
+                labelRemoveTimer.Start();
+                this.ActiveControl = Username_Box;
+            }
+            //TODO: else if (logins are correct), ipv else (denk ik)
+            else
+            {
+                _ID = Username_Box.Text;
+                setVisibility(true);
+                getActiveClientsTimer.Start(); // automatisch ophalen van de actieve verbindingen      
+            }
+        }
+        private void UpdateLabel(object sender, EventArgs e)
+        {
+            Error_Label.Text = "";
+            labelRemoveTimer.Stop();
         }
         #endregion
 
         private void on_Window_Closed_Event(object sender, FormClosingEventArgs e)
         {
-            Packet p = new Packet("9784334", "Disconnect", "24378733", "Disconnecting");
+            Packet p = new Packet(_ID, "Disconnect", "24378733", "Disconnecting");
             //send message to server that ur dying
-            if (client.Connected)
+            if (client.isConnected())
             {
-                SendMessageToServer(client, p);
-                Packet p1 = ReadMessage(client);
+                client.sendMessage(p);
+                Packet p1 = client.ReadMessage();
                 if (p1._message.Equals("LOGGED OFF") && (p1.GetDestination() == "9784334"))
                 {
                     logins.SaveLogins();
@@ -570,6 +618,32 @@ namespace MediCare.ArtsClient
             //this.TabIndex = this.tabControl1.TabCount + 1; NOT NEEDED???
             this.Text = tabName;
             this.UseVisualStyleBackColor = true;
+        }
+
+        public void UpdateValues(string[] data)
+        {
+            if (data.Length < 8)
+            {
+                Heartbeats_Box.Text = "0";
+                RPM_Box.Text = "0";
+                Speed_Box.Text = "0";
+                Distance_Box.Text = "0";
+                Power_Box.Text = "0";
+                Energy_Box.Text = "0";
+                TimeRunning_Box.Text = "0";
+                Brake_Box.Text = "0";
+            }
+            else
+            {
+                Heartbeats_Box.Text = data[0];
+                RPM_Box.Text = data[1];
+                Speed_Box.Text = data[2];
+                Distance_Box.Text = data[3];
+                Power_Box.Text = data[4];
+                Energy_Box.Text = data[5];
+                TimeRunning_Box.Text = data[6];
+                Brake_Box.Text = data[7];
+            }
         }
 
         # region Chat Box

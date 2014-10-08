@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Script.Serialization;
 
 namespace MediCare.NetworkLibrary
@@ -11,10 +6,10 @@ namespace MediCare.NetworkLibrary
     [Serializable()]
     public class Packet
     {
-        public string _id;
-        public string _type;
-        public string _destination;
-        public string _message;
+        public string _id { get; set; }
+        public string _type { get; set; }
+        public string _destination { get; set; }
+        public string _message { get; set; }
 
         // ID = id van sender; type = type bericht; destination = ID van ontvanger; message = bericht
         public Packet(string id, string type, string destination, string message)
@@ -62,11 +57,6 @@ namespace MediCare.NetworkLibrary
         public string GetID()
         {
             return _id;
-        }
-
-        public string Get_Type()
-        {
-            return _type;
         }
 
         public String GetDataString()

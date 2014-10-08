@@ -75,7 +75,7 @@ namespace MediCare
                 this.ActiveControl = Password_TextBox;
                 labelRemoveTimer.Start();
             }
-            else if (logins.KeyExist(Username_TextBox.Text))
+            else if (logins.UserExist(Username_TextBox.Text))
             {
                 Error_Label.Text = "User aleady exists!";
                 this.ActiveControl = Username_TextBox;
