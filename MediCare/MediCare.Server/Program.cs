@@ -105,6 +105,9 @@ namespace MediCare.Server
                                 case "ActiveClients":
                                 HandleActiveClients(packet, sslStream);
                                 break;
+                                case "Filelist":
+                                HandleFileList(packet, sslStream);
+                                break;
                                 default: //nothing
                                 break;
                             }
@@ -114,6 +117,7 @@ namespace MediCare.Server
             }
 
         }
+
 
         //get dataString from the ssl socket
         private string ReadStream(SslStream stream)
@@ -243,6 +247,12 @@ namespace MediCare.Server
             }
             Console.WriteLine("Active clients: " + clients.Count.ToString());
             Packet response = new Packet("Server", "ActiveClients", p._id, ids);
+            SendPacket(stream, response);
+        }
+
+        private void HandleFileList(Packet packet, SslStream stream)
+        {
+            Packet response = mIOv2.Get_Files(packet);
             SendPacket(stream, response);
         }
 

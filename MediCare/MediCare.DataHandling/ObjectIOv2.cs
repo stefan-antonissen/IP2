@@ -111,6 +111,22 @@ namespace MediCare.DataHandling
             }
         }
 
+        public Packet Get_Files(Packet p)
+        {
+            if (Directory.Exists(_dir))
+            {
+                foreach (var file in Directory.GetFiles(_dir))
+                {
+                    if (file.Equals(p._message))
+                    {
+                        Packet responsePacket = new Packet("server", "", p._id, string.Join(" ", Directory.GetFiles(file).ToString()));
+                        return responsePacket;
+                    }
+                }
+            }
+            return null;
+        }
+
         public ArrayList Read_file(Packet p)
         {
             string[] lines = File.ReadAllLines(Path.Combine(_dir,p._id,_dirDictionary[p._id] + _fileExt));
