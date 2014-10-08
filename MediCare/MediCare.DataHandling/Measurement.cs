@@ -9,7 +9,7 @@ using System.Threading.Tasks;
  * @Author: Frank
  * @version: 1.0
  * 
- * Class whick contaisn data about a Measurement.
+ * Class whick contains data about a Measurement.
  * 
  * Tested fully operational.
  *

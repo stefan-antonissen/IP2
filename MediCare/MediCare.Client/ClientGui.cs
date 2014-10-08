@@ -9,13 +9,14 @@ using MediCare.NetworkLibrary;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
+using MediCare.DataHandling;
 
 namespace MediCare.Client
 {
     public partial class ClientGui : Form
     {
         private Controller.BikeController c;
-
+        Graph graph;
         private static string server = "127.0.0.1";
         private static int port = 11000;
         private ClientTcpConnector client;
@@ -23,13 +24,16 @@ namespace MediCare.Client
 
         private readonly Timer updateDataTimer;
         private readonly Timer labelRemoveTimer;
-        private bool[] checkbox_Status = { false, false, false, false, false, false, false, false };
-        private System.Windows.Forms.DataVisualization.Charting.Series[] ChartData = new System.Windows.Forms.DataVisualization.Charting.Series[8];
 
         public ClientGui()
         {
             InitializeComponent();
-            InitializeGraph();
+            graph = new Graph();
+            graph.Initialize_Checkboxes_Client();
+            graph.InitializeChart_Client();
+            graph.InitializeGraph();
+            AddGraphToForm();
+
             this.FormClosing += on_Window_Closed_Event;
             setVisibility(false);
 
@@ -93,6 +97,7 @@ namespace MediCare.Client
                 Energy_Box.Text = data[5];
                 TimeRunning_Box.Text = data[6];
                 Brake_Box.Text = data[7];
+                graph.process_Graph_Data(data);
             }
         }
 
@@ -247,6 +252,7 @@ namespace MediCare.Client
         }
         private void setVisibility(bool v)
         {
+            graph.SetVisibibility(v);
             label1.Visible = v;
             TimeRunning_Box.Visible = v;
             label2.Visible = v;
@@ -267,17 +273,6 @@ namespace MediCare.Client
             typeBox.Visible = v;
             txtLog.Visible = v;
             listView1.Visible = v;
-            Graph.Visible = v;
-            Time_Running_CheckBox.Visible = v;
-            Speed_CheckBox.Visible = v;
-            Distance_CheckBox.Visible = v;
-            Brake_CheckBox.Visible = v;
-            Power_CheckBox.Visible = v;
-            Energy_CheckBox.Visible = v;
-            HeartBeats_CheckBox.Visible = v;
-            RPM_CheckBox.Visible = v;
-
-
 
             Password_Box.Visible = !v;
             Username_Box.Visible = !v;
@@ -304,131 +299,14 @@ namespace MediCare.Client
 
         # region Graph Datahandlers and EventListeners
 
-        private void on_Time_Running_CheckBox_Click(object sender, EventArgs e)
+        private void AddGraphToForm()
         {
-            checkbox_Status[0] = !checkbox_Status[0];
-            updateGraph(0);
-        }
-
-        private void on_Speed_CheckBox_Click(object sender, EventArgs e)
-        {
-            checkbox_Status[1] = !checkbox_Status[1];
-            updateGraph(1);
-        }
-
-        private void on_Distance_CheckBox_Click(object sender, EventArgs e)
-        {
-            checkbox_Status[2] = !checkbox_Status[2];
-            updateGraph(2);
-        }
-
-        private void on_Brake_CheckBox_Click(object sender, EventArgs e)
-        {
-            checkbox_Status[3] = !checkbox_Status[3];
-            updateGraph(3);
-        }
-
-        private void on_Power_CheckBox_Click(object sender, EventArgs e)
-        {
-            checkbox_Status[4] = !checkbox_Status[4];
-            updateGraph(4);
-        }
-
-        private void on_Energy_CheckBox_Click(object sender, EventArgs e)
-        {
-            checkbox_Status[5] = !checkbox_Status[5];
-            updateGraph(5);
-        }
-
-        private void on_HeartBeats_CheckBox_Click(object sender, EventArgs e)
-        {
-            checkbox_Status[6] = !checkbox_Status[6];
-            updateGraph(6);
-        }
-
-        private void on_RPM_CheckBox_Click(object sender, EventArgs e)
-        {
-            checkbox_Status[7] = !checkbox_Status[7];
-            updateGraph(7);
-        }
-
-        private void updateGraph(int box_ID)
-        {
-            Graph.Series.Clear();
-            for (int i = 0; i < checkbox_Status.Length; i++)
+            object[] data = graph.getComponents();
+            this.Controls.Add((System.Windows.Forms.DataVisualization.Charting.Chart) data[0]);
+            for (int i = 1; i < data.Length; i++)
             {
-                if (checkbox_Status[i])
-                {
-                    Graph.Series.Add(ChartData[i]);
-                }
-                else
-                {
-                    //do nothing
-                }
-            }
-        }
+                this.Controls.Add((System.Windows.Forms.CheckBox) data[i]);
 
-        private void InitializeGraph()
-        {
-            for (int i = 0; i < ChartData.Length; i++)
-            {
-                System.Windows.Forms.DataVisualization.Charting.Series s = new System.Windows.Forms.DataVisualization.Charting.Series();
-                s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-
-                switch (i)
-                {
-                    case 0:
-                    s.Color = Color.BurlyWood;
-                    s.Name = "Time Running";
-                    break;
-                    case 1:
-                    s.Color = Color.Blue;
-                    s.Name = "Speed";
-                    break;
-                    case 2:
-                    s.Color = Color.Cyan;
-                    s.Name = "Distance";
-                    break;
-                    case 3:
-                    s.Color = Color.DarkOrange;
-                    s.Name = "Brake";
-                    break;
-                    case 4:
-                    s.Color = Color.ForestGreen;
-                    s.Name = "Power";
-                    break;
-                    case 5:
-                    s.Color = Color.Gold;
-                    s.Name = "Energy";
-                    break;
-                    case 6:
-                    s.Color = Color.Magenta;
-                    s.Name = "Heart Beats";
-                    break;
-                    case 7:
-                    s.Color = Color.MistyRose;
-                    s.Name = "RPM";
-                    break;
-                    default:
-                    s.Color = Color.Black;
-                    s.Name = "ERROR NON EXISTEND ITEM LOADED";
-                    break;
-                }
-                ChartData[i] = s;
-            }
-        }
-
-        /**************************************\
-        * TODO: Implement Small Cashing System *
-        \**************************************/
-        private void process_Graph_Data(String[] data)
-        {
-            if (data.Length != 1) // maybe not needed if called from updatevalues
-            {
-                for (int i = 0; i < data.Length; i++)
-                {
-                    ChartData[i].Points.Add(int.Parse(data[i]));
-                }
             }
         }
 

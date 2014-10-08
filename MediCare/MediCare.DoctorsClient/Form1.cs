@@ -25,6 +25,8 @@ namespace MediCare.ArtsClient
         public DoctorClient()
         {
             InitializeComponent();
+
+
             setVisibility(false);
             this.FormClosing += on_Window_Closed_Event;
         }
@@ -263,6 +265,7 @@ namespace MediCare.ArtsClient
 
     public class clientTab : System.Windows.Forms.TabPage
     {
+        public Graph graph;
         #region define Controls
         public System.Windows.Forms.Button closeButton = new System.Windows.Forms.Button();
         public System.Windows.Forms.Button closeAllButThisButton = new System.Windows.Forms.Button();
@@ -293,6 +296,12 @@ namespace MediCare.ArtsClient
 
         public clientTab(string tabName) //loads of data etc... (joke)
         {
+            graph = new Graph();
+            graph.Initialize_Checkboxes_Doctor();
+            graph.InitializeChart_Doctor();
+            graph.InitializeGraph();
+            AddGraphToForm();
+
             #region Close Buttons
             //close button
             closeButton.Location = new System.Drawing.Point(1070, 600);
@@ -649,9 +658,20 @@ namespace MediCare.ArtsClient
 
         # endregion
 
+        #region Graph Datahandlers and EventListeners
 
+        private void AddGraphToForm()
+        {
+            object[] data = graph.getComponents();
+            Controls.Add((System.Windows.Forms.DataVisualization.Charting.Chart)data[0]);
+            for (int i = 1; i < data.Length; i++)
+            {
+                this.Controls.Add((System.Windows.Forms.CheckBox)data[i]);
 
-    #endregion
+            }
+        }
 
+        #endregion
     }
+#endregion
 }
