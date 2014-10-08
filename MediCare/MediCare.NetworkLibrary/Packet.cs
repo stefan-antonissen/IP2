@@ -64,11 +64,6 @@ namespace MediCare.NetworkLibrary
             return _id;
         }
 
-        public string Get_Type()
-        {
-            return _type;
-        }
-
         public String GetDataString()
         {
             return new JavaScriptSerializer().Serialize(this);
