@@ -9,7 +9,7 @@ namespace MediCare.DataHandling
     {
         private const string _dir = @"Measurements\";
         private const string _fileExt = ".dat";
-        public string Status { get; set; }
+        public string Status { get;  private set; }
         private Dictionary<string,string> _dirDictionary;
 
         public ObjectIOv2()
@@ -24,6 +24,8 @@ namespace MediCare.DataHandling
         /// <returns>Full Directory of created file/existing file</returns>
         public string Create_file(Packet p)
         {
+            Console.WriteLine("\nTimestamp: " + p._message);
+
             string _fulldir = "";
             Status = "busy";
 
@@ -63,7 +65,7 @@ namespace MediCare.DataHandling
         /// 
         /// </summary>
         /// <param name="p"></param>
-        public void Add(Packet p)
+        public void Add_Measurement(Packet p)
         {
             string message = p._message;
             string filename = _dirDictionary[p._id];

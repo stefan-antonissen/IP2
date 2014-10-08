@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MediCare.Controller;
 using System.Net.Sockets;
 using System.Threading;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Net;
 using MediCare.NetworkLibrary;
-using System.Collections;
 using MediCare.DataHandling;
-using System.Web.Script.Serialization;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
 
@@ -22,6 +16,7 @@ namespace MediCare.Server
         private IPAddress _localIP = IPAddress.Parse("127.0.0.1");
         private Dictionary<string, TcpClient> clients = new Dictionary<string, TcpClient>();
         private Dictionary<string, SslStream> clientsStreams = new Dictionary<string, SslStream>();
+        private ObjectIOv2 mIOv2; // do not remove, do not move and do not edit!
         
         private LoginIO logins = new LoginIO();
 
@@ -36,6 +31,8 @@ namespace MediCare.Server
 
         public Server()
         {
+            mIOv2 = new ObjectIOv2(); // do not remove, do not move and do not edit!
+
             TcpListener server = new TcpListener(_localIP, 11000);
             server.Start();
 
@@ -174,6 +171,7 @@ namespace MediCare.Server
          */
         private void HandleDisconnectPacket(Packet p, SslStream stream)
         {
+            mIOv2.Remove_client(p); // do not remove, do not move and do not edit!
             Packet response = new Packet("server", "Disconnect", p.GetID(), "LOGGED OFF");
             SendPacket(stream, response);
             Console.WriteLine(p.GetID() + " has disconnected");
@@ -271,12 +269,13 @@ namespace MediCare.Server
             string[] data = (p.GetMessage().Split(' '));
             if (data.Length < 8)
             {
-                Console.WriteLine("\nTimestamp: " + data[0] + " " + data[1]);
+                mIOv2.Create_file(p);
             }
             else
             {
                 Console.WriteLine("\nHeartbeat: " + data[0] + "\nRPM 1: " + data[1] + "\nSpeed 2: " + data[2] + "\nDistance 3: " + data[3] +
                     "\nPower 4: " + data[4] + "\nEnergy 5: " + data[5] + "\nTimeRunning 6: " + data[6] + "\nBrake 7: " + data[7]);
+                mIOv2.Add_Measurement(p);
             }
         }
 
