@@ -105,9 +105,9 @@ namespace MediCare.Server
                                 case "ActiveClients":
                                 HandleActiveClients(packet, sslStream);
                                 break;
-                                case "Filelist":
-                                HandleFileList(packet, sslStream);
-                                break;
+                                //case "Filelist":
+                                //HandleFileList(packet, sslStream);
+                                //break;
                                 default: //nothing
                                 break;
                             }
@@ -249,12 +249,16 @@ namespace MediCare.Server
             Packet response = new Packet("Server", "ActiveClients", p._id, ids);
             SendPacket(stream, response);
         }
-
-        private void HandleFileList(Packet packet, SslStream stream)
-        {
-            Packet response = mIOv2.Get_Files(packet);
-            SendPacket(stream, response);
-        }
+        /// <summary>
+        /// Methode die aangeroepen wordt als de server een request voor de files binnenkrijgt
+        /// </summary>
+        /// <param name="packet"></param>
+        /// <param name="stream"></param>
+        //private void HandleFileList(Packet packet, SslStream stream)
+        //{
+        //    Packet response = mIOv2.Get_Files(packet);
+        //    SendPacket(stream, response);
+        //}
 
         private void SendPacket(SslStream stream, Packet p)
         {

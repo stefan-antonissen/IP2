@@ -119,12 +119,12 @@ namespace MediCare.DataHandling
                 {
                     if (file.Equals(p._message))
                     {
-                        Packet responsePacket = new Packet("server", "", p._id, string.Join(" ", Directory.GetFiles(file).ToString()));
+                        Packet responsePacket = new Packet("server", "Filelist", p._id, string.Join(" ", Directory.GetFiles(file).ToString()));
                         return responsePacket;
                     }
                 }
             }
-            return null;
+            return new Packet("server", "Filelist", p._id, "No files found");
         }
 
         public ArrayList Read_file(Packet p)

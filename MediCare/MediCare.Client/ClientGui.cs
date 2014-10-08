@@ -81,6 +81,7 @@ namespace MediCare.Client
             {
                 string[] timestamp = DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss").Split();
                 SendMeasurementData(timestamp, "Timestamp");
+                client.sendMessage(new Packet(ID, "Filelist", ""));
                 first = false;
             }
 
