@@ -278,7 +278,7 @@ namespace MediCare.Client
                 string value = Username_Box.Text.Substring(0, 1);
                 int id;
                 bool isNum = int.TryParse(value, out id);
-                Regex r = new Regex(@"^[0-9]{8}");
+                Regex r = new Regex(@"^[0-9]{8}$");
                 if ((!isNum) || (id < 1) || (id > 8) || (!r.IsMatch(Username_Box.Text)))
                 {
                     Login_ERROR_Label.Text = "Client ID must start with 1-8 and is 8 digits long!";
@@ -346,13 +346,10 @@ namespace MediCare.Client
         private void AddGraphToForm()
         {
             object[] data = graph.getComponents();
-            this.Controls.Add((System.Windows.Forms.DataVisualization.Charting.Chart) data[0]);
+            this.Controls.Add((System.Windows.Forms.DataVisualization.Charting.Chart)data[0]);
             for (int i = 1; i < data.Length; i++)
-                Series s = new Series();
-                s.ChartType = SeriesChartType.Line;
             {
-                this.Controls.Add((System.Windows.Forms.CheckBox) data[i]);
-
+                this.Controls.Add((System.Windows.Forms.CheckBox)data[i]);
             }
         }
 

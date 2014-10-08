@@ -249,7 +249,7 @@ namespace MediCare.ArtsClient
         private void login(object sender, EventArgs e)
         {
             //Login to server bla bla bla
-            Regex r = new Regex(@"^[0-9]{8}");
+            Regex r = new Regex(@"^[0-9]{8}$");
             if (String.IsNullOrEmpty(Username_Box.Text) || String.IsNullOrEmpty(Password_Box.Text))
             {
                 Error_Label.Text = "One or more fields are blank!";
