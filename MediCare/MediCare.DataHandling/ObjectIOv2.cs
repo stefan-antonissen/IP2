@@ -70,7 +70,7 @@ namespace MediCare.DataHandling
 
             using (StreamWriter sw = File.AppendText(filename))
             {
-
+                sw.WriteLine(p._message);
             }	
         }
 
