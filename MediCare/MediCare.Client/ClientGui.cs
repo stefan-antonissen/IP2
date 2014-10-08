@@ -79,7 +79,7 @@ namespace MediCare.Client
         {
             if (first)
             {
-                string[] timestamp = { DateTime.Now.ToString(), DateTime.Now.ToString("h:mm:ss tt") };
+                string[] timestamp = DateTime.Now.ToString("yyyy-MM-dd HH_mm_ss").Split();
                 SendMeasurementData(timestamp, "Timestamp");
                 first = false;
             }
