@@ -175,7 +175,8 @@ namespace MediCare.Server
             Packet response = new Packet("server", "Disconnect", p.GetID(), "LOGGED OFF");
             SendPacket(stream, response);
             Console.WriteLine(p.GetID() + " has disconnected");
-            TcpClient sender = clients[p.GetDestination()];
+            TcpClient sender;
+            clients.TryGetValue(p._id, out sender);
             sender.Close();
         }
 
