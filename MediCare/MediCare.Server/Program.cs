@@ -63,7 +63,7 @@ namespace MediCare.Server
 
                             //Console.WriteLine(dataString);
 
-                            if (!clients.ContainsKey(packet.GetID()))
+                            if (!clients.ContainsKey(packet._id))
                             {
                                 clients.Add(packet.GetID(), incomingClient);
                                 clientsStreams.Add(packet.GetID(), sslStream);
