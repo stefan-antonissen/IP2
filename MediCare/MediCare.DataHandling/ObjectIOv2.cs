@@ -111,6 +111,11 @@ namespace MediCare.DataHandling
             }
         }
 
+        /// <summary>
+        /// Find all files associated with the ID sent with the packet.
+        /// </summary>
+        /// <param name="p">Packet with an ID and message, where message should be the id of requested patient</param>
+        /// <returns>Returns a packet with the correct destination, packettype and a messsage that sums up all files separated with a dash ("-")</returns>
         public Packet Get_Files(Packet p)
         {
             if (Directory.Exists(Path.Combine(_dir)))

@@ -252,7 +252,7 @@ namespace MediCare.Server
         /// <summary>
         /// Methode die aangeroepen wordt als de server een request voor de files binnenkrijgt
         /// </summary>
-        /// <param name="packet"></param>
+        /// <param name="packet">Packet waarin de message het id van de opgevraagde patient moet zijn</param>
         /// <param name="stream"></param>
         private void HandleFileList(Packet packet, SslStream stream)
         {
