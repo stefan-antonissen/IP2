@@ -113,13 +113,16 @@ namespace MediCare.DataHandling
 
         public Packet Get_Files(Packet p)
         {
-            if (Directory.Exists(_dir))
+            if (Directory.Exists(Path.Combine(_dir)))
             {
-                foreach (var file in Directory.GetFiles(_dir))
+                Console.WriteLine("checking : " + _dir);
+                Console.WriteLine(Directory.GetCurrentDirectory());
+                foreach (var file in Directory.GetDirectories(_dir))
                 {
+                    Console.WriteLine(file.ToString());
                     if (file.Equals(p._message))
                     {
-                        Packet responsePacket = new Packet("server", "Filelist", p._id, string.Join(" ", Directory.GetFiles(file).ToString()));
+                        Packet responsePacket = new Packet("server", "Filelist", p._id, string.Join(" ", Directory.GetFiles(Path.Combine(_dir, file)).ToString()));
                         return responsePacket;
                     }
                 }

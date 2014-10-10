@@ -105,9 +105,9 @@ namespace MediCare.Server
                                 case "ActiveClients":
                                 HandleActiveClients(packet, sslStream);
                                 break;
-                                //case "Filelist":
-                                //HandleFileList(packet, sslStream);
-                                //break;
+                                case "Filelist":
+                                HandleFileList(packet, sslStream);
+                                break;
                                 default: //nothing
                                 break;
                             }
@@ -254,11 +254,12 @@ namespace MediCare.Server
         /// </summary>
         /// <param name="packet"></param>
         /// <param name="stream"></param>
-        //private void HandleFileList(Packet packet, SslStream stream)
-        //{
-        //    Packet response = mIOv2.Get_Files(packet);
-        //    SendPacket(stream, response);
-        //}
+        private void HandleFileList(Packet packet, SslStream stream)
+        {
+            Packet response = mIOv2.Get_Files(packet);
+            Console.WriteLine(response.toString());
+            SendPacket(stream, response);
+        }
 
         private void SendPacket(SslStream stream, Packet p)
         {
