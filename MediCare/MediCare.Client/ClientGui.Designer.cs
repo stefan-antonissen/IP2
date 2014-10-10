@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-
             this.label1 = new System.Windows.Forms.Label();
             this.TimeRunning_Box = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
@@ -256,6 +255,7 @@
             this.Username_Box.Name = "Username_Box";
             this.Username_Box.Size = new System.Drawing.Size(100, 20);
             this.Username_Box.TabIndex = 24;
+            this.Username_Box.Text = "12345678";
             this.Username_Box.KeyDown += new System.Windows.Forms.KeyEventHandler(this.on_username_box_enter);
             // 
             // Password_Label
@@ -284,7 +284,7 @@
             this.LoginButton.TabIndex = 21;
             this.LoginButton.Text = "Login";
             this.LoginButton.UseVisualStyleBackColor = true;
-            this.LoginButton.Click += new System.EventHandler(this.login);            
+            this.LoginButton.Click += new System.EventHandler(this.login);
             // 
             // Login_ERROR_Label
             // 

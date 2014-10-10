@@ -115,14 +115,19 @@ namespace MediCare.DataHandling
         {
             if (Directory.Exists(Path.Combine(_dir)))
             {
+                DirectoryInfo di = new DirectoryInfo(_dir);
                 Console.WriteLine("checking : " + _dir);
-                Console.WriteLine(Directory.GetCurrentDirectory());
-                foreach (var file in Directory.GetDirectories(_dir))
+                foreach (DirectoryInfo map in di.GetDirectories())
                 {
-                    Console.WriteLine(file.ToString());
-                    if (file.Equals(p._message))
+                    Console.WriteLine(map.ToString());
+                    if (map.Name.Equals(p._message))
                     {
-                        Packet responsePacket = new Packet("server", "Filelist", p._id, string.Join(" ", Directory.GetFiles(Path.Combine(_dir, file)).ToString()));
+                        string message = "";
+                        foreach (FileInfo file in map.GetFiles())
+                        {
+                            message += ("-" + file.ToString());
+                        }
+                        Packet responsePacket = new Packet(p._id, "Filelist", "server", message);
                         return responsePacket;
                     }
                 }
