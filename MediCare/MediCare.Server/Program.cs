@@ -256,9 +256,18 @@ namespace MediCare.Server
         /// <param name="stream"></param>
         private void HandleFileList(Packet packet, SslStream stream)
         {
-            Packet response = mIOv2.Get_Files(packet);
-            Console.WriteLine(response.toString());
-            SendPacket(stream, response);
+            Packet response = mIOv2.Get_Files(packet); 
+            SslStream sslStream;
+            clientsStreams.TryGetValue(packet._destination, out sslStream);
+            Console.WriteLine("THIS IS THE RESPONSE PACKET " + response.toString());
+            try
+            {
+                SendPacket(sslStream, response);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         private void SendPacket(SslStream stream, Packet p)

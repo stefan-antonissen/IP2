@@ -79,6 +79,7 @@ namespace MediCare.ArtsClient
 
         private void processPacket(Packet p)
         {
+            Console.WriteLine("Type: " + p._type);
             Console.WriteLine("Received packet with message: " + p._message);
              switch (p._type)
                             {
@@ -104,6 +105,11 @@ namespace MediCare.ArtsClient
         private void HandleFilelistPacket(Packet p)
         {
             MessageBox.Show(p._message);
+            String[] files = p._message.Split('-');
+            foreach (string file in files)
+            {
+                MessageBox.Show(file);
+            }
         }
 
         private void HandleChatPacket(Packet p)
