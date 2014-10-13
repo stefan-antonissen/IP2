@@ -109,6 +109,9 @@ namespace MediCare.Server
                                 case "Filelist":
                                 HandleFileList(packet, sslStream);
                                 break;
+                                case "FileRequest":
+                                HandleFileRequest(incomingClient, packet);
+                                break;
                                 default: //nothing
                                 break;
                             }
@@ -118,7 +121,6 @@ namespace MediCare.Server
             }
 
         }
-
 
         //get dataString from the ssl socket
         private string ReadStream(SslStream stream)
@@ -292,6 +294,13 @@ namespace MediCare.Server
             {
                 Console.WriteLine(e.Message);
             }
+        }
+
+        private void HandleFileRequest(TcpClient client, Packet packet)
+        {
+            string FileRequested = packet._message;
+            client.Client.SendFile(mIOv2.Get_File(FileRequested));
+            Console.WriteLine(mIOv2.Get_File(FileRequested));
         }
 
         private void SendPacket(SslStream stream, Packet p)

@@ -97,10 +97,18 @@ namespace MediCare.ArtsClient
                                 case "Filelist":
                                 HandleFilelistPacket(p);
                                 break;
+                                case "FileRequest":
+                                HandleFileRequest(p);
+                                break;
                                 default: //nothing
                                 break;
                             }
          }
+
+        private void HandleFileRequest(Packet p)
+        {
+            throw new NotImplementedException();
+        }
 
         private void HandleFilelistPacket(Packet p)
         {
@@ -109,6 +117,8 @@ namespace MediCare.ArtsClient
             foreach (string file in files)
             {
                 MessageBox.Show(file);
+                Packet request = new Packet("98765432", "FileRequest", "server", "12345678-"+ file);
+                client.sendMessage(request);
             }
         }
 

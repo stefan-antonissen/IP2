@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using MediCare.NetworkLibrary;
 
 namespace MediCare.DataHandling
@@ -110,6 +112,28 @@ namespace MediCare.DataHandling
                 _dirDictionary.Remove(p._id);
             }
         }
+        public string Get_File(string fileName)
+        {
+            String[] files = fileName.Split('-');
+            if (Directory.Exists(Path.Combine(_dir)))
+            {
+                DirectoryInfo di = new DirectoryInfo(_dir);
+                foreach (DirectoryInfo map in di.GetDirectories())
+                {
+                    if (map.Name.Equals(files[0]))
+                    {
+                        foreach (FileInfo file in map.GetFiles())
+                        {
+                            if (file.Name.Equals(files[1]))
+                            {
+                                return file.FullName;
+                            }
+                        }
+                    }
+                }
+            }
+            return "no file found";
+        }
 
         /// <summary>
         /// Find all files associated with the ID sent with the packet.
@@ -130,8 +154,11 @@ namespace MediCare.DataHandling
                         string message = "";
                         foreach (FileInfo file in map.GetFiles())
                         {
-                            message += ("-" + file.ToString());
+                            message += (file.ToString() + "-");
                         }
+                        MessageBox.Show(message);
+                        message = message.Remove(message.Length - 1);
+                        MessageBox.Show(message);
                         Packet responsePacket = new Packet("server", "Filelist", "98765432", message);
                         return responsePacket;
                     }
