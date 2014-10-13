@@ -111,7 +111,7 @@ namespace MediCare.Client
 
         private void HandleChatPacket(Packet p)
         {
-            on_message_receive_event(p._message);
+            on_message_receive_event(p._id, p._message);
         }
 
         private void Connect(String SelectedPort)
@@ -260,9 +260,9 @@ namespace MediCare.Client
             txtLog.ScrollToCaret();
         }
 
-        public void on_message_receive_event(string _message)
+        public void on_message_receive_event(string id, string message)
         {
-            txtLog.AppendText(Environment.NewLine + "Other: " + typeBox.Text);
+            txtLog.AppendText(Environment.NewLine + "Dokter " + ID + ": " + message);
             typeBox.Text = "";
             txtLog_AlignTextToBottom();
             txtLog_ScrollToBottom();

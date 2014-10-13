@@ -105,9 +105,9 @@ namespace MediCare.ArtsClient
                     case "Filelist":
                     HandleFilelistPacket(p);
                     break;
-                                case "FileRequest":
-                                HandleFileRequest(p);
-                                break;
+                    case "FileRequest":
+                    HandleFileRequest(p);
+                    break;
                     default: //nothing
                     break;
                 }
@@ -129,11 +129,10 @@ namespace MediCare.ArtsClient
             on_message_receive_event(p._id, p._message);
         }
 
-        //TODO invulling geven
         private void HandleDataPacket(Packet p)
         {
             string[] data = p._message.Split(' ');
-            Console.WriteLine("MESSAGE: " + p._message);
+            //Console.WriteLine("MESSAGE: " + p._message);
             if (_tabIdDict.ContainsKey(p._id))
             {
                 _tabIdDict[p._id].UpdateValues(data);
@@ -149,7 +148,7 @@ namespace MediCare.ArtsClient
             int rowNumber = 1;
             foreach (string id in ids)
             {
-                if (!_ids.Contains(id))
+                if (!_ids.Contains(id) && id != "")
                 {
                     this.dataGridView1.Rows.Add(id);
                     _ids.Add(id);
@@ -235,6 +234,7 @@ namespace MediCare.ArtsClient
             _tabIdDict.Remove(this.tabControl1.SelectedTab.Name);
              this.dataGridView1.Rows.RemoveAt(this.dataGridView1.CurrentCell.RowIndex);
            */
+            _tabIdDict.Remove(this.tabControl1.SelectedTab.Name);
             this.tabControl1.Controls.RemoveAt(this.tabControl1.SelectedIndex);
         }
 
