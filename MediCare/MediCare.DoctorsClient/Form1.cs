@@ -743,6 +743,8 @@ namespace MediCare.ArtsClient
                     Energy_Box.Text = data[5];
                     TimeRunning_Box.Text = data[6];
                     Brake_Box.Text = data[7];
+                    graph.process_Graph_Data(data);
+
                 }
             }
         }
