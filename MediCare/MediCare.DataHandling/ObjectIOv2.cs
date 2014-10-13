@@ -156,9 +156,7 @@ namespace MediCare.DataHandling
                         {
                             message += (file.ToString() + "-");
                         }
-                        MessageBox.Show(message);
                         message = message.Remove(message.Length - 1);
-                        MessageBox.Show(message);
                         Packet responsePacket = new Packet("server", "Filelist", "98765432", message);
                         return responsePacket;
                     }
