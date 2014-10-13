@@ -58,6 +58,60 @@ namespace MediCare.Client
             //opzetten tcp connectie
             TcpClient TcpClient = new TcpClient(server, port);
             client = new ClientTcpConnector(TcpClient, server);
+
+            new System.Threading.Thread(() =>
+            {
+                while (true)
+                {
+                    Packet packet = null;
+                    if (client.isConnected())
+                    {
+                        Console.WriteLine("Reading message\n");
+                        packet = client.ReadMessage();
+
+                        if (packet != null)
+                        {
+                            processPacket(packet);
+                        }
+                    }
+                }
+            }).Start();
+        }
+
+        private void processPacket(Packet p)
+        {
+            Console.WriteLine("Type: " + p._type);
+            Console.WriteLine("Received packet with message: " + p._message);
+            switch (p._type)
+            {
+                //sender = incoming client
+                //packet = data van de client
+                case "Chat":
+                    HandleChatPacket(p);
+                    break;
+                case "Command":
+                    HandleCommandPacket(p);
+                    break;
+                default: //nothing
+                    break;
+            }
+        }
+
+        private void HandleCommandPacket(Packet p)
+        {
+            if (p._message == "reset")
+            {
+                bikeController.ResetBike();
+            }
+            else
+            {
+                bikeController.SetPower(int.Parse(p._message));
+            }
+        }
+
+        private void HandleChatPacket(Packet p)
+        {
+            on_message_receive_event(p._message);
         }
 
         private void Connect(String SelectedPort)
