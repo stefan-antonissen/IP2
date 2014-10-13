@@ -892,6 +892,8 @@ namespace MediCare.ArtsClient
             {
                 if (newPowerBox.Text != "")
                 {
+                    Packet p = new Packet(_id, "Command", _tabName, newPowerBox.Text);
+                    _client.sendMessage(p);
                     newPowerBox.Text = "";
                 }
             }

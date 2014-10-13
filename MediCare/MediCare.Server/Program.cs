@@ -112,6 +112,9 @@ namespace MediCare.Server
                                 case "FileRequest":
                                 HandleFileRequest(incomingClient, packet);
                                 break;
+                                case "Command":
+                                HandleCommandPacket(packet);
+                                break;
                                 default: //nothing
                                 break;
                             }
@@ -316,6 +319,11 @@ namespace MediCare.Server
             string FileRequested = packet._message;
             //client.Client.SendFile(mIOv2.Get_File(FileRequested));
             Console.WriteLine(mIOv2.Get_File(FileRequested));
+        }
+
+        private void HandleCommandPacket(Packet packet)
+        {
+            sendToDestination(packet);
         }
 
         private void SendPacket(SslStream stream, Packet p)
