@@ -132,7 +132,7 @@ namespace MediCare.DataHandling
                         {
                             message += ("-" + file.ToString());
                         }
-                        Packet responsePacket = new Packet(p._id, "Filelist", "server", message);
+                        Packet responsePacket = new Packet("server", "Filelist", "98765432", message);
                         return responsePacket;
                     }
                 }

@@ -93,10 +93,18 @@ namespace MediCare.ArtsClient
                                 case "ActiveClients":
                                 HandleActiveClientsPacket(p);
                                 break;
+                                case "Filelist":
+                                HandleFilelistPacket(p);
+                                break;
                                 default: //nothing
                                 break;
                             }
          }
+
+        private void HandleFilelistPacket(Packet p)
+        {
+            MessageBox.Show(p._message);
+        }
 
         private void HandleChatPacket(Packet p)
         {
