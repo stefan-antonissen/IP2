@@ -74,7 +74,7 @@ namespace MediCare.Controller
         {
             Thread.Sleep(400);
 
-            Console.WriteLine("set status was: " + _status);
+            //Console.WriteLine("set status was: " + _status);
 
             switch (_status)
             {

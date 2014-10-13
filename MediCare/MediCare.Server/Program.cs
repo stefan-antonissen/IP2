@@ -165,7 +165,7 @@ namespace MediCare.Server
 
         private bool IsDoctor(String id)
         {
-            return id.Substring(0, 1).Contains("9");
+            return id.StartsWith("9");
         }
 
         #endregion
@@ -226,7 +226,7 @@ namespace MediCare.Server
                 {
                     if (s.Key.StartsWith("9"))
                     {
-                        Console.WriteLine("Destination: " + s.Key);// + sslStream.ToString());
+                        //Console.WriteLine("Destination: " + s.Key);// + sslStream.ToString());
                         try
                         {
                             SendPacket(s.Value, packet);
@@ -278,7 +278,14 @@ namespace MediCare.Server
          */
         private void HandleBroadcastMessagePacket(Packet p)
         {
-            Packet response = new Packet();
+            foreach (string key in clients.Keys)
+            {
+                if (!key.StartsWith("9"))
+                {
+                    Packet response = new Packet(p._id, "Chat", key, p._message);
+                    sendToDestination(response);
+                }
+            }
         }
         /*
          * Geeft het aantal actieve clients
@@ -294,7 +301,7 @@ namespace MediCare.Server
                     ids += key + " ";
                 }
             }
-            Console.WriteLine("Active clients: " + clients.Count.ToString());
+            //Console.WriteLine("Active clients: " + clients.Count.ToString());
             Packet response = new Packet("Server", "ActiveClients", p._id, ids.Trim());
             SendPacket(stream, response);
         }
@@ -308,7 +315,7 @@ namespace MediCare.Server
             Packet response = mIOv2.Get_Files(packet); 
             SslStream sslStream;
             clientsStreams.TryGetValue(packet._destination, out sslStream);
-            Console.WriteLine("THIS IS THE RESPONSE PACKET " + response.toString());
+            //Console.WriteLine("THIS IS THE RESPONSE PACKET " + response.toString());
             try
             {
                 SendPacket(sslStream, response);

@@ -68,7 +68,6 @@ namespace MediCare.ArtsClient
                     Packet packet = null;
                     if (client.isConnected())
                     {
-                        Console.WriteLine("Reading message\n");
                         packet = client.ReadMessage();
 
                         if (packet != null)
@@ -88,7 +87,6 @@ namespace MediCare.ArtsClient
             }
             else
             {
-                Console.WriteLine("Received packet with message: " + p._message);
                 switch (p._type)
                 {
                     //sender = incoming client
@@ -105,9 +103,9 @@ namespace MediCare.ArtsClient
                     case "Filelist":
                     HandleFilelistPacket(p);
                     break;
-                                case "FileRequest":
-                                HandleFileRequest(p);
-                                break;
+                    case "FileRequest":
+                    HandleFileRequest(p);
+                    break;
                     default: //nothing
                     break;
                 }
@@ -129,11 +127,10 @@ namespace MediCare.ArtsClient
             on_message_receive_event(p._id, p._message);
         }
 
-        //TODO invulling geven
         private void HandleDataPacket(Packet p)
         {
             string[] data = p._message.Split(' ');
-            Console.WriteLine("MESSAGE: " + p._message);
+            //Console.WriteLine("MESSAGE: " + p._message);
             if (_tabIdDict.ContainsKey(p._id))
             {
                 _tabIdDict[p._id].UpdateValues(data);
@@ -149,7 +146,7 @@ namespace MediCare.ArtsClient
             int rowNumber = 1;
             foreach (string id in ids)
             {
-                if (!_ids.Contains(id))
+                if (!_ids.Contains(id) && id != "")
                 {
                     this.dataGridView1.Rows.Add(id);
                     _ids.Add(id);
@@ -177,7 +174,7 @@ namespace MediCare.ArtsClient
             {
                 if (client.isConnected())
                 {
-                    clientTab tab = new clientTab(id);
+                    clientTab tab = new clientTab(id, client, _ID);
                     if (!_tabs.Contains(tab))
                         _tabs.Add(tab);
                     if (!_tabIdDict.ContainsKey(id))
@@ -221,7 +218,7 @@ namespace MediCare.ArtsClient
             {
                 if (!this.tabControl1.Controls.ContainsKey(ids[i]))
                 {
-                    clientTab tab = new clientTab(ids[i]);
+                    clientTab tab = new clientTab(ids[i], client, _ID);
                     this.tabControl1.Controls.Add(tab);
                 }
             }
@@ -235,6 +232,7 @@ namespace MediCare.ArtsClient
             _tabIdDict.Remove(this.tabControl1.SelectedTab.Name);
              this.dataGridView1.Rows.RemoveAt(this.dataGridView1.CurrentCell.RowIndex);
            */
+            _tabIdDict.Remove(this.tabControl1.SelectedTab.Name);
             this.tabControl1.Controls.RemoveAt(this.tabControl1.SelectedIndex);
         }
 
@@ -303,12 +301,10 @@ namespace MediCare.ArtsClient
         }
 
         delegate void UpdateChat(string identification, string text);
-
         public void on_message_receive_event(string id, string message)
         { 
             if (this.txtLog.InvokeRequired)
             {
-                Console.WriteLine("invoking!");
                 UpdateChat d = new UpdateChat(on_message_receive_event);
                 this.Invoke(d, new object[] { id, message });
             }
@@ -477,8 +473,16 @@ namespace MediCare.ArtsClient
         private Label timeRunningLabel = new Label();
         #endregion
 
-        public clientTab(string tabName) //loads of data etc... (joke)
+        private ClientTcpConnector _client;
+        private string _tabName;
+        private string _id;
+
+        public clientTab(string tabName, ClientTcpConnector client, string id) //loads of data etc... (joke)
         {
+            this._client = client;
+            this._id = id;
+            this._tabName = tabName;
+
             graph = new Graph();
             graph.Initialize_Checkboxes_Doctor();
             graph.InitializeChart_Doctor();
@@ -829,7 +833,8 @@ namespace MediCare.ArtsClient
             {
                 if (typeBox.Text != "")
                 {
-
+                    Packet p = new Packet(_id, "Chat", _tabName, typeBox.Text);
+                    _client.sendMessage(p);
                     //txtLog.AppendText("");
                     chatBox.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                     chatBox_AlignTextToBottom();

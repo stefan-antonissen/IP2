@@ -82,8 +82,8 @@ namespace MediCare.Client
 
         private void processPacket(Packet p)
         {
-            Console.WriteLine("Type: " + p._type);
-            Console.WriteLine("Received packet with message: " + p._message);
+            //Console.WriteLine("Type: " + p._type);
+            //Console.WriteLine("Received packet with message: " + p._message);
             switch (p._type)
             {
                 //sender = incoming client
@@ -101,19 +101,20 @@ namespace MediCare.Client
 
         private void HandleCommandPacket(Packet p)
         {
-            if (p._message == "reset")
+            int value;
+            if (p._message.Equals("reset"))
             {
                 bikeController.ResetBike();
             }
-            else
+            else if (int.TryParse(p._message, out value))
             {
-                bikeController.SetPower(int.Parse(p._message));
+                bikeController.SetPower(value);
             }
         }
 
         private void HandleChatPacket(Packet p)
         {
-            on_message_receive_event(p._message);
+            on_message_receive_event(p._id, p._message);
         }
 
         private void Connect(String SelectedPort)
@@ -261,13 +262,22 @@ namespace MediCare.Client
             txtLog.SelectionStart = txtLog.Text.Length;
             txtLog.ScrollToCaret();
         }
-
-        public void on_message_receive_event(string _message)
+        delegate void UpdateChat(string identification, string text);
+        
+        public void on_message_receive_event(string id, string message)
         {
-            txtLog.AppendText(Environment.NewLine + "Other: " + typeBox.Text);
-            typeBox.Text = "";
-            txtLog_AlignTextToBottom();
-            txtLog_ScrollToBottom();
+            if (txtLog.InvokeRequired)
+            {
+                UpdateChat d = new UpdateChat(on_message_receive_event);
+                this.Invoke(d, new object[] { id, message });
+            }
+            else
+            {
+                txtLog.AppendText(Environment.NewLine + "Dokter " + ID + ": " + message);
+                typeBox.Text = "";
+                txtLog_AlignTextToBottom();
+                txtLog_ScrollToBottom();
+            }
         }
 
         # endregion
