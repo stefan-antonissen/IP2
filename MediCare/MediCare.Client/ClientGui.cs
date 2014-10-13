@@ -22,7 +22,9 @@ namespace MediCare.Client
         private static string server = "127.0.0.1";
         private static int port = 11000;
         private ClientTcpConnector client;
+
         string ID;
+        private Boolean userIsAuthenticated = false;
 
         private readonly Timer updateDataTimer;
         private readonly Timer labelRemoveTimer;
@@ -61,7 +63,7 @@ namespace MediCare.Client
 
             new System.Threading.Thread(() =>
             {
-                while (true)
+                while (userIsAuthenticated)
                 {
                     Packet packet = null;
                     if (client.isConnected())
@@ -346,8 +348,33 @@ namespace MediCare.Client
                 else
                 {
                     ID = Username_Box.Text;
-                    setVisibility(true);
-                    updateDataTimer.Start(); // automatisch updaten van de waardes
+                    client.sendFirstConnectPacket(ID, Password_Box.Text);
+
+                    while(!userIsAuthenticated)
+                    {
+                        //pol for packets. if packet == authenticated!
+
+                        Packet packet = null;
+                        if (client.isConnected())
+                        {
+                            packet = client.ReadMessage();
+
+                            if (packet._message.Equals("VERIFIED"))
+                            {
+                                //todo check for authenticated packet from server 
+                                userIsAuthenticated = true;
+
+                                setVisibility(true);
+                                updateDataTimer.Start(); // automatisch updaten van de waardes
+                            }
+                            else
+                            {
+                                Login_ERROR_Label.Text = "Your login is not valid!";
+                                labelRemoveTimer.Start();
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }

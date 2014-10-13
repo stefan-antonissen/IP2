@@ -49,6 +49,11 @@ namespace MediCare.NetworkLibrary
            _client.Close();
         }
 
+        public void sendFirstConnectPacket(string id, string password)
+        {
+            sendMessage(new Packet(id, "FirstConnect", "server", id + ":" + password));
+        }
+
         public Boolean isConnected()
         {
             return _client.Connected;
