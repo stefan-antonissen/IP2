@@ -260,13 +260,22 @@ namespace MediCare.Client
             txtLog.SelectionStart = txtLog.Text.Length;
             txtLog.ScrollToCaret();
         }
-
+        delegate void UpdateChat(string identification, string text);
+        
         public void on_message_receive_event(string id, string message)
         {
-            txtLog.AppendText(Environment.NewLine + "Dokter " + ID + ": " + message);
-            typeBox.Text = "";
-            txtLog_AlignTextToBottom();
-            txtLog_ScrollToBottom();
+            if (txtLog.InvokeRequired)
+            {
+                UpdateChat d = new UpdateChat(on_message_receive_event);
+                this.Invoke(d, new object[] { id, message });
+            }
+            else
+            {
+                txtLog.AppendText(Environment.NewLine + "Dokter " + ID + ": " + message);
+                typeBox.Text = "";
+                txtLog_AlignTextToBottom();
+                txtLog_ScrollToBottom();
+            }
         }
 
         # endregion

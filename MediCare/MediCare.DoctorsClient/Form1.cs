@@ -174,7 +174,7 @@ namespace MediCare.ArtsClient
             {
                 if (client.isConnected())
                 {
-                    clientTab tab = new clientTab(id);
+                    clientTab tab = new clientTab(id, client, _ID);
                     if (!_tabs.Contains(tab))
                         _tabs.Add(tab);
                     if (!_tabIdDict.ContainsKey(id))
@@ -218,7 +218,7 @@ namespace MediCare.ArtsClient
             {
                 if (!this.tabControl1.Controls.ContainsKey(ids[i]))
                 {
-                    clientTab tab = new clientTab(ids[i]);
+                    clientTab tab = new clientTab(ids[i], client, _ID);
                     this.tabControl1.Controls.Add(tab);
                 }
             }
@@ -301,7 +301,6 @@ namespace MediCare.ArtsClient
         }
 
         delegate void UpdateChat(string identification, string text);
-
         public void on_message_receive_event(string id, string message)
         { 
             if (this.txtLog.InvokeRequired)
@@ -474,8 +473,16 @@ namespace MediCare.ArtsClient
         private Label timeRunningLabel = new Label();
         #endregion
 
-        public clientTab(string tabName) //loads of data etc... (joke)
+        private ClientTcpConnector _client;
+        private string _tabName;
+        private string _id;
+
+        public clientTab(string tabName, ClientTcpConnector client, string id) //loads of data etc... (joke)
         {
+            this._client = client;
+            this._id = id;
+            this._tabName = tabName;
+
             graph = new Graph();
             graph.Initialize_Checkboxes_Doctor();
             graph.InitializeChart_Doctor();
@@ -826,7 +833,8 @@ namespace MediCare.ArtsClient
             {
                 if (typeBox.Text != "")
                 {
-
+                    Packet p = new Packet(_id, "Chat", _tabName, typeBox.Text);
+                    _client.sendMessage(p);
                     //txtLog.AppendText("");
                     chatBox.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                     chatBox_AlignTextToBottom();

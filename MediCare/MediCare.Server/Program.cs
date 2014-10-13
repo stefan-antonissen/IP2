@@ -263,7 +263,14 @@ namespace MediCare.Server
          */
         private void HandleBroadcastMessagePacket(Packet p)
         {
-            Packet response = new Packet();
+            foreach (string key in clients.Keys)
+            {
+                if (!key.StartsWith("9"))
+                {
+                    Packet response = new Packet(p._id, "Chat", key, p._message);
+                    sendToDestination(response);
+                }
+            }
         }
         /*
          * Geeft het aantal actieve clients
