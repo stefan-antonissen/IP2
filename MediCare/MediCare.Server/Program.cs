@@ -122,45 +122,53 @@ namespace MediCare.Server
 
         }
 
-        //get dataString from the ssl socket
-        private string ReadStream(SslStream stream)
-        {
-            String jsonString = "";
-
-            return jsonString;
-        }
-
         /**
          * Versturen van een chat, package blijft hetzelfde.
          * Methode is er omdat het anders uit de toon valt met andere methodes.
          */
         private void HandleChatPacket(Packet packet)
         {
-            if (sourceIsDoctor(packet))
+            if (IsDoctor(packet._id)) //if source is doctor send the message to the destination.
             {
-                SslStream sslStream;
-                clientsStreams.TryGetValue(packet._destination, out sslStream);
-                SendPacket(sslStream, packet);
+                sendToDestination(packet);
             }
-            else
+            else //else: source is client. send to all the connected doctors. (connections with an id who start with 9)
             {
-                //source is client. send to doctor
-                foreach (KeyValuePair<string, SslStream> entry in clientsStreams)
+                sendToDoctors(packet);
+            }
+        }
+
+        /// <summary>
+        /// chathelpers are used by the handleChatPacket method.
+        /// contents: sendToDoctors(Packet packet):void; sendToDestination(packet):void and isDoctor(String id):bool
+        /// </summary>
+        #region chathelpers
+        private void sendToDoctors(Packet packet)
+        {
+            foreach (KeyValuePair<string, SslStream> entry in clientsStreams)
+            {
+                if (IsDoctor(entry.Key))
                 {
-                    if (entry.Key.Substring(0, 1).Contains("9"))
-                    {
-                        SslStream sslStream = entry.Value;
-                        SendPacket(sslStream, packet);
-                        //Console.WriteLine("packetMessage: " + packet._message);
-                    }
+                    SslStream sslStream = entry.Value;
+                    SendPacket(sslStream, packet);
+                    //Console.WriteLine("packetMessage: " + packet._message);
                 }
             }
         }
 
-        private bool sourceIsDoctor(Packet packet)
+        private void sendToDestination(Packet packet)
         {
-            return packet._id.Substring(0, 1).Contains("9");
+            SslStream sslStream;
+            clientsStreams.TryGetValue(packet._destination, out sslStream);
+            SendPacket(sslStream, packet);
         }
+
+        private bool IsDoctor(String id)
+        {
+            return id.Substring(0, 1).Contains("9");
+        }
+
+        #endregion
 
         /**
          * Zoeken in de *database* naar de juiste persoons gegevens en haal daar het correcte ID op
