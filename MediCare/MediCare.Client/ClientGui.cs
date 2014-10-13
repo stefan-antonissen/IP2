@@ -53,7 +53,7 @@ namespace MediCare.Client
             labelRemoveTimer.Interval = 3000;
             labelRemoveTimer.Tick += UpdateLabel;
 
-            Connect("SIM");
+            Connect("");
 
             //opzetten tcp connectie
             TcpClient TcpClient = new TcpClient(server, port);
