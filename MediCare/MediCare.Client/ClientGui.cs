@@ -99,13 +99,14 @@ namespace MediCare.Client
 
         private void HandleCommandPacket(Packet p)
         {
-            if (p._message == "reset")
+            int value;
+            if (p._message.Equals("reset"))
             {
                 bikeController.ResetBike();
             }
-            else
+            else if (int.TryParse(p._message, out value))
             {
-                bikeController.SetPower(int.Parse(p._message));
+                bikeController.SetPower(value);
             }
         }
 
