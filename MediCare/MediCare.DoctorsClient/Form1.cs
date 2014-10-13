@@ -112,11 +112,10 @@ namespace MediCare.ArtsClient
                     break;
                 }
             }
+        }
         private void HandleFileRequest(Packet p)
         {
             throw new NotImplementedException();
-        }
-
             String[] files = p._message.Split('-');
             foreach (string file in files)
             {
