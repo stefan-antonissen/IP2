@@ -29,11 +29,10 @@
         private void InitializeComponent()
         {
             this.IndexTab = new System.Windows.Forms.TabPage();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.button1 = new System.Windows.Forms.Button();
+            this.OverviewTable = new System.Windows.Forms.DataGridView();
             this.Signup_Button = new System.Windows.Forms.Button();
             this.typeBox = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.OverviewLabel = new System.Windows.Forms.Label();
             this.txtLog = new System.Windows.Forms.TextBox();
             this.SendMessage = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -50,17 +49,16 @@
             this.Error_Label = new System.Windows.Forms.Label();
             this.ClientID = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IndexTab.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.OverviewTable)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.SuspendLayout();
             // 
             // IndexTab
             // 
-            this.IndexTab.Controls.Add(this.dataGridView1);
-            this.IndexTab.Controls.Add(this.button1);
+            this.IndexTab.Controls.Add(this.OverviewTable);
             this.IndexTab.Controls.Add(this.Signup_Button);
             this.IndexTab.Controls.Add(this.typeBox);
-            this.IndexTab.Controls.Add(this.label1);
+            this.IndexTab.Controls.Add(this.OverviewLabel);
             this.IndexTab.Controls.Add(this.txtLog);
             this.IndexTab.Controls.Add(this.SendMessage);
             this.IndexTab.Cursor = System.Windows.Forms.Cursors.Default;
@@ -72,35 +70,26 @@
             this.IndexTab.Text = "Overview";
             this.IndexTab.UseVisualStyleBackColor = true;
             // 
-            // dataGridView1
+            // OverviewTable
             // 
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.AllowUserToResizeColumns = false;
-            this.dataGridView1.AllowUserToResizeRows = false;
-            this.dataGridView1.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.OverviewTable.AllowUserToAddRows = false;
+            this.OverviewTable.AllowUserToDeleteRows = false;
+            this.OverviewTable.AllowUserToResizeColumns = false;
+            this.OverviewTable.AllowUserToResizeRows = false;
+            this.OverviewTable.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.OverviewTable.BackgroundColor = System.Drawing.SystemColors.ControlLightLight;
+            this.OverviewTable.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.OverviewTable.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.OverviewTable.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.ClientID});
-            this.dataGridView1.Location = new System.Drawing.Point(34, 53);
-            this.dataGridView1.MultiSelect = false;
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.RowHeadersWidth = 75;
-            this.dataGridView1.Size = new System.Drawing.Size(257, 253);
-            this.dataGridView1.TabIndex = 13;
-            this.dataGridView1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
-          
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(656, 32);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(70, 41);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            //this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.OverviewTable.Location = new System.Drawing.Point(34, 58);
+            this.OverviewTable.MultiSelect = false;
+            this.OverviewTable.Name = "OverviewTable";
+            this.OverviewTable.ReadOnly = true;
+            this.OverviewTable.RowHeadersWidth = 75;
+            this.OverviewTable.Size = new System.Drawing.Size(257, 253);
+            this.OverviewTable.TabIndex = 13;
+            this.OverviewTable.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
             // 
             // Signup_Button
             // 
@@ -120,14 +109,15 @@
             this.typeBox.TabIndex = 9;
             this.typeBox.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtLog_KeyDown);
             // 
-            // label1
+            // OverviewLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(31, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(52, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Overview";
+            this.OverviewLabel.AutoSize = true;
+            this.OverviewLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 20F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.OverviewLabel.Location = new System.Drawing.Point(28, 13);
+            this.OverviewLabel.Name = "OverviewLabel";
+            this.OverviewLabel.Size = new System.Drawing.Size(128, 31);
+            this.OverviewLabel.TabIndex = 0;
+            this.OverviewLabel.Text = "Overview";
             // 
             // txtLog
             // 
@@ -268,6 +258,7 @@
             this.ClientID.HeaderText = "Client ID";
             this.ClientID.Name = "ClientID";
             this.ClientID.ReadOnly = true;
+            this.ClientID.Resizable = System.Windows.Forms.DataGridViewTriState.False;
             this.ClientID.ToolTipText = "The ID of the client";
             // 
             // DoctorClient
@@ -286,7 +277,7 @@
             this.Text = "Doctor Client";
             this.IndexTab.ResumeLayout(false);
             this.IndexTab.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.OverviewTable)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -296,7 +287,7 @@
         #endregion
 
         private System.Windows.Forms.TabPage IndexTab;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label OverviewLabel;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.Button SendMessage;
         private System.Windows.Forms.TextBox typeBox;
@@ -313,8 +304,7 @@
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.Button Signup_Button;
         private System.Windows.Forms.Label Error_Label;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.DataGridView dataGridView1;
+        private System.Windows.Forms.DataGridView OverviewTable;
         private System.Windows.Forms.DataGridViewTextBoxColumn ClientID;
 
     }

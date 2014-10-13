@@ -59,7 +59,7 @@ namespace MediCare.ArtsClient
             labelRemoveTimer.Tick += UpdateLabel;
 
             // height moet je handmatig zetten.....
-            dataGridView1.RowTemplate.MinimumHeight = 50;
+            OverviewTable.RowTemplate.MinimumHeight = 50;
 
             new Thread(() =>
             {
@@ -118,7 +118,7 @@ namespace MediCare.ArtsClient
             foreach (string file in files)
             {
                 MessageBox.Show(file);
-                Packet request = new Packet("98765432", "FileRequest", "server", "12345678-"+ file);
+                Packet request = new Packet("98765432", "FileRequest", "server", "12345678-" + file);
                 client.sendMessage(request);
             }
         }
@@ -140,7 +140,6 @@ namespace MediCare.ArtsClient
         private void HandleActiveClientsPacket(Packet p)
         {
             connectedIDs = p.GetMessage();
-
             string[] ids = getActiveClients().Split(' ');
 
             int rowNumber = 1;
@@ -148,17 +147,18 @@ namespace MediCare.ArtsClient
             {
                 if (!_ids.Contains(id) && id != "")
                 {
-                    this.dataGridView1.Rows.Add(id);
+                    this.OverviewTable.Rows.Add(id);
                     _ids.Add(id);
                 }
             }
-            foreach (DataGridViewRow row in dataGridView1.Rows)
+            foreach (DataGridViewRow row in OverviewTable.Rows)
             {
                 if (row.IsNewRow)
                     continue;
                 row.HeaderCell.Value = "Client no. " + rowNumber;
                 rowNumber = rowNumber + 1;
             }
+
         }
 
         private void HandleFilelistPacket(Packet p)
@@ -169,7 +169,7 @@ namespace MediCare.ArtsClient
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            string id = (string)dataGridView1.CurrentCell.Value;
+            string id = (string)OverviewTable.CurrentCell.Value;
             if (!tabControl1.Controls.ContainsKey(id))
             {
                 if (client.isConnected())
@@ -302,7 +302,7 @@ namespace MediCare.ArtsClient
 
         delegate void UpdateChat(string identification, string text);
         public void on_message_receive_event(string id, string message)
-        { 
+        {
             if (this.txtLog.InvokeRequired)
             {
                 UpdateChat d = new UpdateChat(on_message_receive_event);
@@ -333,8 +333,7 @@ namespace MediCare.ArtsClient
         {
             //TODO: table niet of wel visible maken
             IndexTab.Visible = v;
-            button1.Visible = v;
-            label1.Visible = v;
+            OverviewLabel.Visible = v;
             tabControl1.Visible = v;
             SendMessage.Visible = v;
             typeBox.Visible = v;
@@ -810,7 +809,7 @@ namespace MediCare.ArtsClient
             if (this.chatBox.InvokeRequired)
             {
                 UpdateTextChatBox d = new UpdateTextChatBox(UpdateChatBox);
-                this.Invoke(d, new object[] {id, message});
+                this.Invoke(d, new object[] { id, message });
             }
             else
             {
