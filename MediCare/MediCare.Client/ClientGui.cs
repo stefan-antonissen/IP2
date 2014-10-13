@@ -80,8 +80,8 @@ namespace MediCare.Client
 
         private void processPacket(Packet p)
         {
-            Console.WriteLine("Type: " + p._type);
-            Console.WriteLine("Received packet with message: " + p._message);
+            //Console.WriteLine("Type: " + p._type);
+            //Console.WriteLine("Received packet with message: " + p._message);
             switch (p._type)
             {
                 //sender = incoming client

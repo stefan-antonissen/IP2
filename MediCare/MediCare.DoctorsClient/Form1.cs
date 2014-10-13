@@ -68,7 +68,6 @@ namespace MediCare.ArtsClient
                     Packet packet = null;
                     if (client.isConnected())
                     {
-                        Console.WriteLine("Reading message\n");
                         packet = client.ReadMessage();
 
                         if (packet != null)
@@ -88,7 +87,6 @@ namespace MediCare.ArtsClient
             }
             else
             {
-                Console.WriteLine("Received packet with message: " + p._message);
                 switch (p._type)
                 {
                     //sender = incoming client
@@ -308,7 +306,6 @@ namespace MediCare.ArtsClient
         { 
             if (this.txtLog.InvokeRequired)
             {
-                Console.WriteLine("invoking!");
                 UpdateChat d = new UpdateChat(on_message_receive_event);
                 this.Invoke(d, new object[] { id, message });
             }
