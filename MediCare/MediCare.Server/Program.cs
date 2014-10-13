@@ -20,6 +20,7 @@ namespace MediCare.Server
         
         private LoginIO logins = new LoginIO();
 
+        private string _toAllDoctors = "Dokter";
         //README!!! - SSL certificate needs to be coppied from MediCare.Server\ssl_cert.pfx to C:\Windows\Temp\
         private X509Certificate certificate = new X509Certificate(@"C:\Windows\Temp\ssl_cert.pfx", "medicare");
 
@@ -190,21 +191,41 @@ namespace MediCare.Server
          */
         private void HandleDataPacket(Packet packet, SslStream stream)
         {
+            SaveMeasurement(packet);
             Packet response_Sender = new Packet("Server", "Data", packet._id, "Data Saved");
             SendPacket(stream, response_Sender);
             SslStream sslStream;
-            clientsStreams.TryGetValue(packet._destination, out sslStream);
-            Console.WriteLine("Destination: " + packet._destination + " packet id destination: ");// + sslStream.ToString());
-            try
+            if (packet._destination == _toAllDoctors)
             {
-                SendPacket(sslStream, packet);
+                foreach (var s in clientsStreams)
+                {
+                    if (s.Key.StartsWith("9"))
+                    {
+                        Console.WriteLine("Destination: " + s.Key);// + sslStream.ToString());
+                        try
+                        {
+                            SendPacket(s.Value, packet);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                        }
+                    }
+                }
             }
-            catch (Exception e)
+            else
             {
-                Console.WriteLine(e.Message);
+                clientsStreams.TryGetValue(packet._destination, out sslStream); 
+                Console.WriteLine("Destination: " + packet._destination);// + sslStream.ToString());
+                try
+                {
+                    SendPacket(sslStream, packet);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
             }
-
-            SaveMeasurement(packet);
         }
 
         /**
@@ -243,7 +264,10 @@ namespace MediCare.Server
             string ids = "";
             foreach (string key in clients.Keys)
             {
-                ids += key + " ";
+                if (!key.StartsWith("9"))
+                {
+                    ids += key + " ";
+                }
             }
             Console.WriteLine("Active clients: " + clients.Count.ToString());
             Packet response = new Packet("Server", "ActiveClients", p._id, ids);
