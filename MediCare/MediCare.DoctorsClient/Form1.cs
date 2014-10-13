@@ -76,6 +76,18 @@ namespace MediCare.ArtsClient
         {
             return connectedIDs;
         }
+        private void getClients()
+        {
+            string[] ids = getActiveClients().Split(' ');
+            for (int i = 0; i < ids.Length; i++)
+            {
+                if (!this.tabControl1.Controls.ContainsKey(ids[i]))
+                {
+                    clientTab tab = new clientTab(ids[i]);
+                    this.tabControl1.Controls.Add(tab);
+                }
+            }
+        }
         private void button1_Click(object sender, EventArgs e)
         {
             if (client.isConnected())
@@ -747,5 +759,5 @@ namespace MediCare.ArtsClient
 
         #endregion
     }
-#endregion
+    #endregion
 }
