@@ -105,14 +105,29 @@ namespace MediCare.ArtsClient
                     case "Filelist":
                     HandleFilelistPacket(p);
                     break;
+                                case "FileRequest":
+                                HandleFileRequest(p);
+                                break;
                     default: //nothing
                     break;
                 }
             }
+        private void HandleFileRequest(Packet p)
+        {
+            throw new NotImplementedException();
+        }
+
+            String[] files = p._message.Split('-');
+            foreach (string file in files)
+            {
+                MessageBox.Show(file);
+                Packet request = new Packet("98765432", "FileRequest", "server", "12345678-"+ file);
+                client.sendMessage(request);
+            }
         }
         private void HandleChatPacket(Packet p)
         {
-            on_message_receive_event(p._message);
+            on_message_receive_event(p._id, p._message);
         }
 
         //TODO invulling geven
@@ -288,12 +303,27 @@ namespace MediCare.ArtsClient
             txtLog.ScrollToCaret();
         }
 
-        public void on_message_receive_event(string _message)
-        {
-            txtLog.AppendText(Environment.NewLine + "Other: " + typeBox.Text);
-            typeBox.Text = "";
-            txtLog_AlignTextToBottom();
-            txtLog_ScrollToBottom();
+        delegate void UpdateChat(string identification, string text);
+
+        public void on_message_receive_event(string id, string message)
+        { 
+            if (this.txtLog.InvokeRequired)
+            {
+                Console.WriteLine("invoking!");
+                UpdateChat d = new UpdateChat(on_message_receive_event);
+                this.Invoke(d, new object[] { id, message });
+            }
+            else
+            {
+                txtLog.AppendText(Environment.NewLine + id + ": " + message);
+                typeBox.Text = "";
+                txtLog_AlignTextToBottom();
+                txtLog_ScrollToBottom();
+            }
+            if (_tabIdDict.ContainsKey(id))
+            {
+                _tabIdDict[id].UpdateChatBox(id, message);
+            }
         }
 
         # endregion
@@ -769,6 +799,20 @@ namespace MediCare.ArtsClient
         private void txtLog_TextChanged(object sender, EventArgs e)
         {
             //nonedonexD
+        }
+
+        delegate void UpdateTextChatBox(string id, string text);
+        public void UpdateChatBox(string id, string message)
+        {
+            if (this.chatBox.InvokeRequired)
+            {
+                UpdateTextChatBox d = new UpdateTextChatBox(UpdateChatBox);
+                this.Invoke(d, new object[] {id, message});
+            }
+            else
+            {
+                chatBox.AppendText(Environment.NewLine + id + ": " + message);
+            }
         }
 
         private void sendButton_Click(object sender, EventArgs e)

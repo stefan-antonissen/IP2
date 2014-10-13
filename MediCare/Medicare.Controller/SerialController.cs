@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO.Ports;
+using System.Windows.Forms;
 
 namespace MediCare.Controller
 {
@@ -20,6 +21,7 @@ namespace MediCare.Controller
         {
             List<string> ports = GetCorrectPort();
             string port = ports[0];
+            Console.WriteLine("chosen port is: " + ports[0]);
             _comPort = new SerialPort(port, 9600);
         }
 
@@ -56,6 +58,7 @@ namespace MediCare.Controller
                             if (result.ToLower().Contains("ac"))
                             {
                                 correctport.Add(ports[i]); //add the correct port to string
+                                Console.WriteLine("Port added: " + ports[i]);
                             }
                         }
                         Console.WriteLine("Checked: " + ports[i]);
@@ -70,9 +73,13 @@ namespace MediCare.Controller
             }
             if (correctport == null || correctport.Count == 0)
             {
-                System.Windows.Forms.MessageBox.Show("no compatible device found");
-                return null;
+                //MessageBox.Show("No physical device found.\nUsing Simulator.");
+                Console.WriteLine("No physical device found.\nUsing Simulator.");
+                correctport.Add("SIM");
+                return correctport;
+                //return null;
             }
+            Console.WriteLine(correctport);
             return correctport;
         }
 

@@ -28,6 +28,8 @@ namespace MediCare.Client
         private readonly Timer labelRemoveTimer;
         private Series[] ChartData = new Series[8];
 
+        private string _defaultDestination = "Dokter";
+
         private bool first = true;
         public ClientGui()
         {
@@ -51,11 +53,65 @@ namespace MediCare.Client
             labelRemoveTimer.Interval = 3000;
             labelRemoveTimer.Tick += UpdateLabel;
 
-            Connect("SIM");
+            Connect("");
 
             //opzetten tcp connectie
             TcpClient TcpClient = new TcpClient(server, port);
             client = new ClientTcpConnector(TcpClient, server);
+
+            new System.Threading.Thread(() =>
+            {
+                while (true)
+                {
+                    Packet packet = null;
+                    if (client.isConnected())
+                    {
+                        Console.WriteLine("Reading message\n");
+                        packet = client.ReadMessage();
+
+                        if (packet != null)
+                        {
+                            processPacket(packet);
+                        }
+                    }
+                }
+            }).Start();
+        }
+
+        private void processPacket(Packet p)
+        {
+            Console.WriteLine("Type: " + p._type);
+            Console.WriteLine("Received packet with message: " + p._message);
+            switch (p._type)
+            {
+                //sender = incoming client
+                //packet = data van de client
+                case "Chat":
+                    HandleChatPacket(p);
+                    break;
+                case "Command":
+                    HandleCommandPacket(p);
+                    break;
+                default: //nothing
+                    break;
+            }
+        }
+
+        private void HandleCommandPacket(Packet p)
+        {
+            if (p._message == "reset")
+            {
+                bikeController.ResetBike();
+            }
+            else
+            {
+                bikeController.SetPower(int.Parse(p._message));
+            }
+        }
+
+        private void HandleChatPacket(Packet p)
+        {
+            on_message_receive_event(p._message);
         }
 
         private void Connect(String SelectedPort)
@@ -81,7 +137,7 @@ namespace MediCare.Client
             {
                 string[] timestamp = DateTime.Now.ToString("yyyy_MM_dd HH_mm_ss").Split();
                 SendMeasurementData(timestamp, "Timestamp");
-                client.sendMessage(new Packet(ID, "Filelist", "12345678"));
+                client.sendMessage(new Packet(ID, "Filelist", "98765432", "12345678"));
                 first = false;
             }
 
@@ -125,7 +181,7 @@ namespace MediCare.Client
             {
                 s = data[0] + " " + data[1] + " " + data[2] + " " + data[3] + " " + data[4] + " " + data[5] + " " + data[6] + " " + data[7];
             }
-            Packet p = new Packet(ID, type, "98765432", s);
+            Packet p = new Packet(ID, type, _defaultDestination, s);
             if (client.isConnected())
             {
                 client.sendMessage(p);
@@ -160,7 +216,7 @@ namespace MediCare.Client
         {
             if (typeBox.Text != "")
             {
-                Packet p = new Packet(ID, "Chat", "93238792", typeBox.Text);
+                Packet p = new Packet(ID, "Chat", _defaultDestination, typeBox.Text);
                 client.sendMessage(p);
                 txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                 txtLog_AlignTextToBottom();
@@ -175,7 +231,7 @@ namespace MediCare.Client
             {
                 if (typeBox.Text != "")
                 {
-                    Packet p = new Packet(ID, "Chat", "93238792", typeBox.Text);
+                    Packet p = new Packet(ID, "Chat", _defaultDestination, typeBox.Text);
                     client.sendMessage(p);
                     txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                     txtLog_AlignTextToBottom();
@@ -225,7 +281,7 @@ namespace MediCare.Client
 
         private void on_Window_Closed_Event(object sender, FormClosingEventArgs e)
         {
-            Packet p = new Packet(ID, "Disconnect", "92378733", "Disconnecting");
+            Packet p = new Packet(ID, "Disconnect", _defaultDestination, "Disconnecting");
             //send message to server that ur dying
             if (client.isConnected())
             {
