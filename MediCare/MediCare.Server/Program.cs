@@ -179,8 +179,23 @@ namespace MediCare.Server
          */
         private void HandleFirstConnectPacket(Packet p, SslStream stream)
         {
-            Packet response = new Packet("Server", "FirstConnect", p._id, "VERIFIED");
-            SendPacket(stream, response);
+            if(loginIsValid(p._message))
+            {
+                Packet response = new Packet("Server", "FirstConnect", p._id, "VERIFIED");
+                SendPacket(stream, response);
+            }
+            else
+            {
+                Packet response = new Packet("Server", "FirstConnect", p._id, "DENIED");
+                SendPacket(stream, response);
+            }
+        }
+
+        private bool loginIsValid(string credentials)
+        {
+            logins.add("12345678:asd"); //TODO Remove
+            logins.add("98765432:asd"); //TODO Remove
+            return logins.login(credentials);
         }
 
         /**
