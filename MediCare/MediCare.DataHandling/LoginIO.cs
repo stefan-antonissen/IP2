@@ -76,7 +76,7 @@ namespace MediCare.DataHandling
          */
         public static string EncryptPassword(string data)
         {
-            string EncryptionKey = "MAKV2SPBNI99212";
+            string EncryptionKey = "GNCuUnnbp4iaVWDOIjxS";
             byte[] clearBytes = Encoding.Unicode.GetBytes(data);
             using (Aes encryptor = Aes.Create())
             {

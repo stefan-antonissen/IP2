@@ -189,6 +189,7 @@
             this.Username_Box.Size = new System.Drawing.Size(100, 20);
             this.Username_Box.TabIndex = 24;
             this.Username_Box.KeyDown += new System.Windows.Forms.KeyEventHandler(this.on_username_box_enter);
+            this.Username_Box.Text = "98765432";
             // 
             // Password_Label
             // 

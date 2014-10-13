@@ -105,6 +105,9 @@ namespace MediCare.Server
                                 case "ActiveClients":
                                 HandleActiveClients(packet, sslStream);
                                 break;
+                                case "Filelist":
+                                HandleFileList(packet, sslStream);
+                                break;
                                 default: //nothing
                                 break;
                             }
@@ -114,6 +117,7 @@ namespace MediCare.Server
             }
 
         }
+
 
         //get dataString from the ssl socket
         private string ReadStream(SslStream stream)
@@ -175,7 +179,8 @@ namespace MediCare.Server
             Packet response = new Packet("server", "Disconnect", p.GetID(), "LOGGED OFF");
             SendPacket(stream, response);
             Console.WriteLine(p.GetID() + " has disconnected");
-            TcpClient sender = clients[p.GetDestination()];
+            TcpClient sender;
+            clients.TryGetValue(p._id, out sender);
             sender.Close();
         }
 
@@ -187,12 +192,12 @@ namespace MediCare.Server
         {
             Packet response_Sender = new Packet("Server", "Data", packet._id, "Data Saved");
             SendPacket(stream, response_Sender);
-
-            Packet response_receiver = new Packet(packet.GetDestination(), "Data", packet.GetID(), packet.GetMessage());
-
+            SslStream sslStream;
+            clientsStreams.TryGetValue(packet._destination, out sslStream);
+            Console.WriteLine("Destination: " + packet._destination + " packet id destination: ");// + sslStream.ToString());
             try
             {
-                SendPacket(stream, response_receiver);
+                SendPacket(sslStream, packet);
             }
             catch (Exception e)
             {
@@ -241,7 +246,18 @@ namespace MediCare.Server
                 ids += key + " ";
             }
             Console.WriteLine("Active clients: " + clients.Count.ToString());
-            Packet response = new Packet("Server", "Data", p._id, ids);
+            Packet response = new Packet("Server", "ActiveClients", p._id, ids);
+            SendPacket(stream, response);
+        }
+        /// <summary>
+        /// Methode die aangeroepen wordt als de server een request voor de files binnenkrijgt
+        /// </summary>
+        /// <param name="packet">Packet waarin de message het id van de opgevraagde patient moet zijn</param>
+        /// <param name="stream"></param>
+        private void HandleFileList(Packet packet, SslStream stream)
+        {
+            Packet response = mIOv2.Get_Files(packet);
+            Console.WriteLine(response.toString());
             SendPacket(stream, response);
         }
 
@@ -273,8 +289,8 @@ namespace MediCare.Server
             }
             else
             {
-                Console.WriteLine("\nHeartbeat: " + data[0] + "\nRPM 1: " + data[1] + "\nSpeed 2: " + data[2] + "\nDistance 3: " + data[3] +
-                    "\nPower 4: " + data[4] + "\nEnergy 5: " + data[5] + "\nTimeRunning 6: " + data[6] + "\nBrake 7: " + data[7]);
+                //Console.WriteLine("\nHeartbeat: " + data[0] + "\nRPM 1: " + data[1] + "\nSpeed 2: " + data[2] + "\nDistance 3: " + data[3] +
+                //    "\nPower 4: " + data[4] + "\nEnergy 5: " + data[5] + "\nTimeRunning 6: " + data[6] + "\nBrake 7: " + data[7]);
                 mIOv2.Add_Measurement(p);
             }
         }

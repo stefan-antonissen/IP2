@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 using MediCare.NetworkLibrary;
 
 namespace MediCare.DataHandling
@@ -11,6 +14,8 @@ namespace MediCare.DataHandling
         private const string _fileExt = ".dat";
         public string Status { get;  private set; }
         private Dictionary<string,string> _dirDictionary;
+        private const string EncryptionKey = "X10j6CZgLK24OESeXAoq";
+        private Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
 
         public ObjectIOv2()
         {
@@ -77,7 +82,24 @@ namespace MediCare.DataHandling
 
             using (StreamWriter sw = File.AppendText(Path.Combine(_dir, p._id, filename + _fileExt)))
             {
-                sw.WriteLine(p._message);
+                
+                byte[] clearBytes = Encoding.Unicode.GetBytes(p._message);
+                string encryptedData = "";
+                using (Aes encryptor = Aes.Create())
+                {
+                    encryptor.Key = pdb.GetBytes(32);
+                    encryptor.IV = pdb.GetBytes(16);
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+                        {
+                            cs.Write(clearBytes, 0, clearBytes.Length);
+                            cs.Close();
+                        }
+                        encryptedData = Convert.ToBase64String(ms.ToArray());
+                    }
+                }
+                sw.WriteLine(encryptedData);
             }
         }
 
@@ -87,6 +109,65 @@ namespace MediCare.DataHandling
             {
                 _dirDictionary.Remove(p._id);
             }
+        }
+
+        /// <summary>
+        /// Find all files associated with the ID sent with the packet.
+        /// </summary>
+        /// <param name="p">Packet with an ID and message, where message should be the id of requested patient</param>
+        /// <returns>Returns a packet with the correct destination, packettype and a messsage that sums up all files separated with a dash ("-")</returns>
+        public Packet Get_Files(Packet p)
+        {
+            if (Directory.Exists(Path.Combine(_dir)))
+            {
+                DirectoryInfo di = new DirectoryInfo(_dir);
+                Console.WriteLine("checking : " + _dir);
+                foreach (DirectoryInfo map in di.GetDirectories())
+                {
+                    Console.WriteLine(map.ToString());
+                    if (map.Name.Equals(p._message))
+                    {
+                        string message = "";
+                        foreach (FileInfo file in map.GetFiles())
+                        {
+                            message += ("-" + file.ToString());
+                        }
+                        Packet responsePacket = new Packet("server", "Filelist", "98765432", message);
+                        return responsePacket;
+                    }
+                }
+            }
+            return new Packet("server", "Filelist", p._id, "No files found");
+        }
+
+        public ArrayList Read_file(Packet p)
+        {
+            string[] lines = File.ReadAllLines(Path.Combine(_dir,p._id,_dirDictionary[p._id] + _fileExt));
+            foreach (var line in lines)
+            {
+                Console.WriteLine(Decrypt(line));
+            }
+            return null;
+        }
+
+        private string Decrypt(string cipherText)
+        {
+            byte[] cipherBytes = Convert.FromBase64String(cipherText);
+            using (Aes encryptor = Aes.Create())
+            {
+                encryptor.Key = pdb.GetBytes(32);
+                encryptor.IV = pdb.GetBytes(16);
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
+                    {
+                        cs.Write(cipherBytes, 0, cipherBytes.Length);
+                        cs.Close();
+                    }
+                    cipherText = Encoding.Unicode.GetString(ms.ToArray());
+                }
+            }
+            return cipherText;
         }
 
         /// <summary>
