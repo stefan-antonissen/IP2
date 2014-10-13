@@ -17,7 +17,7 @@ namespace MediCare.Server
         private Dictionary<string, TcpClient> clients = new Dictionary<string, TcpClient>();
         private Dictionary<string, SslStream> clientsStreams = new Dictionary<string, SslStream>();
         private ObjectIOv2 mIOv2; // do not remove, do not move and do not edit!
-        
+
         private LoginIO logins = new LoginIO();
 
         //README!!! - SSL certificate needs to be coppied from MediCare.Server\ssl_cert.pfx to C:\Windows\Temp\
@@ -41,7 +41,7 @@ namespace MediCare.Server
             while (true)
             {
                 incomingClient = server.AcceptTcpClient();
-                
+
                 new Thread(() =>
                 {
                     Console.WriteLine("Connection found!");
@@ -67,7 +67,7 @@ namespace MediCare.Server
                             {
                                 clients.Add(packet.GetID(), incomingClient);
                                 clientsStreams.Add(packet.GetID(), sslStream);
-                                
+
                                 #region DEBUG
 #if DEBUG
                                 Console.WriteLine("ID: " + packet.GetID() + "incomingClient: " + incomingClient.ToString());
@@ -76,7 +76,7 @@ namespace MediCare.Server
                                 #endregion
                             }
 
-                            Console.WriteLine("Client connected");
+                            Console.WriteLine("Incoming action" + packet._type);
                             switch (packet._type)
                             {
                                 //sender = incoming client
@@ -194,7 +194,7 @@ namespace MediCare.Server
             SendPacket(stream, response_Sender);
             SslStream sslStream;
             clientsStreams.TryGetValue(packet._destination, out sslStream);
-            Console.WriteLine("Destination: " + packet._destination + " packet id destination: ");// + sslStream.ToString());
+         //   Console.WriteLine("Destination: " + packet._destination + " packet id destination: ");// + sslStream.ToString());
             try
             {
                 SendPacket(sslStream, packet);
@@ -246,7 +246,7 @@ namespace MediCare.Server
                 ids += key + " ";
             }
             Console.WriteLine("Active clients: " + clients.Count.ToString());
-            Packet response = new Packet("Server", "ActiveClients", p._id, ids);
+            Packet response = new Packet("Server", "ActiveClients", p._id, ids.Trim());
             SendPacket(stream, response);
         }
         /// <summary>

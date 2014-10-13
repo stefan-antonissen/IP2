@@ -33,11 +33,11 @@ namespace MediCare.ArtsClient
 
         private Dictionary<string, clientTab> _tabIdDict = new Dictionary<string, clientTab>();
         private List<clientTab> _tabs = new List<clientTab>();
+        private List<string> _ids = new List<string>();
 
         public DoctorClient()
         {
             InitializeComponent();
-
 
             setVisibility(false);
             this.FormClosing += on_Window_Closed_Event;
@@ -45,18 +45,21 @@ namespace MediCare.ArtsClient
             //opzetten tcp connectie
             TcpClient TcpClient = new TcpClient(server, port);
             client = new ClientTcpConnector(TcpClient, server);
-            
-            
+
+
             // haalt de de actieve clients op elke 1s
             getActiveClientsTimer = new System.Windows.Forms.Timer();
             getActiveClientsTimer.Interval = 1000;
             getActiveClientsTimer.Tick += updateActiveClients;
-            
- 
+
+
             // timer voor het verwijderen van de errortekst na 3s, 'cosmetisch'
             labelRemoveTimer = new System.Windows.Forms.Timer();
             labelRemoveTimer.Interval = 3000;
             labelRemoveTimer.Tick += UpdateLabel;
+
+            // height moet je handmatig zetten.....
+            dataGridView1.RowTemplate.MinimumHeight = 50;
 
             new Thread(() =>
             {
@@ -79,33 +82,34 @@ namespace MediCare.ArtsClient
 
         private void processPacket(Packet p)
         {
-            Console.WriteLine("Received packet with message: " + p._message);
-             switch (p._type)
-                            {
-                                //sender = incoming client
-                                //packet = data van de client
-                                case "Chat":
-                                HandleChatPacket(p);
-                                break;
-                                case "Data":
-                                HandleDataPacket(p);
-                                break;
-                                case "ActiveClients":
-                                HandleActiveClientsPacket(p);
-                                break;
-                                case "Filelist":
-                                HandleFilelistPacket(p);
-                                break;
-                                default: //nothing
-                                break;
-                            }
-         }
-
-        private void HandleFilelistPacket(Packet p)
-        {
-            MessageBox.Show(p._message);
+            if (this.InvokeRequired)
+            {
+                this.Invoke(new Action<Packet>(processPacket), new object[] { p });
+            }
+            else
+            {
+                Console.WriteLine("Received packet with message: " + p._message);
+                switch (p._type)
+                {
+                    //sender = incoming client
+                    //packet = data van de client
+                    case "Chat":
+                    HandleChatPacket(p);
+                    break;
+                    case "Data":
+                    HandleDataPacket(p);
+                    break;
+                    case "ActiveClients":
+                    HandleActiveClientsPacket(p);
+                    break;
+                    case "Filelist":
+                    HandleFilelistPacket(p);
+                    break;
+                    default: //nothing
+                    break;
+                }
+            }
         }
-
         private void HandleChatPacket(Packet p)
         {
             on_message_receive_event(p._message);
@@ -125,6 +129,52 @@ namespace MediCare.ArtsClient
         private void HandleActiveClientsPacket(Packet p)
         {
             connectedIDs = p.GetMessage();
+
+            string[] ids = getActiveClients().Split(' ');
+
+            int rowNumber = 1;
+            foreach (string id in ids)
+            {
+                if (!_ids.Contains(id))
+                {
+                    this.dataGridView1.Rows.Add(id);
+                    _ids.Add(id);
+                }
+            }
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                if (row.IsNewRow)
+                    continue;
+                row.HeaderCell.Value = "Client no. " + rowNumber;
+                rowNumber = rowNumber + 1;
+            }
+        }
+
+        private void HandleFilelistPacket(Packet p)
+        {
+            MessageBox.Show(p._message);
+        }
+
+
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            string id = (string)dataGridView1.CurrentCell.Value;
+            if (!tabControl1.Controls.ContainsKey(id))
+            {
+                if (client.isConnected())
+                {
+                    clientTab tab = new clientTab(id);
+                    if (!_tabs.Contains(tab))
+                        _tabs.Add(tab);
+                    if (!_tabIdDict.ContainsKey(id))
+                        _tabIdDict.Add(id, tab);
+
+                    tab.closeAllButThisButton.Click += new System.EventHandler(On_Tab_Close_All_Event);
+                    tab.closeButton.Click += new System.EventHandler(On_Tab_Closed_Event);
+                    this.tabControl1.Controls.Add(tab);
+                    this.tabControl1.SelectedTab = tab;
+                }
+            }
         }
 
         /**
@@ -142,13 +192,14 @@ namespace MediCare.ArtsClient
         {
             Packet response = new Packet(_ID, "ActiveClients", "Server", "Get active clients");
             client.sendMessage(response);
-
-            //Packet p1 = client.ReadMessage();
         }
+
         private string getActiveClients()
         {
             return connectedIDs;
         }
+
+        // code wordt niet gebruikt?
         private void getClients()
         {
             string[] ids = getActiveClients().Split(' ');
@@ -161,48 +212,16 @@ namespace MediCare.ArtsClient
                 }
             }
         }
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (client.isConnected())
-            {
-                string[] ids = connectedIDs.Split(' ');
-                clientTab tab = new clientTab(ids[0]);
-                _tabs.Add(tab);
-                _tabIdDict.Add(ids[0], _tabs[0]);
-
-                tab.closeAllButThisButton.Click += new System.EventHandler(On_Tab_Close_All_Event);
-                tab.closeButton.Click += new System.EventHandler(On_Tab_Closed_Event);
-                this.tabControl1.Controls.Add(tab);
-                new Thread(() =>
-                {
-                    while (true)
-                    {
-                        //Console.WriteLine(client.ReadMessage());
-                    }
-                }).Start();
-            }
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            clientTab tab = new clientTab("tab2");
-            tab.closeAllButThisButton.Click += new System.EventHandler(On_Tab_Close_All_Event);
-            tab.closeButton.Click += new System.EventHandler(On_Tab_Closed_Event);
-            this.tabControl1.Controls.Add(tab);
-        }
-
-        private void button3_Click(object sender, EventArgs e)
-        {
-            clientTab tab = new clientTab("tab3");
-            tab.closeAllButThisButton.Click += new System.EventHandler(On_Tab_Close_All_Event);
-            tab.closeButton.Click += new System.EventHandler(On_Tab_Closed_Event);
-            this.tabControl1.Controls.Add(tab);
-        }
 
         # region TabControl Event Handlers
         private void On_Tab_Closed_Event(Object Sender, EventArgs e)
         {
-            this.tabControl1.Controls.RemoveAt(tabControl1.SelectedIndex);
+            /* 'Clean' code als een client disocnnect
+            _ids.Remove(this.tabControl1.SelectedTab.Name);
+            _tabIdDict.Remove(this.tabControl1.SelectedTab.Name);
+             this.dataGridView1.Rows.RemoveAt(this.dataGridView1.CurrentCell.RowIndex);
+           */
+            this.tabControl1.Controls.RemoveAt(this.tabControl1.SelectedIndex);
         }
 
         //Skip zero because that is our main screen. Also dont close the Current Tab
@@ -287,16 +306,14 @@ namespace MediCare.ArtsClient
 
         private void setVisibility(bool v)
         {
+            //TODO: table niet of wel visible maken
             IndexTab.Visible = v;
-            button3.Visible = v;
-            button2.Visible = v;
             button1.Visible = v;
             label1.Visible = v;
             tabControl1.Visible = v;
             SendMessage.Visible = v;
             typeBox.Visible = v;
             txtLog.Visible = v;
-            panel1.Visible = v;
             Password_Box.Visible = v;
             Username_Box.Visible = v;
             Password_Label.Visible = v;
@@ -400,35 +417,35 @@ namespace MediCare.ArtsClient
 
     #region Tab generation
 
-    public class clientTab : System.Windows.Forms.TabPage
+    public class clientTab : TabPage
     {
         public Graph graph;
         #region define Controls
-        public System.Windows.Forms.Button closeButton = new System.Windows.Forms.Button();
-        public System.Windows.Forms.Button closeAllButThisButton = new System.Windows.Forms.Button();
-        private System.Windows.Forms.TextBox chatBox = new System.Windows.Forms.TextBox();
-        private System.Windows.Forms.TextBox typeBox = new System.Windows.Forms.TextBox();
-        private System.Windows.Forms.Button sendButtonClient = new System.Windows.Forms.Button();
+        public Button closeButton = new Button();
+        public Button closeAllButThisButton = new Button();
+        private TextBox chatBox = new TextBox();
+        private TextBox typeBox = new TextBox();
+        private Button sendButtonClient = new Button();
 
-        private System.Windows.Forms.Button updatePowerButton = new System.Windows.Forms.Button();
-        public System.Windows.Forms.TextBox newPowerBox = new System.Windows.Forms.TextBox();
-        private System.Windows.Forms.Label newPowerLabel = new System.Windows.Forms.Label();
-        private System.Windows.Forms.Label RPMLabel = new System.Windows.Forms.Label();
-        private System.Windows.Forms.TextBox Speed_Box = new System.Windows.Forms.TextBox();
-        private System.Windows.Forms.TextBox Distance_Box = new System.Windows.Forms.TextBox();
-        private System.Windows.Forms.TextBox Brake_Box = new System.Windows.Forms.TextBox();
-        private System.Windows.Forms.TextBox Power_Box = new System.Windows.Forms.TextBox();
-        private System.Windows.Forms.TextBox Energy_Box = new System.Windows.Forms.TextBox();
-        private System.Windows.Forms.TextBox Heartbeats_Box = new System.Windows.Forms.TextBox();
-        private System.Windows.Forms.TextBox RPM_Box = new System.Windows.Forms.TextBox();
-        private System.Windows.Forms.Label speedLabel = new System.Windows.Forms.Label();
-        private System.Windows.Forms.Label brakeLabel = new System.Windows.Forms.Label();
-        private System.Windows.Forms.Label powerLabel = new System.Windows.Forms.Label();
-        private System.Windows.Forms.Label heartBeatsLabel = new System.Windows.Forms.Label();
-        private System.Windows.Forms.Label energyLabel = new System.Windows.Forms.Label();
-        private System.Windows.Forms.Label distanceLabel = new System.Windows.Forms.Label();
-        private System.Windows.Forms.TextBox TimeRunning_Box = new System.Windows.Forms.TextBox();
-        private System.Windows.Forms.Label timeRunningLabel = new System.Windows.Forms.Label();
+        private Button updatePowerButton = new Button();
+        public TextBox newPowerBox = new TextBox();
+        private Label newPowerLabel = new Label();
+        private Label RPMLabel = new Label();
+        private TextBox Speed_Box = new TextBox();
+        private TextBox Distance_Box = new TextBox();
+        private TextBox Brake_Box = new TextBox();
+        private TextBox Power_Box = new TextBox();
+        private TextBox Energy_Box = new TextBox();
+        private TextBox Heartbeats_Box = new TextBox();
+        private TextBox RPM_Box = new TextBox();
+        private Label speedLabel = new Label();
+        private Label brakeLabel = new Label();
+        private Label powerLabel = new Label();
+        private Label heartBeatsLabel = new Label();
+        private Label energyLabel = new Label();
+        private Label distanceLabel = new Label();
+        private TextBox TimeRunning_Box = new TextBox();
+        private Label timeRunningLabel = new Label();
         #endregion
 
         public clientTab(string tabName) //loads of data etc... (joke)
@@ -590,7 +607,7 @@ namespace MediCare.ArtsClient
             powerLabel.Text = "Power";
             #endregion
 
-            #region Eneergy
+            #region Energy
             //
             //   ENERGY
             //
@@ -729,7 +746,6 @@ namespace MediCare.ArtsClient
                 if (this.Heartbeats_Box.InvokeRequired && this.RPM_Box.InvokeRequired && this.Speed_Box.InvokeRequired && this.Distance_Box.InvokeRequired &&
                      this.Power_Box.InvokeRequired && this.Energy_Box.InvokeRequired && this.TimeRunning_Box.InvokeRequired && this.Brake_Box.InvokeRequired)
                 {
-                    Console.WriteLine("invoking!");
                     UpdateValueCallback d = new UpdateValueCallback(UpdateValues);
                     this.Invoke(d, new object[] { data });
                 }
@@ -847,7 +863,6 @@ namespace MediCare.ArtsClient
 
             }
         }
-
         #endregion
     }
     #endregion
