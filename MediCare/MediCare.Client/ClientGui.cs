@@ -23,7 +23,7 @@ namespace MediCare.Client
         private static int port = 11000;
         private ClientTcpConnector client;
 
-        string ID;
+        string _ID;
         private Boolean userIsAuthenticated = false;
 
         private readonly Timer updateDataTimer;
@@ -140,7 +140,7 @@ namespace MediCare.Client
             {
                 string[] timestamp = DateTime.Now.ToString("yyyy_MM_dd HH_mm_ss").Split();
                 SendMeasurementData(timestamp, "Timestamp");
-                client.sendMessage(new Packet(ID, "Filelist", "98765432", "12345678"));
+                client.sendMessage(new Packet(_ID, "Filelist", "98765432", "12345678"));
                 first = false;
             }
 
@@ -184,7 +184,7 @@ namespace MediCare.Client
             {
                 s = data[0] + " " + data[1] + " " + data[2] + " " + data[3] + " " + data[4] + " " + data[5] + " " + data[6] + " " + data[7];
             }
-            Packet p = new Packet(ID, type, _defaultDestination, s);
+            Packet p = new Packet(_ID, type, _defaultDestination, s);
             if (client.isConnected())
             {
                 client.sendMessage(p);
@@ -219,7 +219,7 @@ namespace MediCare.Client
         {
             if (typeBox.Text != "")
             {
-                Packet p = new Packet(ID, "Chat", _defaultDestination, typeBox.Text);
+                Packet p = new Packet(_ID, "Chat", _defaultDestination, typeBox.Text);
                 client.sendMessage(p);
                 txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                 txtLog_AlignTextToBottom();
@@ -234,7 +234,7 @@ namespace MediCare.Client
             {
                 if (typeBox.Text != "")
                 {
-                    Packet p = new Packet(ID, "Chat", _defaultDestination, typeBox.Text);
+                    Packet p = new Packet(_ID, "Chat", _defaultDestination, typeBox.Text);
                     client.sendMessage(p);
                     txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                     txtLog_AlignTextToBottom();
@@ -273,7 +273,7 @@ namespace MediCare.Client
             }
             else
             {
-                txtLog.AppendText(Environment.NewLine + "Dokter " + ID + ": " + message);
+                txtLog.AppendText(Environment.NewLine + "Dokter " + _ID + ": " + message);
                 typeBox.Text = "";
                 txtLog_AlignTextToBottom();
                 txtLog_ScrollToBottom();
@@ -293,7 +293,7 @@ namespace MediCare.Client
 
         private void on_Window_Closed_Event(object sender, FormClosingEventArgs e)
         {
-            Packet p = new Packet(ID, "Disconnect", _defaultDestination, "Disconnecting");
+            Packet p = new Packet(_ID, "Disconnect", _defaultDestination, "Disconnecting");
             //send message to server that ur dying
             if (client.isConnected())
             {
@@ -338,8 +338,7 @@ namespace MediCare.Client
         {
             if (String.IsNullOrEmpty(Username_Box.Text) || String.IsNullOrEmpty(Password_Box.Text))
             {
-                Login_ERROR_Label.Text = "One or more fields are blank!";
-                labelRemoveTimer.Start();
+                displayErrorMessage("One or more fields are blank!");
                 this.ActiveControl = Username_Box;
             }
             else
@@ -350,15 +349,13 @@ namespace MediCare.Client
                 Regex r = new Regex(@"^[0-9]{8}$");
                 if ((!isNum) || (id < 1) || (id > 8) || (!r.IsMatch(Username_Box.Text)))
                 {
-                    Login_ERROR_Label.Text = "Client ID must start with 1-8 and is 8 digits long!";
-                    labelRemoveTimer.Start();
+                    displayErrorMessage("Client ID must start with 1-8 and is 8 digits long!");
                     this.ActiveControl = Username_Box;
                 }
-                //TODO: else if (logins are correct), ipv else (denk ik)
                 else
                 {
-                    ID = Username_Box.Text;
-                    client.sendFirstConnectPacket(ID, Password_Box.Text);
+                    _ID = Username_Box.Text;
+                    client.sendFirstConnectPacket(_ID, Password_Box.Text);
 
                     while(!userIsAuthenticated)
                     {
@@ -379,8 +376,7 @@ namespace MediCare.Client
                             }
                             else
                             {
-                                Login_ERROR_Label.Text = "Your login is not valid!";
-                                labelRemoveTimer.Start();
+                                displayErrorMessage("Your login is not valid!");
                                 break;
                             }
                         }
@@ -388,6 +384,13 @@ namespace MediCare.Client
                 }
             }
         }
+
+        private void displayErrorMessage(string message)
+        {
+            Login_ERROR_Label.Text = message;
+            labelRemoveTimer.Start();
+        }
+
         private void setVisibility(bool v)
         {
             graph.SetVisibibility(v);

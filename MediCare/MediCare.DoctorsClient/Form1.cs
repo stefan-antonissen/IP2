@@ -29,7 +29,9 @@ namespace MediCare.ArtsClient
 
         private LoginIO logins = new LoginIO();
         private string connectedIDs = "";
+
         private string _ID;
+        private Boolean userIsAuthenticated = false;
 
         private Dictionary<string, clientTab> _tabIdDict = new Dictionary<string, clientTab>();
         private List<clientTab> _tabs = new List<clientTab>();
@@ -63,7 +65,7 @@ namespace MediCare.ArtsClient
 
             new Thread(() =>
             {
-                while (true)
+                while (userIsAuthenticated)
                 {
                     Packet packet = null;
                     if (client.isConnected())
@@ -386,7 +388,7 @@ namespace MediCare.ArtsClient
                 labelRemoveTimer.Start();
                 this.ActiveControl = Username_Box;
             }
-            else if (!Username_Box.Text.Substring(0, 1).Equals("9") || (!r.IsMatch(Username_Box.Text)))
+            else if (!Username_Box.Text.StartsWith("9") || (!r.IsMatch(Username_Box.Text)))
             {
                 Error_Label.Text = "Doctor ID must start with a 9 and is 8 digits long!";
                 labelRemoveTimer.Start();
@@ -396,10 +398,46 @@ namespace MediCare.ArtsClient
             else
             {
                 _ID = Username_Box.Text;
-                setVisibility(true);
-                getActiveClientsTimer.Start(); // automatisch ophalen van de actieve verbindingen      
+                client.sendFirstConnectPacket(_ID, Password_Box.Text);
+
+                while (!userIsAuthenticated)
+                {
+                    //pol for packets. if packet == authenticated!
+
+                    Packet packet = null;
+                    if (client.isConnected())
+                    {
+                        packet = client.ReadMessage();
+
+                        if (packet._message.Equals("VERIFIED"))
+                        {
+                            //todo check for authenticated packet from server 
+                            userIsAuthenticated = true;
+
+                            setVisibility(true);
+                            getActiveClientsTimer.Start(); // automatisch ophalen van de actieve verbindingen
+                        }
+                        else
+                        {
+                            displayErrorMessage("Your login is not valid!");
+                            break;
+                        }
+                    }
+                }
             }
+            //{
+            //    _ID = Username_Box.Text;
+            //    setVisibility(true);
+            //    getActiveClientsTimer.Start(); // automatisch ophalen van de actieve verbindingen      
+            //}
         }
+
+        private void displayErrorMessage(string message)
+        {
+            Error_Label.Text = message;
+            labelRemoveTimer.Start();
+        }
+
         private void UpdateLabel(object sender, EventArgs e)
         {
             Error_Label.Text = "";

@@ -183,11 +183,19 @@ namespace MediCare.Server
             {
                 Packet response = new Packet("Server", "FirstConnect", p._id, "VERIFIED");
                 SendPacket(stream, response);
+      
+#if DEBUG
+                Console.WriteLine("Login succeeded");
+#endif
             }
             else
             {
                 Packet response = new Packet("Server", "FirstConnect", p._id, "DENIED");
                 SendPacket(stream, response);
+
+#if DEBUG
+                Console.WriteLine("Login credentials are invalid");
+#endif
             }
         }
 
