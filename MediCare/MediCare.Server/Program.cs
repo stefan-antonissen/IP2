@@ -133,7 +133,7 @@ namespace MediCare.Server
             Packet result = new Packet("Server", "Result", packet._id, resultstring);
             try
             {
-                sendToDestination(result);
+                SendToDestination(result);
             }
             catch (Exception e)
             {
@@ -149,7 +149,7 @@ namespace MediCare.Server
         {
             if (IsDoctor(packet._id)) //if source is doctor send the message to the destination.
             {
-                sendToDestination(packet);
+                SendToDestination(packet);
             }
             else //else: source is client. send to all the connected doctors. (connections with an id who start with 9)
             {
@@ -175,7 +175,7 @@ namespace MediCare.Server
             }
         }
 
-        private void sendToDestination(Packet packet)
+        private void SendToDestination(Packet packet)
         {
             SslStream sslStream;
             clientsStreams.TryGetValue(packet._destination, out sslStream);
@@ -240,11 +240,18 @@ namespace MediCare.Server
 
         private bool loginIsValid(string credentials)
         {
-            // credentials = "username\npass"
-
             loginIO.add("12345678:dsa"); //TODO Remove
-            loginIO.add("98765432\nasd"); //TODO Remove
+            loginIO.add("98765432:asd"); //TODO Remove
             loginIO.add("87654321:asd"); //TODO Remove
+
+            // This part is for the Doctors signup tool.
+            // The signup tool connects with "DoctorID" + "r"
+            // this code checks if the doctor is connected if yes. its fine for the signuptool to connect without password
+            if (credentials.Split(':')[0].EndsWith("r"))
+            {
+                return clients.ContainsKey(credentials.Split(':')[0].Substring(0, 8));
+            }
+
             return loginIO.login(credentials);
         }
 
@@ -256,7 +263,7 @@ namespace MediCare.Server
         {
             mIOv2.Remove_client(p); // do not remove, do not move and do not edit!
             Packet response = new Packet("server", "Disconnect", p.GetID(), "LOGGED OFF");
-            sendToDestination(response);
+            SendToDestination(response);
             Console.WriteLine(p.GetID() + " has disconnected");
             TcpClient sender;
             clients.TryGetValue(p._id, out sender);
@@ -271,7 +278,7 @@ namespace MediCare.Server
         {
             SaveMeasurement(packet);
             Packet response_Sender = new Packet("Server", "Data", packet._id, "Data Saved");
-            sendToDestination(response_Sender);
+            SendToDestination(response_Sender);
             SslStream sslStream;
             if (packet._destination == _toAllDoctors)
             {
@@ -322,7 +329,7 @@ namespace MediCare.Server
         {
             loginIO.add(p.GetMessage());
             Packet response = new Packet("server", "Registration", p.GetID(), "Registration attempt succeeded");
-            sendToDestination(response);
+            SendToDestination(response);
         }
 
         /**
@@ -337,7 +344,7 @@ namespace MediCare.Server
                 if (!key.StartsWith("9"))
                 {
                     Packet response = new Packet(id, "Chat", key, p._message);
-                    sendToDestination(response);
+                    SendToDestination(response);
                 }
             }
         }
@@ -357,7 +364,7 @@ namespace MediCare.Server
             }
             //Console.WriteLine("Active clients: " + clients.Count.ToString());
             Packet response = new Packet("Server", "ActiveClients", p._id, ids.Trim());
-            sendToDestination(response);
+            SendToDestination(response);
         }
         /// <summary>
         /// Methode die aangeroepen wordt als de server een request voor de files binnenkrijgt
@@ -372,7 +379,7 @@ namespace MediCare.Server
             //Console.WriteLine("THIS IS THE RESPONSE PACKET " + response.toString());
             try
             {
-                sendToDestination(response);
+                SendToDestination(response);
             }
             catch (Exception e)
             {
@@ -396,7 +403,7 @@ namespace MediCare.Server
 
         private void HandleCommandPacket(Packet packet)
         {
-            sendToDestination(packet);
+            SendToDestination(packet);
         }
 
         private void SendPacket(SslStream stream, Packet p)
