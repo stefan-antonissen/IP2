@@ -276,7 +276,7 @@ namespace MediCare.Client
             }
             else
             {
-                txtLog.AppendText(Environment.NewLine + "Dokter " + _ID + ": " + message);
+                txtLog.AppendText(Environment.NewLine + "Dokter " + id + ": " + message);
                 typeBox.Text = "";
                 txtLog_AlignTextToBottom();
                 txtLog_ScrollToBottom();
