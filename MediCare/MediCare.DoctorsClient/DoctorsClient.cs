@@ -498,6 +498,16 @@ namespace MediCare.ArtsClient
             else
                 _signupTool.Show();
         }
+
+        private void Filelist_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            int index = this.Filelist.IndexFromPoint(e.Location);
+            if (index != System.Windows.Forms.ListBox.NoMatches)
+            {
+                
+                MessageBox.Show(Filelist.Items[index].ToString());
+            }
+        }
     }
 
     #region Tab generation

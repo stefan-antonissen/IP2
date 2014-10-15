@@ -82,6 +82,7 @@ namespace MediCare.ArtsClient
             this.Filelist.Name = "Filelist";
             this.Filelist.Size = new System.Drawing.Size(573, 238);
             this.Filelist.TabIndex = 14;
+            this.Filelist.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.Filelist_MouseDoubleClick);
             // 
             // OverviewTable
             // 
@@ -103,7 +104,7 @@ namespace MediCare.ArtsClient
             this.OverviewTable.Size = new System.Drawing.Size(257, 253);
             this.OverviewTable.TabIndex = 13;
             this.OverviewTable.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
-            this.OverviewTable.SelectionChanged += new EventHandler(dataGridView1_SelectionChanged);
+            this.OverviewTable.SelectionChanged += new System.EventHandler(this.dataGridView1_SelectionChanged);
             // 
             // ClientID
             // 
