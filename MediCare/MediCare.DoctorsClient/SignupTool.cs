@@ -17,14 +17,19 @@ namespace MediCare
 {
     public partial class SignupTool : Form
     {
-        private LoginIO logins;
         private readonly Timer labelRemoveTimer;
-
-        public SignupTool()
+        private static string server = "127.0.0.1";
+        private static int port = 11000;
+        private ClientTcpConnector client;
+        private string id;
+        public SignupTool(string id)
         {
             InitializeComponent();
-            logins = new LoginIO();
 
+            //verbinden met de server om registratie af te handelen
+            TcpClient TcpClient = new TcpClient(server, port);
+            client = new ClientTcpConnector(TcpClient, server);
+            this.id = id;
             labelRemoveTimer = new Timer();
             labelRemoveTimer.Interval = 3000;
             labelRemoveTimer.Tick += UpdateLabel;
@@ -75,12 +80,12 @@ namespace MediCare
                 this.ActiveControl = Password_TextBox;
                 labelRemoveTimer.Start();
             }
-            else if (logins.UserExist(Username_TextBox.Text))
-            {
-                Error_Label.Text = "User aleady exists!";
-                this.ActiveControl = Username_TextBox;
-                labelRemoveTimer.Start();
-            }
+            //  else if (loginIO.UserExist(Username_TextBox.Text))
+            // {
+            //      Error_Label.Text = "User aleady exists!";
+            //     this.ActiveControl = Username_TextBox;
+            //    labelRemoveTimer.Start();
+            // }
             else if ((!r.IsMatch(Username_TextBox.Text) || Int32.Parse(Username_TextBox.Text.Substring(0, 1)) == 9))
             {
                 Error_Label.Text = "Username must start with 1-8 \n and are 8 characters long";
@@ -94,23 +99,19 @@ namespace MediCare
                 Username_TextBox.Text = "";
                 Password_TextBox.Text = "";
                 Password_Verify_TextBox.Text = "";
+                if (client.isConnected())
+                {
+                    client.sendMessage(new Packet("SignupTool", "Registration", "Server", name + "\n" + pass));
+                    
+                    MessageBox.Show("Registered user " + name + " and saved! " + client.ReadMessage()._message);
 
-                logins.add(name + "\n" + pass);
-
-                MessageBox.Show("Registered user " + name + "! " + logins.getSize());
-
-                logins.SaveLogins();
-                this.Close();
+                    client.sendFirstConnectPacket(id + "r", "nopassword");
+                    if (client.ReadMessage().Equals("LOGGED OFF"))
+                    {
+                        client.Close();
+                    }
+                }
             }
-            else
-            {
-                Error_Label.Text = "Invalid username or password";
-                this.ActiveControl = Username_TextBox;
-            }
-            // Compile a packet (not defined what to send yet)
-            // Do you want to encrypt the password here or on the server? My guess is server.
-            // Does the password need to meet certain requirements?
-            // Send to server
         }
         #endregion
 

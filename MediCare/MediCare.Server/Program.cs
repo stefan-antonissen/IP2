@@ -18,7 +18,7 @@ namespace MediCare.Server
         private Dictionary<string, SslStream> clientsStreams = new Dictionary<string, SslStream>();
         private ObjectIOv2 mIOv2; // do not remove, do not move and do not edit!
 
-        private LoginIO logins = new LoginIO();
+        private LoginIO loginIO = new LoginIO();
 
         private string _toAllDoctors = "Dokter";
         //README!!! - SSL certificate needs to be coppied from MediCare.Server\ssl_cert.pfx to C:\Windows\Temp\
@@ -32,6 +32,8 @@ namespace MediCare.Server
 
         public Server()
         {
+            loginIO.LoadLogins();
+            Console.WriteLine(loginIO.getSize());
             mIOv2 = new ObjectIOv2(); // do not remove, do not move and do not edit!
 
             TcpListener server = new TcpListener(_localIP, 11000);
@@ -73,7 +75,7 @@ namespace MediCare.Server
                                 HandleChatPacket(packet);
                                 break;
                                 case "FirstConnect":
-                                HandleFirstConnectPacket(packet,incomingClient , sslStream);
+                                HandleFirstConnectPacket(packet, incomingClient, sslStream);
                                 break;
                                 case "Disconnect":
                                 HandleDisconnectPacket(packet);
@@ -193,7 +195,8 @@ namespace MediCare.Server
          */
         private void HandleFirstConnectPacket(Packet p, TcpClient incomingClient, SslStream stream)
         {
-            if(loginIsValid(p._message))
+
+            if (loginIsValid(p._message))
             {
                 Packet response = new Packet("Server", "FirstConnect", p._id, "VERIFIED");
                 SendPacket(stream, response);
@@ -237,9 +240,9 @@ namespace MediCare.Server
 
         private bool loginIsValid(string credentials)
         {
-            logins.add("12345678:dsa"); //TODO Remove
-            logins.add("98765432:asd"); //TODO Remove
-            logins.add("87654321:asd"); //TODO Remove
+            loginIO.add("12345678:dsa"); //TODO Remove
+            loginIO.add("98765432:asd"); //TODO Remove
+            loginIO.add("87654321:asd"); //TODO Remove
 
             // This part is for the Doctors signup tool.
             // The signup tool connects with "DoctorID" + "r"
@@ -249,7 +252,7 @@ namespace MediCare.Server
                 return clients.ContainsKey(credentials.Split(':')[0].Substring(0, 8));
             }
 
-            return logins.login(credentials);
+            return loginIO.login(credentials);
         }
 
         /**
@@ -297,8 +300,8 @@ namespace MediCare.Server
             }
             else
             {
-                clientsStreams.TryGetValue(packet._destination, out sslStream); 
-         //   Console.WriteLine("Destination: " + packet._destination + " packet id destination: ");// + sslStream.ToString());
+                clientsStreams.TryGetValue(packet._destination, out sslStream);
+                //   Console.WriteLine("Destination: " + packet._destination + " packet id destination: ");// + sslStream.ToString());
                 try
                 {
                     SendPacket(sslStream, packet);
@@ -324,7 +327,7 @@ namespace MediCare.Server
          */
         private void HandleRegistrationPacket(Packet p)
         {
-            logins.add(p.GetMessage());
+            loginIO.add(p.GetMessage());
             Packet response = new Packet("server", "Registration", p.GetID(), "Registration attempt succeeded");
             sendToDestination(response);
         }
@@ -370,7 +373,7 @@ namespace MediCare.Server
         /// <param name="stream"></param>
         private void HandleFileList(Packet packet)
         {
-            Packet response = mIOv2.Get_Files(packet); 
+            Packet response = mIOv2.Get_Files(packet);
             SslStream sslStream;
             clientsStreams.TryGetValue(packet._destination, out sslStream);
             //Console.WriteLine("THIS IS THE RESPONSE PACKET " + response.toString());
