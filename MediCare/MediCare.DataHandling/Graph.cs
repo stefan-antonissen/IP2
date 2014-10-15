@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Windows.Forms.DataVisualization.Charting;
 
 namespace MediCare.DataHandling
 {
@@ -375,7 +376,22 @@ namespace MediCare.DataHandling
             // {
             for (int i = 0; i < data.Length; i++)
             {
-                ChartData[i].Points.Add(double.Parse(data[i]));
+                if (ChartData[i].Points.Count > 10)
+                {
+                    //shift one
+                    for (int j = 0; j < ChartData[i].Points.Count -1; j++)
+                    {
+                        ChartData[i].Points[j] = ChartData[i].Points[j + 1];
+                    }
+                    ChartData[i].Points[ChartData[i].Points.Count - 1  ] = new DataPoint(double.Parse(data[i]), 10);
+                    //ChartData[i].Points.RemoveAt(10);
+                    //ChartData[i].Points.Add(double.Parse(data[i]));
+
+                }
+                else
+                {
+                    ChartData[i].Points.Add(double.Parse(data[i]));
+                }
                 //ChartData[i].Points.
             }
             // }
