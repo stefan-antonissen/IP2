@@ -64,19 +64,6 @@ namespace MediCare.Server
 
                             //Console.WriteLine(dataString);
 
-                            if (!clients.ContainsKey(packet._id))
-                            {
-                                clients.Add(packet.GetID(), incomingClient);
-                                clientsStreams.Add(packet.GetID(), sslStream);
-
-                                #region DEBUG
-#if DEBUG
-                                Console.WriteLine("ID: " + packet.GetID() + "incomingClient: " + incomingClient.ToString());
-                                printClientList();
-#endif
-                                #endregion
-                            }
-
                             Console.WriteLine("Incoming action" + packet._type);
                             switch (packet._type)
                             {
@@ -86,7 +73,7 @@ namespace MediCare.Server
                                 HandleChatPacket(packet);
                                 break;
                                 case "FirstConnect":
-                                HandleFirstConnectPacket(packet, sslStream);
+                                HandleFirstConnectPacket(packet,incomingClient , sslStream);
                                 break;
                                 case "Disconnect":
                                 HandleDisconnectPacket(packet, sslStream);
@@ -177,16 +164,20 @@ namespace MediCare.Server
          * Zoeken in de *database* naar de juiste persoons gegevens en haal daar het correcte ID op
          * 
          */
-        private void HandleFirstConnectPacket(Packet p, SslStream stream)
+        private void HandleFirstConnectPacket(Packet p, TcpClient incomingClient, SslStream stream)
         {
             if(loginIsValid(p._message))
             {
                 Packet response = new Packet("Server", "FirstConnect", p._id, "VERIFIED");
                 SendPacket(stream, response);
-      
 #if DEBUG
                 Console.WriteLine("Login succeeded");
 #endif
+                //login is valid. Do add the client to the dictionaries.
+                if (!clientIsKnown(p._id))
+                {
+                    addNewClient(p, incomingClient, stream);
+                }
             }
             else
             {
@@ -197,6 +188,24 @@ namespace MediCare.Server
                 Console.WriteLine("Login credentials are invalid");
 #endif
             }
+        }
+
+        private void addNewClient(Packet p, TcpClient incomingClient, SslStream stream)
+        {
+            clients.Add(p.GetID(), incomingClient);
+            clientsStreams.Add(p.GetID(), stream);
+
+            #region DEBUG
+#if DEBUG
+            Console.WriteLine("ID: " + p.GetID() + "incomingClient: " + incomingClient.ToString());
+            printClientList();
+#endif
+            #endregion
+        }
+
+        private bool clientIsKnown(String id)
+        {
+            return clients.ContainsKey(id);
         }
 
         private bool loginIsValid(string credentials)
