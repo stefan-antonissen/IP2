@@ -17,9 +17,10 @@ namespace MediCare.Server
         private Dictionary<string, TcpClient> clients = new Dictionary<string, TcpClient>();
         private Dictionary<string, SslStream> clientsStreams = new Dictionary<string, SslStream>();
         private ObjectIOv2 mIOv2; // do not remove, do not move and do not edit!
-        
+
         private LoginIO logins = new LoginIO();
 
+        private string _toAllDoctors = "Dokter";
         //README!!! - SSL certificate needs to be coppied from MediCare.Server\ssl_cert.pfx to C:\Windows\Temp\
         private X509Certificate certificate = new X509Certificate(@"C:\Windows\Temp\ssl_cert.pfx", "medicare");
 
@@ -41,7 +42,7 @@ namespace MediCare.Server
             while (true)
             {
                 incomingClient = server.AcceptTcpClient();
-                
+
                 new Thread(() =>
                 {
                     Console.WriteLine("Connection found!");
@@ -63,20 +64,7 @@ namespace MediCare.Server
 
                             //Console.WriteLine(dataString);
 
-                            if (!clients.ContainsKey(packet._id))
-                            {
-                                clients.Add(packet.GetID(), incomingClient);
-                                clientsStreams.Add(packet.GetID(), sslStream);
-                                
-                                #region DEBUG
-#if DEBUG
-                                Console.WriteLine("ID: " + packet.GetID() + "incomingClient: " + incomingClient.ToString());
-                                printClientList();
-#endif
-                                #endregion
-                            }
-
-                            Console.WriteLine("Client connected");
+                            Console.WriteLine("Incoming action" + packet._type);
                             switch (packet._type)
                             {
                                 //sender = incoming client
@@ -85,7 +73,7 @@ namespace MediCare.Server
                                 HandleChatPacket(packet);
                                 break;
                                 case "FirstConnect":
-                                HandleFirstConnectPacket(packet, sslStream);
+                                HandleFirstConnectPacket(packet,incomingClient , sslStream);
                                 break;
                                 case "Disconnect":
                                 HandleDisconnectPacket(packet, sslStream);
@@ -108,6 +96,12 @@ namespace MediCare.Server
                                 case "Filelist":
                                 HandleFileList(packet, sslStream);
                                 break;
+                                case "FileRequest":
+                                HandleFileRequest(incomingClient, packet);
+                                break;
+                                case "Command":
+                                HandleCommandPacket(packet);
+                                break;
                                 default: //nothing
                                 break;
                             }
@@ -118,55 +112,107 @@ namespace MediCare.Server
 
         }
 
-
-        //get dataString from the ssl socket
-        private string ReadStream(SslStream stream)
-        {
-            String jsonString = "";
-
-            return jsonString;
-        }
-
         /**
          * Versturen van een chat, package blijft hetzelfde.
          * Methode is er omdat het anders uit de toon valt met andere methodes.
          */
         private void HandleChatPacket(Packet packet)
         {
-            if (sourceIsDoctor(packet))
+            if (IsDoctor(packet._id)) //if source is doctor send the message to the destination.
             {
-                SslStream sslStream;
-                clientsStreams.TryGetValue(packet._destination, out sslStream);
-                SendPacket(sslStream, packet);
+                sendToDestination(packet);
             }
-            else
+            else //else: source is client. send to all the connected doctors. (connections with an id who start with 9)
             {
-                //source is client. send to doctor
-                foreach (KeyValuePair<string, SslStream> entry in clientsStreams)
+                sendToDoctors(packet);
+            }
+        }
+
+        /// <summary>
+        /// chathelpers are used by the handleChatPacket method.
+        /// contents: sendToDoctors(Packet packet):void; sendToDestination(packet):void and isDoctor(String id):bool
+        /// </summary>
+        #region chathelpers
+        private void sendToDoctors(Packet packet)
+        {
+            foreach (KeyValuePair<string, SslStream> entry in clientsStreams)
+            {
+                if (IsDoctor(entry.Key))
                 {
-                    if (entry.Key.Substring(0, 1).Contains("9"))
-                    {
-                        SslStream sslStream = entry.Value;
-                        SendPacket(sslStream, packet);
-                        //Console.WriteLine("packetMessage: " + packet._message);
-                    }
+                    SslStream sslStream = entry.Value;
+                    SendPacket(sslStream, packet);
+                    //Console.WriteLine("packetMessage: " + packet._message);
                 }
             }
         }
 
-        private bool sourceIsDoctor(Packet packet)
+        private void sendToDestination(Packet packet)
         {
-            return packet._id.Substring(0, 1).Contains("9");
+            SslStream sslStream;
+            clientsStreams.TryGetValue(packet._destination, out sslStream);
+            SendPacket(sslStream, packet);
         }
+
+        private bool IsDoctor(String id)
+        {
+            return id.StartsWith("9");
+        }
+
+        #endregion
 
         /**
          * Zoeken in de *database* naar de juiste persoons gegevens en haal daar het correcte ID op
          * 
          */
-        private void HandleFirstConnectPacket(Packet p, SslStream stream)
+        private void HandleFirstConnectPacket(Packet p, TcpClient incomingClient, SslStream stream)
         {
-            Packet response = new Packet("Server", "FirstConnect", p._id, "VERIFIED");
-            SendPacket(stream, response);
+            if(loginIsValid(p._message))
+            {
+                Packet response = new Packet("Server", "FirstConnect", p._id, "VERIFIED");
+                SendPacket(stream, response);
+#if DEBUG
+                Console.WriteLine("Login succeeded");
+#endif
+                //login is valid. Do add the client to the dictionaries.
+                if (!clientIsKnown(p._id))
+                {
+                    addNewClient(p, incomingClient, stream);
+                }
+            }
+            else
+            {
+                Packet response = new Packet("Server", "FirstConnect", p._id, "DENIED");
+                SendPacket(stream, response);
+
+#if DEBUG
+                Console.WriteLine("Login credentials are invalid");
+#endif
+            }
+        }
+
+        private void addNewClient(Packet p, TcpClient incomingClient, SslStream stream)
+        {
+            clients.Add(p.GetID(), incomingClient);
+            clientsStreams.Add(p.GetID(), stream);
+
+            #region DEBUG
+#if DEBUG
+            Console.WriteLine("ID: " + p.GetID() + "incomingClient: " + incomingClient.ToString());
+            printClientList();
+#endif
+            #endregion
+        }
+
+        private bool clientIsKnown(String id)
+        {
+            return clients.ContainsKey(id);
+        }
+
+        private bool loginIsValid(string credentials)
+        {
+            logins.add("12345678:asd"); //TODO Remove
+            logins.add("98765432:asd"); //TODO Remove
+            return logins.login(credentials);
         }
 
         /**
@@ -190,21 +236,41 @@ namespace MediCare.Server
          */
         private void HandleDataPacket(Packet packet, SslStream stream)
         {
+            SaveMeasurement(packet);
             Packet response_Sender = new Packet("Server", "Data", packet._id, "Data Saved");
             SendPacket(stream, response_Sender);
             SslStream sslStream;
-            clientsStreams.TryGetValue(packet._destination, out sslStream);
-            Console.WriteLine("Destination: " + packet._destination + " packet id destination: ");// + sslStream.ToString());
-            try
+            if (packet._destination == _toAllDoctors)
             {
-                SendPacket(sslStream, packet);
+                foreach (var s in clientsStreams)
+                {
+                    if (s.Key.StartsWith("9"))
+                    {
+                        //Console.WriteLine("Destination: " + s.Key);// + sslStream.ToString());
+                        try
+                        {
+                            SendPacket(s.Value, packet);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                        }
+                    }
+                }
             }
-            catch (Exception e)
+            else
             {
-                Console.WriteLine(e.Message);
+                clientsStreams.TryGetValue(packet._destination, out sslStream); 
+         //   Console.WriteLine("Destination: " + packet._destination + " packet id destination: ");// + sslStream.ToString());
+                try
+                {
+                    SendPacket(sslStream, packet);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
             }
-
-            SaveMeasurement(packet);
         }
 
         /**
@@ -232,7 +298,14 @@ namespace MediCare.Server
          */
         private void HandleBroadcastMessagePacket(Packet p)
         {
-            Packet response = new Packet();
+            foreach (string key in clients.Keys)
+            {
+                if (!key.StartsWith("9"))
+                {
+                    Packet response = new Packet(p._id, "Chat", key, p._message);
+                    sendToDestination(response);
+                }
+            }
         }
         /*
          * Geeft het aantal actieve clients
@@ -243,10 +316,13 @@ namespace MediCare.Server
             string ids = "";
             foreach (string key in clients.Keys)
             {
-                ids += key + " ";
+                if (!key.StartsWith("9"))
+                {
+                    ids += key + " ";
+                }
             }
-            Console.WriteLine("Active clients: " + clients.Count.ToString());
-            Packet response = new Packet("Server", "ActiveClients", p._id, ids);
+            //Console.WriteLine("Active clients: " + clients.Count.ToString());
+            Packet response = new Packet("Server", "ActiveClients", p._id, ids.Trim());
             SendPacket(stream, response);
         }
         /// <summary>
@@ -256,9 +332,30 @@ namespace MediCare.Server
         /// <param name="stream"></param>
         private void HandleFileList(Packet packet, SslStream stream)
         {
-            Packet response = mIOv2.Get_Files(packet);
-            Console.WriteLine(response.toString());
-            SendPacket(stream, response);
+            Packet response = mIOv2.Get_Files(packet); 
+            SslStream sslStream;
+            clientsStreams.TryGetValue(packet._destination, out sslStream);
+            //Console.WriteLine("THIS IS THE RESPONSE PACKET " + response.toString());
+            try
+            {
+                SendPacket(sslStream, response);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        private void HandleFileRequest(TcpClient client, Packet packet)
+        {
+            string FileRequested = packet._message;
+            //client.Client.SendFile(mIOv2.Get_File(FileRequested));
+            Console.WriteLine(mIOv2.Get_File(FileRequested));
+        }
+
+        private void HandleCommandPacket(Packet packet)
+        {
+            sendToDestination(packet);
         }
 
         private void SendPacket(SslStream stream, Packet p)
