@@ -13,18 +13,18 @@ namespace MediCare.DataHandling
     public class LoginIO
     {
         public Dictionary<string, string> logins { get; set; }
+        static string filename = "USERDATA.STATIC";
         Serializer serializer;
 
         public LoginIO()
         {
             logins = new Dictionary<string, string>();
             serializer = new Serializer();
-            LoadLogins();
         }
 
         public void add(string credentials)
         {
-            string[] splitted = credentials.Split(new string[] { "\n", "\r\n", ":" }, StringSplitOptions.RemoveEmptyEntries);
+            string[] splitted = credentials.Split(new string[] { "\n", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             if (!logins.ContainsKey(splitted[0]))
             {
                 logins.Add(splitted[0], EncryptPassword(splitted[1]));
@@ -33,12 +33,13 @@ namespace MediCare.DataHandling
 
         public bool login(string credentials)
         {
-            string[] credentialsArray = credentials.Split(':');
+            string[] credentialsArray = credentials.Split(new string[] { "\n", "\r\n", ":" }, StringSplitOptions.RemoveEmptyEntries);
             return login(credentialsArray[0], credentialsArray[1]);
         }
 
         public bool login(string name, string password)
         {
+            Console.WriteLine(logins.ContainsKey(name) + " " + logins.Keys.First() + " " + logins.Count);
             string ActualPassword;
             return logins.TryGetValue(name, out ActualPassword) &&
                        ActualPassword.Equals(EncryptPassword(password));
@@ -65,14 +66,14 @@ namespace MediCare.DataHandling
         // save the arraylist of measurements to a file
         public void SaveLogins()
         {
-            serializer.SerializeObject("USERDATA.STATIC", logins);
+            serializer.SerializeObject(filename, logins);
         }
 
         // load the arraylist of measurements from a file, returns the arraylist
         public void LoadLogins()
         {
-            if (File.Exists("USERDATA.STATIC"))
-                this.logins = (Dictionary<string, string>)serializer.DeSerializeObject("USERDATA.STATIC");
+            if (File.Exists(filename))
+                this.logins = (Dictionary<string, string>)serializer.DeSerializeObject(filename);
         }
 
         /**

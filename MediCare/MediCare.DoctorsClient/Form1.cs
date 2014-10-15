@@ -416,7 +416,7 @@ namespace MediCare.ArtsClient
             {
                 _ID = Username_Box.Text;
                 client.sendFirstConnectPacket(_ID, Password_Box.Text);
-
+                
                 while (!userIsAuthenticated)
                 {
                     //pol for packets. if packet == authenticated!
@@ -488,7 +488,7 @@ namespace MediCare.ArtsClient
         {
             new Thread(() =>
             {
-                Application.Run(new SignupTool());
+                Application.Run(new SignupTool(_ID));
             }).Start();
 
         }

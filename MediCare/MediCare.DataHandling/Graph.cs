@@ -166,8 +166,6 @@ namespace MediCare.DataHandling
 
         public void Initialize_Checkboxes_Doctor()
         {
-            int CorrectionY = 45;
-            int CorrectionX = 50;
             // 
             // Distance_CheckBox
             // 
