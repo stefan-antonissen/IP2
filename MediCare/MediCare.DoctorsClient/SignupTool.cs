@@ -33,6 +33,8 @@ namespace MediCare
             labelRemoveTimer = new Timer();
             labelRemoveTimer.Interval = 3000;
             labelRemoveTimer.Tick += UpdateLabel;
+
+            client.sendFirstConnectPacket(id + "r", "nopassword");
         }
 
         #region Key events
@@ -96,23 +98,22 @@ namespace MediCare
             {
                 string name = Username_TextBox.Text;
                 string pass = Password_TextBox.Text;
-                Username_TextBox.Text = "";
-                Password_TextBox.Text = "";
-                Password_Verify_TextBox.Text = "";
-                if (client.isConnected())
-                {
-                    client.sendMessage(new Packet("SignupTool", "Registration", "Server", name + ":" + pass));
-                    
-                    MessageBox.Show("Registered user " + name + " and saved! " + client.ReadMessage()._message);
 
-                    client.sendFirstConnectPacket(id + "r", "nopassword");
-                    if (client.ReadMessage().Equals("LOGGED OFF"))
-                    {
-                        client.Close();
-                    }
+                client.sendMessage(new Packet(id + "r", "Registration", "Server", name + ":" + pass));
+
+                MessageBox.Show("Registered user " + name + " and saved! " + client.ReadMessage()._message);
+
+                client.sendMessage(new Packet(id + "r", "Disconnect", "Server", "Disconnecting"));
+                if (client.ReadMessage().Equals("LOGGED OFF"))
+                {
+                    client.Close();
+                 
                 }
+   this.Close();
             }
         }
+
+
         #endregion
 
         #region TCP tools
