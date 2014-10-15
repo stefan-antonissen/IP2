@@ -210,8 +210,9 @@ namespace MediCare.Server
 
         private bool loginIsValid(string credentials)
         {
-            logins.add("12345678:asd"); //TODO Remove
+            logins.add("12345678:dsa"); //TODO Remove
             logins.add("98765432:asd"); //TODO Remove
+            logins.add("87654321:asd"); //TODO Remove
             return logins.login(credentials);
         }
 

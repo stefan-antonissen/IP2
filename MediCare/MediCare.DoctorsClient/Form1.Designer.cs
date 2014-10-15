@@ -1,4 +1,7 @@
-﻿namespace MediCare.ArtsClient
+﻿using System;
+using System.Security.AccessControl;
+
+namespace MediCare.ArtsClient
 {
     partial class DoctorClient
     {
@@ -29,7 +32,9 @@
         private void InitializeComponent()
         {
             this.IndexTab = new System.Windows.Forms.TabPage();
+            this.Filelist = new System.Windows.Forms.ListBox();
             this.OverviewTable = new System.Windows.Forms.DataGridView();
+            this.ClientID = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Signup_Button = new System.Windows.Forms.Button();
             this.typeBox = new System.Windows.Forms.TextBox();
             this.OverviewLabel = new System.Windows.Forms.Label();
@@ -47,7 +52,6 @@
             this.label3 = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
             this.Error_Label = new System.Windows.Forms.Label();
-            this.ClientID = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.IndexTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.OverviewTable)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -55,6 +59,7 @@
             // 
             // IndexTab
             // 
+            this.IndexTab.Controls.Add(this.Filelist);
             this.IndexTab.Controls.Add(this.OverviewTable);
             this.IndexTab.Controls.Add(this.Signup_Button);
             this.IndexTab.Controls.Add(this.typeBox);
@@ -69,6 +74,14 @@
             this.IndexTab.TabIndex = 0;
             this.IndexTab.Text = "Overview";
             this.IndexTab.UseVisualStyleBackColor = true;
+            // 
+            // Filelist
+            // 
+            this.Filelist.FormattingEnabled = true;
+            this.Filelist.Location = new System.Drawing.Point(444, 58);
+            this.Filelist.Name = "Filelist";
+            this.Filelist.Size = new System.Drawing.Size(573, 238);
+            this.Filelist.TabIndex = 14;
             // 
             // OverviewTable
             // 
@@ -90,6 +103,17 @@
             this.OverviewTable.Size = new System.Drawing.Size(257, 253);
             this.OverviewTable.TabIndex = 13;
             this.OverviewTable.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
+            this.OverviewTable.SelectionChanged += new EventHandler(dataGridView1_SelectionChanged);
+            // 
+            // ClientID
+            // 
+            this.ClientID.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.ClientID.FillWeight = 300F;
+            this.ClientID.HeaderText = "Client ID";
+            this.ClientID.Name = "ClientID";
+            this.ClientID.ReadOnly = true;
+            this.ClientID.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+            this.ClientID.ToolTipText = "The ID of the client";
             // 
             // Signup_Button
             // 
@@ -251,16 +275,6 @@
             this.Error_Label.Size = new System.Drawing.Size(0, 13);
             this.Error_Label.TabIndex = 26;
             // 
-            // ClientID
-            // 
-            this.ClientID.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.ClientID.FillWeight = 300F;
-            this.ClientID.HeaderText = "Client ID";
-            this.ClientID.Name = "ClientID";
-            this.ClientID.ReadOnly = true;
-            this.ClientID.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-            this.ClientID.ToolTipText = "The ID of the client";
-            // 
             // DoctorClient
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -306,6 +320,7 @@
         private System.Windows.Forms.Label Error_Label;
         private System.Windows.Forms.DataGridView OverviewTable;
         private System.Windows.Forms.DataGridViewTextBoxColumn ClientID;
+        private System.Windows.Forms.ListBox Filelist;
 
     }
 }

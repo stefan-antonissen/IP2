@@ -165,7 +165,12 @@ namespace MediCare.ArtsClient
 
         private void HandleFilelistPacket(Packet p)
         {
-            MessageBox.Show(p._message);
+            Filelist.Items.Clear();
+            string[] files = p._message.Split('-');
+            foreach (string file in files)
+            {
+                Filelist.Items.Add(file);
+            }
         }
 
 
@@ -188,6 +193,14 @@ namespace MediCare.ArtsClient
                     this.tabControl1.SelectedTab = tab;
                 }
             }
+        }
+
+        private void dataGridView1_SelectionChanged(object sender, EventArgs e)
+        {
+            string patientID = (string) OverviewTable.CurrentCell.Value;
+            Packet p = new Packet(_ID, "Filelist", "server", patientID);
+            Console.WriteLine("Patient id : "+ patientID);
+            client.sendMessage(p);
         }
 
         /**
