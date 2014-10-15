@@ -51,7 +51,7 @@ namespace MediCare.NetworkLibrary
 
         public void sendFirstConnectPacket(string id, string password)
         {
-            sendMessage(new Packet(id, "FirstConnect", "server", id + "\n" + password));
+            sendMessage(new Packet(id, "FirstConnect", "server", id + ":" + password));
         }
 
         public Boolean isConnected()

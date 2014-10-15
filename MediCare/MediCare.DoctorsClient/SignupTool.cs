@@ -101,7 +101,7 @@ namespace MediCare
                 Password_Verify_TextBox.Text = "";
                 if (client.isConnected())
                 {
-                    client.sendMessage(new Packet("SignupTool", "Registration", "Server", name + "\n" + pass));
+                    client.sendMessage(new Packet("SignupTool", "Registration", "Server", name + ":" + pass));
                     
                     MessageBox.Show("Registered user " + name + " and saved! " + client.ReadMessage()._message);
 
