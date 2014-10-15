@@ -107,9 +107,8 @@ namespace MediCare
                 if (client.ReadMessage().Equals("LOGGED OFF"))
                 {
                     client.Close();
-                 
                 }
-   this.Close();
+                this.Close();
             }
         }
 
