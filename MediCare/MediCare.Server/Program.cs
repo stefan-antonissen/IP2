@@ -213,6 +213,15 @@ namespace MediCare.Server
             logins.add("12345678:dsa"); //TODO Remove
             logins.add("98765432:asd"); //TODO Remove
             logins.add("87654321:asd"); //TODO Remove
+
+            // This part is for the Doctors signup tool.
+            // The signup tool connects with "DoctorID" + "r"
+            // this code checks if the doctor is connected if yes. its fine for the signuptool to connect without password
+            if (credentials.Split(':')[0].EndsWith("r"))
+            {
+                return clients.ContainsKey(credentials.Split(':')[0].Substring(0, 8));
+            }
+
             return logins.login(credentials);
         }
 
