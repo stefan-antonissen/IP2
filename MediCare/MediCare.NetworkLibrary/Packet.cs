@@ -68,5 +68,26 @@ namespace MediCare.NetworkLibrary
         {
             return "ID: " + _id + " Type: " + _type + " Destination: " + _destination + " \nMessage: " + _message; 
         }
+
+        static public Boolean hasValidId(Packet p)
+        {
+            if(p._id.Length == 8)
+            {
+                int n;
+                return int.TryParse(p._id, out n); 
+            }
+            else if(p._id.Length == 9)
+            {
+                if (!p._id.EndsWith("r"))
+                    return false;
+
+                int n;
+                return int.TryParse(p._id.Substring(0, 8), out n); 
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }
