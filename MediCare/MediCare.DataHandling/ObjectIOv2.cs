@@ -168,11 +168,13 @@ namespace MediCare.DataHandling
         public ArrayList Read_file(Packet p)
         {
             string[] lines = File.ReadAllLines(Path.Combine(_dir,p._id,_dirDictionary[p._id] + _fileExt));
+            ArrayList resultList = new ArrayList();
             foreach (var line in lines)
             {
                 Console.WriteLine(Decrypt(line));
+                resultList.Add(Decrypt(line));
             }
-            return null;
+            return resultList;
         }
 
         private string Decrypt(string cipherText)
@@ -195,12 +197,21 @@ namespace MediCare.DataHandling
             return cipherText;
         }
 
+        
         /// <summary>
-        /// 
+        /// removes file by id and datetime
         /// </summary>
-        /// <param name="p"></param>
-        public void Remove_file(Packet p)
+        /// <param name="id">the id of the person from the file which needs to be removed</param>
+        /// <param name="dateTime">datetime of the file which needs to be removed format: "yyyy_MM_dd HH_mm_ss"</param>
+        /// <returns> when file exists: "File deleted" (when deleted), when not exists: "the file does not exist</returns>
+        public string Remove_file(string id, string dateTime)
         {
+            if (File.Exists(Path.Combine(_dir, id, dateTime + _fileExt)))
+            {
+                File.Delete(Path.Combine(_dir, id, dateTime + _fileExt));
+            }
+            return !File.Exists(Path.Combine(_dir, id, dateTime + _fileExt)) ? "the file does not exist" : "File Deleted";
+        }
         }
     }
 }

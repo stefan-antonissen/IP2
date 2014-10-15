@@ -32,6 +32,9 @@ namespace MediCare.Client
 
         private string _defaultDestination = "Dokter";
 
+        //USE THIS FORMAT WHEN SENDING DATETIME PACKET!
+        private string DateFileFormat = "yyyy_MM_dd HH_mm_ss";
+
         private bool first = true;
         public ClientGui()
         {
@@ -141,7 +144,7 @@ namespace MediCare.Client
         {
             if (first)
             {
-                string[] timestamp = DateTime.Now.ToString("yyyy_MM_dd HH_mm_ss").Split();
+                string[] timestamp = DateTime.Now.ToString(DateFileFormat).Split();
                 SendMeasurementData(timestamp, "Timestamp");
                 client.sendMessage(new Packet(_ID, "Filelist", "98765432", "12345678"));
                 first = false;
