@@ -63,17 +63,20 @@ namespace MediCare.Client
 
             new System.Threading.Thread(() =>
             {
-                while (userIsAuthenticated)
+                while (true)
                 {
-                    Packet packet = null;
-                    if (client.isConnected())
+                    if (userIsAuthenticated)
                     {
-                        Console.WriteLine("Reading message\n");
-                        packet = client.ReadMessage();
-
-                        if (packet != null)
+                        Packet packet = null;
+                        if (client.isConnected())
                         {
-                            processPacket(packet);
+                            Console.WriteLine("Reading message\n");
+                            packet = client.ReadMessage();
+
+                            if (packet != null)
+                            {
+                                processPacket(packet);
+                            }
                         }
                     }
                 }

@@ -65,16 +65,19 @@ namespace MediCare.ArtsClient
 
             new Thread(() =>
             {
-                while (userIsAuthenticated)
+                while (true)
                 {
-                    Packet packet = null;
-                    if (client.isConnected())
+                    if (userIsAuthenticated)
                     {
-                        packet = client.ReadMessage();
-
-                        if (packet != null)
+                        Packet packet = null;
+                        if (client.isConnected())
                         {
-                            processPacket(packet);
+                            packet = client.ReadMessage();
+
+                            if (packet != null)
+                            {
+                                processPacket(packet);
+                            }
                         }
                     }
                 }
@@ -143,6 +146,7 @@ namespace MediCare.ArtsClient
         {
             connectedIDs = p.GetMessage();
             string[] ids = getActiveClients().Split(' ');
+            Console.WriteLine("Active Clients: " + connectedIDs);
 
             int rowNumber = 1;
             foreach (string id in ids)
