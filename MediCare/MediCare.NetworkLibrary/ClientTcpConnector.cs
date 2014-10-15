@@ -12,10 +12,10 @@ namespace MediCare.NetworkLibrary
 {
     public class ClientTcpConnector
     {
-        TcpClient _client;
-        String _server;
+        private TcpClient _client;
+        private String _server;
 
-        SslStream stream;
+        private SslStream stream;
 
         public ClientTcpConnector(TcpClient client, String server)
         {
@@ -23,8 +23,8 @@ namespace MediCare.NetworkLibrary
             this._server = server;
 
             //SSL Stream
-            stream = new SslStream(client.GetStream() , false ,
-            new RemoteCertificateValidationCallback(ValidateServerCertificate), null );
+            stream = new SslStream(client.GetStream(), false,
+            new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
             stream.AuthenticateAsClient(server);
         }
 
@@ -46,7 +46,7 @@ namespace MediCare.NetworkLibrary
 
         public void Close()
         {
-           _client.Close();
+            _client.Close();
         }
 
         public void sendFirstConnectPacket(string id, string password)

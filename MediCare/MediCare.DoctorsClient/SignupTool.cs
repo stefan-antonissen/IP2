@@ -17,24 +17,31 @@ namespace MediCare
 {
     public partial class SignupTool : Form
     {
-        private readonly Timer labelRemoveTimer;
-        private static string server = "127.0.0.1";
-        private static int port = 11000;
-        private ClientTcpConnector client;
-        private string id;
+        private readonly Timer _labelRemoveTimer;
+        private static string _server = "127.0.0.1";
+        private static int _port = 11000;
+        private ClientTcpConnector _client;
+        private string _id;
+
         public SignupTool(string id)
         {
+            //TODO HANDLE DISCONNECT
             InitializeComponent();
 
             //verbinden met de server om registratie af te handelen
-            TcpClient TcpClient = new TcpClient(server, port);
-            client = new ClientTcpConnector(TcpClient, server);
-            this.id = id;
-            labelRemoveTimer = new Timer();
-            labelRemoveTimer.Interval = 3000;
-            labelRemoveTimer.Tick += UpdateLabel;
+            TcpClient TcpClient = new TcpClient(_server, _port);
+            _client = new ClientTcpConnector(TcpClient, _server);
 
-            client.sendFirstConnectPacket(id + "r", "nopassword");
+            this._id = id;
+
+            _labelRemoveTimer = new Timer();
+            _labelRemoveTimer.Interval = 3000;
+            _labelRemoveTimer.Tick += UpdateLabel;
+
+            this.FormClosing += Form_FormClosing;
+
+            _client.sendFirstConnectPacket(id + "r", "nopassword");
+            Console.WriteLine(_client.ReadMessage());
         }
 
         #region Key events
@@ -69,76 +76,74 @@ namespace MediCare
          */
         private void login(object sender, EventArgs e)
         {
+            string name = Username_TextBox.Text;
+            string pass = Password_TextBox.Text;
+            string verifypass = Password_Verify_TextBox.Text;
+
+            _client.sendMessage(new Packet(_id + "r", "Registration", "Server", name + ":" + pass));
+            string response = _client.ReadMessage().GetMessage();
+
             Regex r = new Regex("^[0-9]{8}$");
-            if (Username_TextBox.Text.Equals("") || Password_TextBox.Text.Equals("") || Password_Verify_TextBox.Equals(""))
+            if (name.Equals("") || pass.Equals("") || verifypass.Equals(""))
             {
                 Error_Label.Text = "One or more fields are blank!";
                 this.ActiveControl = Username_TextBox;
-                labelRemoveTimer.Start();
+                _labelRemoveTimer.Start();
             }
-            else if (!Password_TextBox.Text.Equals(Password_Verify_TextBox.Text))
+            else if (!pass.Equals(verifypass))
             {
                 Error_Label.Text = "Passwords do not match!";
                 this.ActiveControl = Password_TextBox;
-                labelRemoveTimer.Start();
+                _labelRemoveTimer.Start();
             }
-            //  else if (loginIO.UserExist(Username_TextBox.Text))
-            // {
-            //      Error_Label.Text = "User aleady exists!";
-            //     this.ActiveControl = Username_TextBox;
-            //    labelRemoveTimer.Start();
-            // }
-            else if ((!r.IsMatch(Username_TextBox.Text) || Int32.Parse(Username_TextBox.Text.Substring(0, 1)) == 9))
+            else if (response.Equals("REGISTER_FAIL"))
+            {
+                Error_Label.Text = "User aleady exists!";
+                this.ActiveControl = Username_TextBox;
+                _labelRemoveTimer.Start();
+            }
+            else if ((!r.IsMatch(name) || Int32.Parse(name.Substring(0, 1)) == 9))
             {
                 Error_Label.Text = "Username must start with 1-8 \n and are 8 characters long";
                 this.ActiveControl = Username_TextBox;
-                labelRemoveTimer.Start();
+                _labelRemoveTimer.Start();
             }
-            else if (Username_TextBox.Text != "" && Password_TextBox.Text != "" && Password_TextBox.Text.Equals(Password_Verify_TextBox.Text))
+            else if (name != "" && pass != "" && pass.Equals(verifypass) && (response.Equals("REGISTER_SUCCESS")))
             {
-                string name = Username_TextBox.Text;
-                string pass = Password_TextBox.Text;
+                // client.sendMessage(new Packet(id + "r", "Registration", "Server", name + ":" + pass));
 
-                client.sendMessage(new Packet(id + "r", "Registration", "Server", name + ":" + pass));
-
-                MessageBox.Show("Registered user " + name + " and saved! " + client.ReadMessage()._message);
-
-                client.sendMessage(new Packet(id + "r", "Disconnect", "Server", "Disconnecting"));
-                if (client.ReadMessage().Equals("LOGGED OFF"))
-                {
-                    client.Close();
-                }
-                this.Close();
+                MessageBox.Show("Registered user " + name + " and saved!");
+                this.Hide();
+                // client.sendMessage(new Packet(id + "r", "Disconnect", Server", "Disconnecting"));
+                // if (client.ReadMessage().Equals("LOGGED OFF"))
+                // {
+                //    client.Close();
+                // }
+                //  this.Close();
             }
         }
 
 
         #endregion
-
-        #region TCP tools
-        private void SendMessageToServer(TcpClient client, Packet message)
+        public void endConnection()
         {
-            BinaryFormatter formatter = new BinaryFormatter(); // the formatter that will serialize my object on my stream 
-
-            NetworkStream strm = client.GetStream(); // the stream
-            MessageBox.Show(message.toString());
-            MessageBox.Show(Utils.GetPacketString(message));
-            formatter.Serialize(strm, Utils.GetPacketString(message)); // the serialization process 
-            //client.GetStream().Write(bytes, 0, bytes.Length);
+            this.Close();
         }
-
-        private Packet ReadMessage(TcpClient client)
-        {
-            BinaryFormatter formatter = new BinaryFormatter();
-            String dataString = (String)formatter.Deserialize(client.GetStream());
-            return Utils.GetPacket(dataString);
-        }
-        #endregion
-
         private void UpdateLabel(object sender, EventArgs e)
         {
             Error_Label.Text = "";
-            labelRemoveTimer.Stop();
+            _labelRemoveTimer.Stop();
+        }
+
+        //  hide de window ipv het echt te sluiten
+        private void Form_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing) 
+            {
+                e.Cancel = true;
+                this.Hide();
+            }
+
         }
     }
 

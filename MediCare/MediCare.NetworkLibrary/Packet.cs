@@ -18,7 +18,6 @@ namespace MediCare.NetworkLibrary
             this._type = type;
             this._destination = destination;
             this._message = message;
-            //encoding blablabla
         }
 
         public Packet()
@@ -29,24 +28,12 @@ namespace MediCare.NetworkLibrary
         public Packet(string id, string type, string message)
             : this(id, type, "", message)
         {
-            //encoding blablabla
+
         }
 
-        public void HandleServer(ServerInterface server)
+        public string GetID()
         {
-            //decoding and sending to server
-            //server.sendPacket(tcpClient, this);
-        }
-
-        public void HandleClient(ClientInterface client)
-        {
-            //decoding and sending to client
-            //client.sendPacket(this);
-        }
-
-        public string GetMessage()
-        {
-            return _message;
+            return _id;
         }
 
         public string GetDestination()
@@ -54,9 +41,14 @@ namespace MediCare.NetworkLibrary
             return _destination;
         }
 
-        public string GetID()
+        public string GetType()
         {
-            return _id;
+            return _type;
+        }
+
+        public string GetMessage()
+        {
+            return _message;
         }
 
         public String GetDataString()
@@ -66,7 +58,7 @@ namespace MediCare.NetworkLibrary
 
         public string toString()
         {
-            return "ID: " + _id + " Type: " + _type + " Destination: " + _destination + " \nMessage: " + _message; 
+            return "ID: " + _id + " Type: " + _type + " Destination: " + _destination + " \nMessage: " + _message;
         }
     }
 }

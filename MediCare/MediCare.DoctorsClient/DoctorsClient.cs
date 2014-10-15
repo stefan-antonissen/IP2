@@ -20,22 +20,23 @@ namespace MediCare.ArtsClient
 {
     public partial class DoctorClient : Form
     {
-        private readonly System.Windows.Forms.Timer getActiveClientsTimer;
-        private readonly System.Windows.Forms.Timer labelRemoveTimer;
+        private readonly System.Windows.Forms.Timer _getActiveClientsTimer;
+        private readonly System.Windows.Forms.Timer _labelRemoveTimer;
 
-        private static string server = "127.0.0.1";
-        private static int port = 11000;
-        private ClientTcpConnector client;
+        private static string _server = "127.0.0.1";
+        private static int _port = 11000;
+        private ClientTcpConnector _client;
 
-        private LoginIO logins = new LoginIO();
-        private string connectedIDs = "";
+        private string _connectedIDs = "";
 
         private string _ID;
-        private Boolean userIsAuthenticated = false;
+        private Boolean _userIsAuthenticated = false;
 
         private Dictionary<string, clientTab> _tabIdDict = new Dictionary<string, clientTab>();
         private List<clientTab> _tabs = new List<clientTab>();
         private List<string> _ids = new List<string>();
+
+        private SignupTool _signupTool;
 
         //USE THIS FORMAT WHEN SENDING DATETIME FOR fILEIO!
         private string DateFileFormat = "yyyy_MM_dd HH_mm_ss";
@@ -48,34 +49,34 @@ namespace MediCare.ArtsClient
             this.FormClosing += on_Window_Closed_Event;
 
             //opzetten tcp connectie
-            TcpClient TcpClient = new TcpClient(server, port);
-            client = new ClientTcpConnector(TcpClient, server);
+            TcpClient TcpClient = new TcpClient(_server, _port);
+            _client = new ClientTcpConnector(TcpClient, _server);
 
 
             // haalt de de actieve clients op elke 1s
-            getActiveClientsTimer = new System.Windows.Forms.Timer();
-            getActiveClientsTimer.Interval = 1000;
-            getActiveClientsTimer.Tick += updateActiveClients;
+            _getActiveClientsTimer = new System.Windows.Forms.Timer();
+            _getActiveClientsTimer.Interval = 1000;
+            _getActiveClientsTimer.Tick += updateActiveClients;
 
 
             // timer voor het verwijderen van de errortekst na 3s, 'cosmetisch'
-            labelRemoveTimer = new System.Windows.Forms.Timer();
-            labelRemoveTimer.Interval = 3000;
-            labelRemoveTimer.Tick += UpdateLabel;
+            _labelRemoveTimer = new System.Windows.Forms.Timer();
+            _labelRemoveTimer.Interval = 3000;
+            _labelRemoveTimer.Tick += UpdateLabel;
 
-            // height moet je handmatig zetten.....
+            // height van de table moet je handmatig setten.....
             OverviewTable.RowTemplate.MinimumHeight = 50;
 
             new Thread(() =>
             {
                 while (true)
                 {
-                    if (userIsAuthenticated)
+                    if (_userIsAuthenticated)
                     {
                         Packet packet = null;
-                        if (client.isConnected())
+                        if (_client.isConnected())
                         {
-                            packet = client.ReadMessage();
+                            packet = _client.ReadMessage();
 
                             if (packet != null)
                             {
@@ -127,7 +128,7 @@ namespace MediCare.ArtsClient
             {
                 MessageBox.Show(file);
                 Packet request = new Packet("98765432", "FileRequest", "server", "12345678-" + file);
-                client.sendMessage(request);
+                _client.sendMessage(request);
             }
         }
         private void HandleChatPacket(Packet p)
@@ -147,7 +148,7 @@ namespace MediCare.ArtsClient
 
         private void HandleActiveClientsPacket(Packet p)
         {
-            connectedIDs = p.GetMessage();
+            _connectedIDs = p.GetMessage();
             string[] ids = getActiveClients().Split(' ');
             //Console.WriteLine("Active Clients: " + connectedIDs);
 
@@ -186,9 +187,9 @@ namespace MediCare.ArtsClient
             string id = (string)OverviewTable.CurrentCell.Value;
             if (!tabControl1.Controls.ContainsKey(id))
             {
-                if (client.isConnected())
+                if (_client.isConnected())
                 {
-                    clientTab tab = new clientTab(id, client, _ID);
+                    clientTab tab = new clientTab(id, _client, _ID);
                     if (!_tabs.Contains(tab))
                         _tabs.Add(tab);
                     if (!_tabIdDict.ContainsKey(id))
@@ -204,10 +205,10 @@ namespace MediCare.ArtsClient
 
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
-            string patientID = (string) OverviewTable.CurrentCell.Value;
+            string patientID = (string)OverviewTable.CurrentCell.Value;
             Packet p = new Packet(_ID, "Filelist", "server", patientID);
-            Console.WriteLine("Patient id : "+ patientID);
-            client.sendMessage(p);
+            Console.WriteLine("Patient id : " + patientID);
+            _client.sendMessage(p);
         }
 
         /**
@@ -224,12 +225,12 @@ namespace MediCare.ArtsClient
         private void updateActiveClients(object sender, EventArgs e)
         {
             Packet response = new Packet(_ID, "ActiveClients", "Server", "Get active clients");
-            client.sendMessage(response);
+            _client.sendMessage(response);
         }
 
         private string getActiveClients()
         {
-            return connectedIDs;
+            return _connectedIDs;
         }
 
         // code wordt niet gebruikt?
@@ -240,7 +241,7 @@ namespace MediCare.ArtsClient
             {
                 if (!this.tabControl1.Controls.ContainsKey(ids[i]))
                 {
-                    clientTab tab = new clientTab(ids[i], client, _ID);
+                    clientTab tab = new clientTab(ids[i], _client, _ID);
                     this.tabControl1.Controls.Add(tab);
                 }
             }
@@ -294,7 +295,7 @@ namespace MediCare.ArtsClient
                 if (typeBox.Text != "")
                 {
                     Packet p = new Packet(_ID, "Broadcast", "5", typeBox.Text);
-                    client.sendMessage(p);
+                    _client.sendMessage(p);
                     txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                     txtLog_AlignTextToBottom();
                     txtLog_ScrollToBottom();
@@ -405,37 +406,41 @@ namespace MediCare.ArtsClient
             if (String.IsNullOrEmpty(Username_Box.Text) || String.IsNullOrEmpty(Password_Box.Text))
             {
                 Error_Label.Text = "One or more fields are blank!";
-                labelRemoveTimer.Start();
+                _labelRemoveTimer.Start();
                 this.ActiveControl = Username_Box;
             }
             else if (!Username_Box.Text.StartsWith("9") || (!r.IsMatch(Username_Box.Text)))
             {
                 Error_Label.Text = "Doctor ID must start with a 9 and is 8 digits long!";
-                labelRemoveTimer.Start();
+                _labelRemoveTimer.Start();
                 this.ActiveControl = Username_Box;
             }
-            //TODO: else if (logins are correct), ipv else (denk ik)
             else
             {
                 _ID = Username_Box.Text;
-                client.sendFirstConnectPacket(_ID, Password_Box.Text);
-                
-                while (!userIsAuthenticated)
+                _client.sendFirstConnectPacket(_ID, Password_Box.Text);
+
+                while (!_userIsAuthenticated)
                 {
                     //pol for packets. if packet == authenticated!
 
                     Packet packet = null;
-                    if (client.isConnected())
+                    if (_client.isConnected())
                     {
-                        packet = client.ReadMessage();
+                        packet = _client.ReadMessage();
 
                         if (packet._message.Equals("VERIFIED"))
                         {
                             //todo check for authenticated packet from server 
-                            userIsAuthenticated = true;
+                            _userIsAuthenticated = true;
 
                             setVisibility(true);
-                            getActiveClientsTimer.Start(); // automatisch ophalen van de actieve verbindingen
+                            _getActiveClientsTimer.Start(); // automatisch ophalen van de actieve verbindingen
+
+                            _signupTool = new SignupTool(_ID);
+                            _signupTool.Hide();
+
+
                         }
                         else
                         {
@@ -455,28 +460,27 @@ namespace MediCare.ArtsClient
         private void displayErrorMessage(string message)
         {
             Error_Label.Text = message;
-            labelRemoveTimer.Start();
+            _labelRemoveTimer.Start();
         }
 
         private void UpdateLabel(object sender, EventArgs e)
         {
             Error_Label.Text = "";
-            labelRemoveTimer.Stop();
+            _labelRemoveTimer.Stop();
         }
         #endregion
 
         private void on_Window_Closed_Event(object sender, FormClosingEventArgs e)
         {
-            Packet p = new Packet(_ID, "Disconnect", "24378733", "Disconnecting");
+            Packet p = new Packet(_ID, "Disconnect", "Server", "Disconnecting");
             //send message to server that ur dying
-            if (client.isConnected())
+            if (_client.isConnected())
             {
-                client.sendMessage(p);
-                Packet p1 = client.ReadMessage();
-                if (p1._message.Equals("LOGGED OFF") && (p1.GetDestination() == "9784334"))
+                _client.sendMessage(p);
+                Packet p1 = _client.ReadMessage();
+                if (p1._message.Equals("LOGGED OFF"))
                 {
-                    logins.SaveLogins();
-                    client.Close();
+                    _client.Close();
 
                 }
                 else
@@ -489,11 +493,10 @@ namespace MediCare.ArtsClient
 
         private void Signup_Button_Click(object sender, EventArgs e)
         {
-            new Thread(() =>
-            {
-                Application.Run(new SignupTool(_ID));
-            }).Start();
-
+            if (_signupTool.Visible)
+                _signupTool.Hide();
+            else
+                _signupTool.Show();
         }
     }
 
