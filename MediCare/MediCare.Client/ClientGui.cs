@@ -73,7 +73,7 @@ namespace MediCare.Client
                         Packet packet = null;
                         if (client.isConnected())
                         {
-                            Console.WriteLine("Reading message\n");
+                            //Console.WriteLine("Reading message\n");
                             packet = client.ReadMessage();
 
                             if (packet != null)

@@ -149,7 +149,7 @@ namespace MediCare.ArtsClient
         {
             connectedIDs = p.GetMessage();
             string[] ids = getActiveClients().Split(' ');
-            Console.WriteLine("Active Clients: " + connectedIDs);
+            //Console.WriteLine("Active Clients: " + connectedIDs);
 
             int rowNumber = 1;
             foreach (string id in ids)

@@ -64,7 +64,7 @@ namespace MediCare.Server
 
                             //Console.WriteLine(dataString);
 
-                            Console.WriteLine("Incoming action" + packet._type);
+                            //Console.WriteLine("Incoming action" + packet._type);
                             switch (packet._type)
                             {
                                 //sender = incoming client
@@ -76,13 +76,13 @@ namespace MediCare.Server
                                 HandleFirstConnectPacket(packet,incomingClient , sslStream);
                                 break;
                                 case "Disconnect":
-                                HandleDisconnectPacket(packet, sslStream);
+                                HandleDisconnectPacket(packet);
                                 break;
                                 case "Data":
-                                HandleDataPacket(packet, sslStream);
+                                HandleDataPacket(packet);
                                 break;
                                 case "Registration":
-                                HandleRegistrationPacket(packet, sslStream);
+                                HandleRegistrationPacket(packet);
                                 break;
                                 case "Broadcast":
                                 HandleBroadcastMessagePacket(packet);
@@ -91,16 +91,16 @@ namespace MediCare.Server
                                 HandleTimestampPacket(packet);
                                 break;
                                 case "ActiveClients":
-                                HandleActiveClients(packet, sslStream);
+                                HandleActiveClients(packet);
                                 break;
                                 case "Filelist":
-                                HandleFileList(packet, sslStream);
+                                HandleFileList(packet);
                                 break;
                                 case "FileRequest":
                                 HandleFileRequest(incomingClient, packet);
                                 break;
                                 case "FileDelete":
-                                HandleFileDeleteRequest(incomingClient, packet, sslStream);
+                                HandleFileDeleteRequest(incomingClient, packet);
                                 break;
                                 case "Command":
                                 HandleCommandPacket(packet);
@@ -121,7 +121,7 @@ namespace MediCare.Server
         /// <param name="incomingClient"></param>
         /// <param name="packet"></param>
         /// <param name="ssl"></param>
-        private void HandleFileDeleteRequest(TcpClient incomingClient, Packet packet, SslStream ssl)
+        private void HandleFileDeleteRequest(TcpClient incomingClient, Packet packet)
         {   
             //TODO test method
             //first string is ID [0], 
@@ -131,7 +131,7 @@ namespace MediCare.Server
             Packet result = new Packet("Server", "Result", packet._id, resultstring);
             try
             {
-                SendPacket(ssl, result);
+                sendToDestination(result);
             }
             catch (Exception e)
             {
@@ -247,11 +247,11 @@ namespace MediCare.Server
          * Stuur het sluit bericht terug naar de client en sluit de connectie. 
          * Client doet hetzelfde na het ontvangen van het sluit bericht.
          */
-        private void HandleDisconnectPacket(Packet p, SslStream stream)
+        private void HandleDisconnectPacket(Packet p)
         {
             mIOv2.Remove_client(p); // do not remove, do not move and do not edit!
             Packet response = new Packet("server", "Disconnect", p.GetID(), "LOGGED OFF");
-            SendPacket(stream, response);
+            sendToDestination(response);
             Console.WriteLine(p.GetID() + " has disconnected");
             TcpClient sender;
             clients.TryGetValue(p._id, out sender);
@@ -262,11 +262,11 @@ namespace MediCare.Server
          * Save de data die je binnen krijgt.
          * Stuur de data door naar de DoktorClient.
          */
-        private void HandleDataPacket(Packet packet, SslStream stream)
+        private void HandleDataPacket(Packet packet)
         {
             SaveMeasurement(packet);
             Packet response_Sender = new Packet("Server", "Data", packet._id, "Data Saved");
-            SendPacket(stream, response_Sender);
+            sendToDestination(response_Sender);
             SslStream sslStream;
             if (packet._destination == _toAllDoctors)
             {
@@ -313,11 +313,11 @@ namespace MediCare.Server
          * Handel het registratie process af. genereer een uniek ID voeg toe aan bestand (zie LoginIO)
          * Stuur een bericht terug dat de data is aangekomen.
          */
-        private void HandleRegistrationPacket(Packet p, SslStream stream)
+        private void HandleRegistrationPacket(Packet p)
         {
             logins.add(p.GetMessage());
             Packet response = new Packet("server", "Registration", p.GetID(), "Registration attempt succeeded");
-            SendPacket(stream, response);
+            sendToDestination(response);
         }
 
         /**
@@ -340,7 +340,7 @@ namespace MediCare.Server
          * Geeft het aantal actieve clients
          * 
          */
-        private void HandleActiveClients(Packet p, SslStream stream)
+        private void HandleActiveClients(Packet p)
         {
             string ids = "";
             foreach (string key in clients.Keys)
@@ -352,14 +352,14 @@ namespace MediCare.Server
             }
             //Console.WriteLine("Active clients: " + clients.Count.ToString());
             Packet response = new Packet("Server", "ActiveClients", p._id, ids.Trim());
-            SendPacket(stream, response);
+            sendToDestination(response);
         }
         /// <summary>
         /// Methode die aangeroepen wordt als de server een request voor de files binnenkrijgt
         /// </summary>
         /// <param name="packet">Packet waarin de message het id van de opgevraagde patient moet zijn</param>
         /// <param name="stream"></param>
-        private void HandleFileList(Packet packet, SslStream stream)
+        private void HandleFileList(Packet packet)
         {
             Packet response = mIOv2.Get_Files(packet); 
             SslStream sslStream;
@@ -367,7 +367,7 @@ namespace MediCare.Server
             //Console.WriteLine("THIS IS THE RESPONSE PACKET " + response.toString());
             try
             {
-                SendPacket(sslStream, response);
+                sendToDestination(response);
             }
             catch (Exception e)
             {
@@ -381,7 +381,7 @@ namespace MediCare.Server
         /// <param name="client"></param>
         /// <param name="packet"></param>
         /// <param name="ssl"></param>
-        private void HandleFileRequest(TcpClient client, Packet packet, SslStream ssl)
+        private void HandleFileRequest(TcpClient client, Packet packet)
         {
             string FileRequested = packet._message;
             //client.Client.SendFile(mIOv2.Get_File(FileRequested));
