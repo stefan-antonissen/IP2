@@ -37,6 +37,9 @@ namespace MediCare.ArtsClient
         private List<clientTab> _tabs = new List<clientTab>();
         private List<string> _ids = new List<string>();
 
+        //USE THIS FORMAT WHEN SENDING DATETIME FOR fILEIO!
+        private string DateFileFormat = "yyyy_MM_dd HH_mm_ss";
+
         public DoctorClient()
         {
             InitializeComponent();
@@ -146,7 +149,7 @@ namespace MediCare.ArtsClient
         {
             connectedIDs = p.GetMessage();
             string[] ids = getActiveClients().Split(' ');
-            Console.WriteLine("Active Clients: " + connectedIDs);
+            //Console.WriteLine("Active Clients: " + connectedIDs);
 
             int rowNumber = 1;
             foreach (string id in ids)
