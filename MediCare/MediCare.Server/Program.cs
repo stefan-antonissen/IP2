@@ -99,6 +99,9 @@ namespace MediCare.Server
                                 case "FileRequest":
                                 HandleFileRequest(incomingClient, packet);
                                 break;
+                                case "FileDelete":
+                                HandleFileDeleteRequest(incomingClient, packet, sslStream);
+                                break;
                                 case "Command":
                                 HandleCommandPacket(packet);
                                 break;
@@ -110,6 +113,30 @@ namespace MediCare.Server
                 }).Start();
             }
 
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="incomingClient"></param>
+        /// <param name="packet"></param>
+        /// <param name="ssl"></param>
+        private void HandleFileDeleteRequest(TcpClient incomingClient, Packet packet, SslStream ssl)
+        {   
+            //TODO test method
+            //first string is ID [0], 
+            //second & third is the datetime [1](date) [2](time)
+            string[] split = packet._message.Split();
+            string resultstring = mIOv2.Remove_file(split[0], split[1] + " " + split[2]);
+            Packet result = new Packet("Server", "Result", packet._id, resultstring);
+            try
+            {
+                SendPacket(ssl, result);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
         }
 
         /**
@@ -347,11 +374,18 @@ namespace MediCare.Server
                 Console.WriteLine(e.Message);
             }
         }
-
-        private void HandleFileRequest(TcpClient client, Packet packet)
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="client"></param>
+        /// <param name="packet"></param>
+        /// <param name="ssl"></param>
+        private void HandleFileRequest(TcpClient client, Packet packet, SslStream ssl)
         {
             string FileRequested = packet._message;
             //client.Client.SendFile(mIOv2.Get_File(FileRequested));
+            //TODO return file data!
             Console.WriteLine(mIOv2.Get_File(FileRequested));
         }
 
