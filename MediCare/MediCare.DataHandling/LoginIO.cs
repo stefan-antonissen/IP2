@@ -24,7 +24,7 @@ namespace MediCare.DataHandling
 
         public void add(string credentials)
         {
-            string[] splitted = credentials.Split(new string[] { "\n", "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            string[] splitted = credentials.Split(new string[] { "\n", "\r\n" , ":"}, StringSplitOptions.RemoveEmptyEntries);
             if (!logins.ContainsKey(splitted[0]))
             {
                 logins.Add(splitted[0], EncryptPassword(splitted[1]));
@@ -33,7 +33,7 @@ namespace MediCare.DataHandling
 
         public bool login(string credentials)
         {
-            string[] credentialsArray = credentials.Split(new string[] { "\n", "\r\n", ":" }, StringSplitOptions.RemoveEmptyEntries);
+            string[] credentialsArray = credentials.Split(':');
             return login(credentialsArray[0], credentialsArray[1]);
         }
 
