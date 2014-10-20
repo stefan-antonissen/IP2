@@ -138,12 +138,11 @@ namespace MediCare
         //  hide de window ipv het echt te sluiten
         private void Form_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (e.CloseReason == CloseReason.UserClosing) 
+            if (e.CloseReason == CloseReason.UserClosing)
             {
                 e.Cancel = true;
                 this.Hide();
             }
-
         }
     }
 

@@ -52,6 +52,7 @@ namespace MediCare.ArtsClient
             this.label3 = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
             this.Error_Label = new System.Windows.Forms.Label();
+            this.ManageUsersButton = new System.Windows.Forms.Button();
             this.IndexTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.OverviewTable)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -59,6 +60,7 @@ namespace MediCare.ArtsClient
             // 
             // IndexTab
             // 
+            this.IndexTab.Controls.Add(this.ManageUsersButton);
             this.IndexTab.Controls.Add(this.Filelist);
             this.IndexTab.Controls.Add(this.OverviewTable);
             this.IndexTab.Controls.Add(this.Signup_Button);
@@ -118,7 +120,7 @@ namespace MediCare.ArtsClient
             // 
             // Signup_Button
             // 
-            this.Signup_Button.Location = new System.Drawing.Point(1131, 600);
+            this.Signup_Button.Location = new System.Drawing.Point(1030, 601);
             this.Signup_Button.Name = "Signup_Button";
             this.Signup_Button.Size = new System.Drawing.Size(95, 23);
             this.Signup_Button.TabIndex = 12;
@@ -201,7 +203,7 @@ namespace MediCare.ArtsClient
             this.Password_Label.Name = "Password_Label";
             this.Password_Label.Size = new System.Drawing.Size(53, 13);
             this.Password_Label.TabIndex = 23;
-            this.Password_Label.Text = "Password";
+            this.Password_Label.Text = "Pass33word";
             // 
             // Username_label
             // 
@@ -276,6 +278,16 @@ namespace MediCare.ArtsClient
             this.Error_Label.Size = new System.Drawing.Size(0, 13);
             this.Error_Label.TabIndex = 26;
             // 
+            // ManageUsersButton
+            // 
+            this.ManageUsersButton.Location = new System.Drawing.Point(1131, 601);
+            this.ManageUsersButton.Name = "ManageUsersButton";
+            this.ManageUsersButton.Size = new System.Drawing.Size(95, 23);
+            this.ManageUsersButton.TabIndex = 15;
+            this.ManageUsersButton.Text = "Manage users";
+            this.ManageUsersButton.UseVisualStyleBackColor = true;
+            this.ManageUsersButton.Click += new System.EventHandler(this.ManageUsersButton_Click);
+            // 
             // DoctorClient
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -322,6 +334,7 @@ namespace MediCare.ArtsClient
         private System.Windows.Forms.DataGridView OverviewTable;
         private System.Windows.Forms.DataGridViewTextBoxColumn ClientID;
         private System.Windows.Forms.ListBox Filelist;
+        private System.Windows.Forms.Button ManageUsersButton;
 
     }
 }

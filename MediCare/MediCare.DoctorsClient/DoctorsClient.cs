@@ -37,6 +37,7 @@ namespace MediCare.ArtsClient
         private List<string> _ids = new List<string>();
 
         private SignupTool _signupTool;
+        private ManageUsersTool _manageUsersTool;
 
         //USE THIS FORMAT WHEN SENDING DATETIME FOR fILEIO!
         private string DateFileFormat = "yyyy_MM_dd HH_mm_ss";
@@ -440,7 +441,8 @@ namespace MediCare.ArtsClient
                             _signupTool = new SignupTool(_ID);
                             _signupTool.Hide();
 
-
+                            _manageUsersTool = new ManageUsersTool(_ID);
+                            _manageUsersTool.Hide();
                         }
                         else
                         {
@@ -490,6 +492,13 @@ namespace MediCare.ArtsClient
                 }
             }
         }
+        private void ManageUsersButton_Click(object sender, EventArgs e)
+        {
+            if (_signupTool.Visible)
+                _manageUsersTool.Hide();
+            else
+                _manageUsersTool.Show();
+        }
 
         private void Signup_Button_Click(object sender, EventArgs e)
         {
@@ -504,7 +513,7 @@ namespace MediCare.ArtsClient
             int index = this.Filelist.IndexFromPoint(e.Location);
             if (index != System.Windows.Forms.ListBox.NoMatches)
             {
-                
+
                 MessageBox.Show(Filelist.Items[index].ToString());
             }
         }

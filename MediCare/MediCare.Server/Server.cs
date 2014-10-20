@@ -36,7 +36,7 @@ namespace MediCare.Server
 
             mIOv2 = new ObjectIOv2(); // do not remove, do not move and do not edit!
 
-            TcpListener server = new TcpListener(_localIP, 11000);
+            TcpListener server = new TcpListener(/*_localIP,*/ 11000);
             server.Start();
 
             TcpClient incomingClient;

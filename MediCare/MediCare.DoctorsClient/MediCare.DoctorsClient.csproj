@@ -51,6 +51,12 @@
     <Compile Include="DoctorsClient.Designer.cs">
       <DependentUpon>DoctorsClient.cs</DependentUpon>
     </Compile>
+    <Compile Include="ManageUsersTool.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ManageUsersTool.Designer.cs">
+      <DependentUpon>ManageUsersTool.cs</DependentUpon>
+    </Compile>
     <Compile Include="SignupTool.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -61,6 +67,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="DoctorsClient.resx">
       <DependentUpon>DoctorsClient.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ManageUsersTool.resx">
+      <DependentUpon>ManageUsersTool.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SignupTool.resx">
       <DependentUpon>SignupTool.cs</DependentUpon>
