@@ -24,7 +24,6 @@ namespace MediCare
 
         public ManageUsersTool(string id)
         {
-            //TODO HANDLE DISCONNECT
             InitializeComponent();
 
             //verbinden met de server om registratie af te handelen
@@ -38,6 +37,7 @@ namespace MediCare
             _labelRemoveTimer.Tick += UpdateLabel;
 
             this.FormClosing += ManageUsersTool_FormClosing;
+
             this.dataGridView1.EditingControlShowing += this.dataGridView1_EditingControlShowing;
             this.dataGridView1.CellFormatting += dataGridView1_CellFormatting;
             this.dataGridView1.CellValueChanged += dataGridView1_CellValueChanged;
@@ -71,6 +71,14 @@ namespace MediCare
                     this.dataGridView1.Rows.Add(ids[i], pass[i]);
             }
 
+            int rowNumber = 1;
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                if (row.IsNewRow)
+                    continue;
+                row.HeaderCell.Value = "Client no. " + rowNumber;
+                rowNumber = rowNumber + 1;
+            }
         }
 
         // event handler voor delete button
@@ -97,23 +105,26 @@ namespace MediCare
         // sturen naar de server als je op enter drukt
         private void dataGridView1_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
-            string value = (string)dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
-            if (!string.IsNullOrEmpty(value) && !_prevCellValue.Equals(value))
+            if (e.ColumnIndex != -1)
             {
-                string id = (string)dataGridView1.Rows[e.RowIndex].Cells[0].Value;
-                string newpass = (string)dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+                string value = (string)dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
+                if (!string.IsNullOrEmpty(value) && !_prevCellValue.Equals(value))
+                {
+                    string id = (string)dataGridView1.Rows[e.RowIndex].Cells[0].Value;
+                    string newpass = (string)dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value;
 
-                bool doesthepasswordcontainweirdcharsthatyoudontwantinapassword = Regex.IsMatch(newpass, @"[^A-Za-z0-9]+");
-                if (doesthepasswordcontainweirdcharsthatyoudontwantinapassword)
-                {
-                    MessageBox.Show("Password may only contain letters and numers!");
-                    dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = _prevCellValue;
-                }
-                else
-                {
-                    _client.sendMessage(new Packet(_id + "m", "ManageUsers", "Server", "NewPass@" + id + "@" + newpass));
-                    if (_client.ReadMessage()._message.Equals("Pass changed"))
-                        MessageBox.Show("Password of client " + id + " successfully changed!");
+                    bool doesthepasswordcontainweirdcharsthatyoudontwantinapassword = Regex.IsMatch(newpass, @"[^A-Za-z0-9]+");
+                    if (doesthepasswordcontainweirdcharsthatyoudontwantinapassword)
+                    {
+                        MessageBox.Show("Password may only contain letters and numers!");
+                        dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value = _prevCellValue;
+                    }
+                    else
+                    {
+                        _client.sendMessage(new Packet(_id + "m", "ManageUsers", "Server", "NewPass@" + id + "@" + newpass));
+                        if (_client.ReadMessage()._message.Equals("Pass changed"))
+                            MessageBox.Show("Password of client " + id + " successfully changed!");
+                    }
                 }
             }
         }

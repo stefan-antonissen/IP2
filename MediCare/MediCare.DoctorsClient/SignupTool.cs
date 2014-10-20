@@ -25,7 +25,6 @@ namespace MediCare
 
         public SignupTool(string id)
         {
-            //TODO HANDLE DISCONNECT
             InitializeComponent();
 
             //verbinden met de server om registratie af te handelen
@@ -41,7 +40,7 @@ namespace MediCare
             this.FormClosing += Form_FormClosing;
 
             _client.sendFirstConnectPacket(id + "r", "nopassword");
-            Console.WriteLine(_client.ReadMessage());
+            Console.WriteLine(_client.ReadMessage()._message);
         }
 
         #region Key events
