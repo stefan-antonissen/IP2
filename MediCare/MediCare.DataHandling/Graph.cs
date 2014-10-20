@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
 using System.Windows.Forms.DataVisualization.Charting;
+using System.Collections;
 
 namespace MediCare.DataHandling
 {
@@ -25,6 +26,8 @@ namespace MediCare.DataHandling
         private System.Windows.Forms.CheckBox HeartBeats_CheckBox;
         private System.Windows.Forms.CheckBox RPM_CheckBox;
         private bool[] checkbox_Status = { false, false, false, false, false, false, false, false };
+        private ArrayList[] graphData = new ArrayList[8];
+        private int datacounter = 0;
 
         public Graph()
         {
@@ -41,6 +44,11 @@ namespace MediCare.DataHandling
             this.HeartBeats_CheckBox = new System.Windows.Forms.CheckBox();
             this.RPM_CheckBox = new System.Windows.Forms.CheckBox();
             this.ChartData = new System.Windows.Forms.DataVisualization.Charting.Series[8];
+
+            for (int i = 0; i < graphData.Length; i++)
+            {
+                graphData[i] = new ArrayList();
+            }
         }
 
         public void InitializeChart_Client()
@@ -372,29 +380,21 @@ namespace MediCare.DataHandling
 
         public void process_Graph_Data(String[] data)
         {
-            // if (data.Length != 1) // maybe not needed if called from updatevalues
-            // {
             for (int i = 0; i < data.Length; i++)
             {
-                if (ChartData[i].Points.Count > 10)
-                {
-                    //shift one
-                    for (int j = 0; j < ChartData[i].Points.Count -1; j++)
-                    {
-                        ChartData[i].Points[j] = ChartData[i].Points[j + 1];
-                    }
-                    ChartData[i].Points[ChartData[i].Points.Count - 1  ] = new DataPoint(double.Parse(data[i]), 10);
-                    //ChartData[i].Points.RemoveAt(10);
-                    //ChartData[i].Points.Add(double.Parse(data[i]));
-
-                }
-                else
-                {
-                    ChartData[i].Points.Add(double.Parse(data[i]));
-                }
-                //ChartData[i].Points.
+                graphData[i].Add(double.Parse(data[i]));    
             }
-            // }
+
+            if (datacounter < 120) { datacounter++; }
+
+            for (int i = 0; i < graphData.Length; i++)
+            {
+                for (int j = 0; j < datacounter; j++)
+                {
+                    double[] temp = Array.ConvertAll<object, double>(graphData[i].GetRange(graphData[i].Count - datacounter, datacounter).ToArray(), o => (double)o);
+                    ChartData[i].Points.Add(temp);// graphData[i].IndexOf(graphData[i].Count - j));
+                }
+            }
         }
 
         public object[] getComponents()
