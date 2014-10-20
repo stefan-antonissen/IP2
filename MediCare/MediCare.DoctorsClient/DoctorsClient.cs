@@ -84,6 +84,7 @@ namespace MediCare.ArtsClient
                             }
                         }
                     }
+                    Thread.Sleep(5);
                 }
             }).Start();
         }
@@ -463,7 +464,7 @@ namespace MediCare.ArtsClient
                         }
                         else
                         {
-                            displayErrorMessage("Your login is not valid!");
+                            displayErrorMessage(packet._message);
                             break;
                         }
                     }

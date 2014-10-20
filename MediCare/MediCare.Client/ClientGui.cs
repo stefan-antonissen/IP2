@@ -85,6 +85,7 @@ namespace MediCare.Client
                             }
                         }
                     }
+                    System.Threading.Thread.Sleep(5);
                 }
             }).Start();
         }
@@ -106,8 +107,23 @@ namespace MediCare.Client
                 case "Disconnect":
                 HandleDisconnectPacket(p);
                 break;
+                case "FirstConnect":
+                HandleFirstConnectPacket(p);
+                break;
                 default: //nothing
                 break;
+            }
+        }
+
+        private void HandleFirstConnectPacket(Packet p)
+        {
+            if (p._message == "VERIFIED")
+            {
+                Console.WriteLine("Succesfully logged in");
+            }
+            else
+            {
+                displayErrorMessage(p._message);
             }
         }
 
@@ -384,7 +400,7 @@ namespace MediCare.Client
                             }
                             else
                             {
-                                displayErrorMessage("Your login is not valid!");
+                                displayErrorMessage(packet._message);
                                 break;
                             }
                         }

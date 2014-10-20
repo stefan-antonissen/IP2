@@ -195,28 +195,36 @@ namespace MediCare.Server
          */
         private void HandleFirstConnectPacket(Packet p, TcpClient incomingClient, SslStream stream)
         {
-
-            if (loginIsValid(p._message))
+            if (_clients.ContainsKey(p._id))
             {
-                Packet response = new Packet("Server", "FirstConnect", p._id, "VERIFIED");
+                Console.WriteLine("Client already logged in!");
+                Packet response = new Packet("Server", "FirstConnect", p._id, "Login failed, this ID is already logged in.");
                 SendPacket(stream, response);
-#if DEBUG
-                Console.WriteLine("Login succeeded");
-#endif
-                //login is valid. Do add the client to the dictionaries.
-                if (!clientIsKnown(p._id))
-                {
-                    addNewClient(p, incomingClient, stream);
-                }
             }
             else
             {
-                Packet response = new Packet("Server", "FirstConnect", p._id, "DENIED");
-                SendPacket(stream, response);
+                if (loginIsValid(p._message))
+                {
+                    Packet response = new Packet("Server", "FirstConnect", p._id, "VERIFIED");
+                    SendPacket(stream, response);
+#if DEBUG
+                    Console.WriteLine("Login succeeded");
+#endif
+                    //login is valid. Do add the client to the dictionaries.
+                    if (!clientIsKnown(p._id))
+                    {
+                        addNewClient(p, incomingClient, stream);
+                    }
+                }
+                else
+                {
+                    Packet response = new Packet("Server", "FirstConnect", p._id, "Login failed, login credentials are invalid");
+                    SendPacket(stream, response);
 
 #if DEBUG
-                Console.WriteLine("Login credentials are invalid");
+                    Console.WriteLine("Login credentials are invalid");
 #endif
+                }
             }
         }
 
