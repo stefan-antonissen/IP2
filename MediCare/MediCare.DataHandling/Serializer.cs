@@ -37,10 +37,18 @@ namespace MediCare.DataHandling
         {
             object objectToSerialize;
             Stream stream = File.Open(filename, FileMode.Open);
-            BinaryFormatter bFormatter = new BinaryFormatter();
-            objectToSerialize = bFormatter.Deserialize(stream);
-            stream.Close();
-            return objectToSerialize;
+            if (stream.Length < 1)
+            {
+                stream.Close();
+                return null;
+            }
+            else
+            {
+                BinaryFormatter bFormatter = new BinaryFormatter();
+                objectToSerialize = bFormatter.Deserialize(stream);
+                stream.Close();
+                return objectToSerialize;
+            }
         }
     }
 }

@@ -12,22 +12,22 @@ namespace MediCare.DataHandling
     [Serializable()]
     public class LoginIO
     {
-        public Dictionary<string, string> logins { get; set; }
-        Serializer serializer;
+        public Dictionary<string, string> _logins { get; set; }
+        static string _filename = "USERDATA.STATIC";
+        Serializer _serializer;
 
         public LoginIO()
         {
-            logins = new Dictionary<string, string>();
-            serializer = new Serializer();
-            LoadLogins();
+            _logins = new Dictionary<string, string>();
+            _serializer = new Serializer();
         }
 
         public void add(string credentials)
         {
             string[] splitted = credentials.Split(new string[] { "\n", "\r\n", ":" }, StringSplitOptions.RemoveEmptyEntries);
-            if (!logins.ContainsKey(splitted[0]))
+            if (!_logins.ContainsKey(splitted[0]))
             {
-                logins.Add(splitted[0], EncryptPassword(splitted[1]));
+                _logins.Add(splitted[0], EncryptPassword(splitted[1]));
             }
         }
 
@@ -40,39 +40,39 @@ namespace MediCare.DataHandling
         public bool login(string name, string password)
         {
             string ActualPassword;
-            return logins.TryGetValue(name, out ActualPassword) &&
+            return _logins.TryGetValue(name, out ActualPassword) &&
                        ActualPassword.Equals(EncryptPassword(password));
         }
         public bool UserExist(string key)
         {
-            return logins.ContainsKey(key);
+            return _logins.ContainsKey(key);
         }
         public void del(string key)
         {
-            logins.Remove(key);
+            _logins.Remove(key);
         }
 
         public void empty()
         {
-            logins.Clear();
+            _logins.Clear();
         }
 
         public int getSize()
         {
-            return logins.Count;
+            return _logins.Count;
         }
 
         // save the arraylist of measurements to a file
         public void SaveLogins()
         {
-            serializer.SerializeObject("USERDATA.STATIC", logins);
+            _serializer.SerializeObject(_filename, _logins);
         }
 
         // load the arraylist of measurements from a file, returns the arraylist
         public void LoadLogins()
         {
-            if (File.Exists("USERDATA.STATIC"))
-                this.logins = (Dictionary<string, string>)serializer.DeSerializeObject("USERDATA.STATIC");
+            if (File.Exists(_filename))
+                this._logins = (Dictionary<string, string>)_serializer.DeSerializeObject(_filename);
         }
 
         /**

@@ -11,14 +11,14 @@ using System.Net.Security;
 
 namespace MediCare.Server
 {
-    class Server
+    public class Server
     {
         private IPAddress _localIP = IPAddress.Parse("127.0.0.1");
-        private Dictionary<string, TcpClient> clients = new Dictionary<string, TcpClient>();
-        private Dictionary<string, SslStream> clientsStreams = new Dictionary<string, SslStream>();
+        private Dictionary<string, TcpClient> _clients = new Dictionary<string, TcpClient>();
+        private Dictionary<string, SslStream> _clientsStreams = new Dictionary<string, SslStream>();
         private ObjectIOv2 mIOv2; // do not remove, do not move and do not edit!
 
-        private LoginIO loginIO = new LoginIO();
+        private LoginIO _loginIO = new LoginIO();
 
         private string _toAllDoctors = "Dokter";
         //README!!! - SSL certificate needs to be coppied from MediCare.Server\ssl_cert.pfx to C:\Windows\Temp\
@@ -32,8 +32,8 @@ namespace MediCare.Server
 
         public Server()
         {
-            loginIO.LoadLogins();
-            Console.WriteLine(loginIO.getSize());
+            _loginIO.LoadLogins();
+
             mIOv2 = new ObjectIOv2(); // do not remove, do not move and do not edit!
 
             TcpListener server = new TcpListener(_localIP, 11000);
@@ -63,6 +63,9 @@ namespace MediCare.Server
                             dataString = (String)formatter.Deserialize(sslStream);
                             //dataString = (String)formatter.Deserialize(sender.GetStream());
                             packet = Utils.GetPacket(dataString);
+
+                            if(!Packet.hasValidId(packet))
+                                Console.WriteLine("WARNING! PACKET HAS INVALID ID. ONE SHOULD NOT SEND PACKETS TO THE SERVER WHO HAVE AN ID THAT DOES NOT PASS THE hasValidId(p) METHOD! \nPACKET ID USED WHAS: " + packet._id);
 
                             //Console.WriteLine(dataString);
 
@@ -124,7 +127,7 @@ namespace MediCare.Server
         /// <param name="packet"></param>
         /// <param name="ssl"></param>
         private void HandleFileDeleteRequest(TcpClient incomingClient, Packet packet)
-        {   
+        {
             //TODO test method
             //first string is ID [0], 
             //second & third is the datetime [1](date) [2](time)
@@ -164,7 +167,7 @@ namespace MediCare.Server
         #region chathelpers
         private void sendToDoctors(Packet packet)
         {
-            foreach (KeyValuePair<string, SslStream> entry in clientsStreams)
+            foreach (KeyValuePair<string, SslStream> entry in _clientsStreams)
             {
                 if (IsDoctor(entry.Key))
                 {
@@ -178,7 +181,7 @@ namespace MediCare.Server
         private void SendToDestination(Packet packet)
         {
             SslStream sslStream;
-            clientsStreams.TryGetValue(packet._destination, out sslStream);
+            _clientsStreams.TryGetValue(packet._destination, out sslStream);
             SendPacket(sslStream, packet);
         }
 
@@ -222,8 +225,8 @@ namespace MediCare.Server
 
         private void addNewClient(Packet p, TcpClient incomingClient, SslStream stream)
         {
-            clients.Add(p.GetID(), incomingClient);
-            clientsStreams.Add(p.GetID(), stream);
+            _clients.Add(p.GetID(), incomingClient);
+            _clientsStreams.Add(p.GetID(), stream);
 
             #region DEBUG
 #if DEBUG
@@ -235,29 +238,29 @@ namespace MediCare.Server
 
         private bool clientIsKnown(String id)
         {
-            return clients.ContainsKey(id);
+            return _clients.ContainsKey(id);
         }
 
         private bool loginIsValid(string credentials)
         {
-            loginIO.add("12345678:dsa"); //TODO Remove
-            loginIO.add("98765432:asd"); //TODO Remove
-            loginIO.add("87654321:asd"); //TODO Remove
+            _loginIO.add("12345678:dsa"); //TODO Remove
+            _loginIO.add("98765432:asd"); //TODO Remove
+            _loginIO.add("87654321:asd"); //TODO Remove
 
             // This part is for the Doctors signup tool.
             // The signup tool connects with "DoctorID" + "r"
             // this code checks if the doctor is connected if yes. its fine for the signuptool to connect without password
             if (credentials.Split(':')[0].EndsWith("r"))
             {
-                return clients.ContainsKey(credentials.Split(':')[0].Substring(0, 8));
+                return _clients.ContainsKey(credentials.Split(':')[0].Substring(0, 8));
             }
 
-            return loginIO.login(credentials);
+            return _loginIO.login(credentials);
         }
 
         /**
+         * Client stuurt een Disconnect type packet, en wordt hier afgehandeld.
          * Stuur het sluit bericht terug naar de client en sluit de connectie. 
-         * Client doet hetzelfde na het ontvangen van het sluit bericht.
          */
         private void HandleDisconnectPacket(Packet p)
         {
@@ -266,7 +269,7 @@ namespace MediCare.Server
             SendToDestination(response);
             Console.WriteLine(p.GetID() + " has disconnected");
             TcpClient sender;
-            clients.TryGetValue(p._id, out sender);
+            _clients.TryGetValue(p._id, out sender);
             sender.Close();
         }
 
@@ -282,7 +285,7 @@ namespace MediCare.Server
             SslStream sslStream;
             if (packet._destination == _toAllDoctors)
             {
-                foreach (var s in clientsStreams)
+                foreach (var s in _clientsStreams)
                 {
                     if (s.Key.StartsWith("9"))
                     {
@@ -300,7 +303,7 @@ namespace MediCare.Server
             }
             else
             {
-                clientsStreams.TryGetValue(packet._destination, out sslStream);
+                _clientsStreams.TryGetValue(packet._destination, out sslStream);
                 //   Console.WriteLine("Destination: " + packet._destination + " packet id destination: ");// + sslStream.ToString());
                 try
                 {
@@ -321,15 +324,28 @@ namespace MediCare.Server
         {
             SaveMeasurement(p);
         }
+
         /**
          * Handel het registratie process af. genereer een uniek ID voeg toe aan bestand (zie LoginIO)
          * Stuur een bericht terug dat de data is aangekomen.
          */
         private void HandleRegistrationPacket(Packet p)
         {
-            loginIO.add(p.GetMessage());
-            Packet response = new Packet("server", "Registration", p.GetID(), "Registration attempt succeeded");
-            SendToDestination(response);
+            string[] credentials = p.GetMessage().Split(':');
+            string name = credentials[0];
+            Console.WriteLine("Server: " + name);
+            if (_loginIO.UserExist(name))
+            {
+                Packet response = new Packet("Server", "Registration", p.GetID(), "REGISTER_FAIL");
+                SendToDestination(response);
+            }
+            else
+            {
+                _loginIO.add(p.GetMessage());
+                _loginIO.SaveLogins();
+                Packet response = new Packet("server", "Registration", p.GetID(), "REGISTER_SUCCESS");
+                SendToDestination(response);
+            }
         }
 
         /**
@@ -339,7 +355,7 @@ namespace MediCare.Server
         private void HandleBroadcastMessagePacket(Packet p)
         {
             string id = p._id + " [Broadcast]";
-            foreach (string key in clients.Keys)
+            foreach (string key in _clients.Keys)
             {
                 if (!key.StartsWith("9"))
                 {
@@ -348,6 +364,7 @@ namespace MediCare.Server
                 }
             }
         }
+
         /*
          * Geeft het aantal actieve clients
          * 
@@ -355,7 +372,7 @@ namespace MediCare.Server
         private void HandleActiveClients(Packet p)
         {
             string ids = "";
-            foreach (string key in clients.Keys)
+            foreach (string key in _clients.Keys)
             {
                 if (!key.StartsWith("9"))
                 {
@@ -366,6 +383,7 @@ namespace MediCare.Server
             Packet response = new Packet("Server", "ActiveClients", p._id, ids.Trim());
             SendToDestination(response);
         }
+
         /// <summary>
         /// Methode die aangeroepen wordt als de server een request voor de files binnenkrijgt
         /// </summary>
@@ -375,7 +393,7 @@ namespace MediCare.Server
         {
             Packet response = mIOv2.Get_Files(packet);
             SslStream sslStream;
-            clientsStreams.TryGetValue(packet._destination, out sslStream);
+            _clientsStreams.TryGetValue(packet._destination, out sslStream);
             //Console.WriteLine("THIS IS THE RESPONSE PACKET " + response.toString());
             try
             {
@@ -386,7 +404,7 @@ namespace MediCare.Server
                 Console.WriteLine(e.Message);
             }
         }
-        
+
         /// <summary>
         /// 
         /// </summary>
@@ -444,7 +462,7 @@ namespace MediCare.Server
         {
             Console.WriteLine("\n############################################# ");
             Console.WriteLine("content for clients dictionary: ");
-            foreach (KeyValuePair<string, TcpClient> entry in clients)
+            foreach (KeyValuePair<string, TcpClient> entry in _clients)
             {
                 Console.WriteLine("ID: " + ((string)entry.Key) + " TcpClient: " + entry.Value.GetHashCode());
             }
