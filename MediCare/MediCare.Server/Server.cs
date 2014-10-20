@@ -89,9 +89,6 @@ namespace MediCare.Server
                                 case "Registration":
                                 HandleRegistrationPacket(packet);
                                 break;
-                                case "Broadcast":
-                                HandleBroadcastMessagePacket(packet);
-                                break;
                                 case "Timestamp":
                                 HandleTimestampPacket(packet);
                                 break;
@@ -345,23 +342,6 @@ namespace MediCare.Server
                 _loginIO.SaveLogins();
                 Packet response = new Packet("server", "Registration", p.GetID(), "REGISTER_SUCCESS");
                 SendToDestination(response);
-            }
-        }
-
-        /**
-         * Handel een broadcast message af van de Doktor.
-         * 
-         */
-        private void HandleBroadcastMessagePacket(Packet p)
-        {
-            string id = p._id + " [Broadcast]";
-            foreach (string key in _clients.Keys)
-            {
-                if (!key.StartsWith("9"))
-                {
-                    Packet response = new Packet(id, "Chat", key, p._message);
-                    SendToDestination(response);
-                }
             }
         }
 

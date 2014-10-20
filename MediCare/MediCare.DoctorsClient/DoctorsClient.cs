@@ -295,8 +295,11 @@ namespace MediCare.ArtsClient
             {
                 if (typeBox.Text != "")
                 {
-                    Packet p = new Packet(_ID, "Broadcast", "5", typeBox.Text);
-                    _client.sendMessage(p);
+                    foreach (string key in _tabIdDict.Keys)
+                    {
+                        Packet p = new Packet(_ID + " [Broadcast]", "Chat", key, typeBox.Text);
+                        _client.sendMessage(p);
+                    }
                     txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                     txtLog_AlignTextToBottom();
                     txtLog_ScrollToBottom();
