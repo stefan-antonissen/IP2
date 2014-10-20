@@ -110,6 +110,7 @@ namespace MediCare.Client
 
         private void HandleCommandPacket(Packet p)
         {
+            Console.WriteLine("Received Command message: " + p._message);
             int value;
             if (p._message.Equals("reset"))
             {
