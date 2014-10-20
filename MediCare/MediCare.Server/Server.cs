@@ -81,7 +81,7 @@ namespace MediCare.Server
                                 HandleFirstConnectPacket(packet, incomingClient, sslStream);
                                 break;
                                 case "Disconnect":
-                                HandleDisconnectPacket(packet);
+                                HandleDisconnectPacket(packet, sslStream);
                                 break;
                                 case "Data":
                                 HandleDataPacket(packet);
@@ -91,9 +91,6 @@ namespace MediCare.Server
                                 break;
                                 case "ManageUsers":
                                 HandleManageUsersPacket(packet);
-                                break;
-                                case "Broadcast":
-                                HandleBroadcastMessagePacket(packet);
                                 break;
                                 case "Timestamp":
                                 HandleTimestampPacket(packet);
@@ -180,7 +177,7 @@ namespace MediCare.Server
                 }
             }
         }
-
+        
         private void SendToDestination(Packet packet)
         {
             SslStream sslStream;
@@ -201,28 +198,36 @@ namespace MediCare.Server
          */
         private void HandleFirstConnectPacket(Packet p, TcpClient incomingClient, SslStream stream)
         {
-
-            if (loginIsValid(p._message))
+            if (_clients.ContainsKey(p._id))
             {
-                Packet response = new Packet("Server", "FirstConnect", p._id, "VERIFIED");
+                Console.WriteLine("Client already logged in!");
+                Packet response = new Packet("Server", "FirstConnect", p._id, "Login failed, this ID is already logged in.");
                 SendPacket(stream, response);
-#if DEBUG
-                Console.WriteLine("Login succeeded");
-#endif
-                //login is valid. Do add the client to the dictionaries.
-                if (!clientIsKnown(p._id))
-                {
-                    addNewClient(p, incomingClient, stream);
-                }
             }
             else
             {
-                Packet response = new Packet("Server", "FirstConnect", p._id, "DENIED");
-                SendPacket(stream, response);
+                if (loginIsValid(p._message))
+                {
+                    Packet response = new Packet("Server", "FirstConnect", p._id, "VERIFIED");
+                    SendPacket(stream, response);
+#if DEBUG
+                    Console.WriteLine("Login succeeded");
+#endif
+                    //login is valid. Do add the client to the dictionaries.
+                    if (!clientIsKnown(p._id))
+                    {
+                        addNewClient(p, incomingClient, stream);
+                    }
+                }
+                else
+                {
+                    Packet response = new Packet("Server", "FirstConnect", p._id, "Login failed, login credentials are invalid");
+                    SendPacket(stream, response);
 
 #if DEBUG
-                Console.WriteLine("Login credentials are invalid");
+                    Console.WriteLine("Login credentials are invalid");
 #endif
+                }
             }
         }
 
@@ -265,15 +270,25 @@ namespace MediCare.Server
          * Client stuurt een Disconnect type packet, en wordt hier afgehandeld.
          * Stuur het sluit bericht terug naar de client en sluit de connectie. 
          */
-        private void HandleDisconnectPacket(Packet p)
+        private void HandleDisconnectPacket(Packet p, SslStream sslStream)
         {
-            mIOv2.Remove_client(p); // do not remove, do not move and do not edit!
+            if (p._id != null)
+            {
+                Console.WriteLine("Removing client from dictionary's: " + p._id);
+                mIOv2.Remove_client(p); // do not remove, do not move and do not edit!
+                if (_clients.ContainsKey(p._id))
+                {
+                    _clients.Remove(p._id);
+                }
+                if (_clientsStreams.ContainsKey(p._id))
+                {
+                    _clientsStreams.Remove(p._id);
+                }
+            }
             Packet response = new Packet("server", "Disconnect", p.GetID(), "LOGGED OFF");
-            SendToDestination(response);
-            Console.WriteLine(p.GetID() + " has disconnected");
-            TcpClient sender;
-            _clients.TryGetValue(p._id, out sender);
-            sender.Close();
+            SendPacket(sslStream, response);
+            Console.WriteLine("A client has disconnected");
+            sslStream.Close();
         }
 
         /**
@@ -399,23 +414,6 @@ namespace MediCare.Server
                 SendToDestination(response);
             }
         }
-        /**
-         * Handel een broadcast message af van de Doktor.
-         * 
-         */
-        private void HandleBroadcastMessagePacket(Packet p)
-        {
-            string id = p._id + " [Broadcast]";
-            foreach (string key in _clients.Keys)
-            {
-                if (!key.StartsWith("9"))
-                {
-                    Packet response = new Packet(id, "Chat", key, p._message);
-                    SendToDestination(response);
-                }
-            }
-        }
-
         /*
          * Geeft het aantal actieve clients
          * 
@@ -471,6 +469,7 @@ namespace MediCare.Server
 
         private void HandleCommandPacket(Packet packet)
         {
+            Console.WriteLine("Received Command packet: " + packet._message);
             SendToDestination(packet);
         }
 

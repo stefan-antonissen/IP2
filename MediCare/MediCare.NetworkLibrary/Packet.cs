@@ -63,7 +63,11 @@ namespace MediCare.NetworkLibrary
 
         static public Boolean hasValidId(Packet p)
         {
-            if (p._id.Length == 8)
+            if (p._id == null && p._type == "Disconnect")
+            {
+                return true;
+            }
+            else if(p._id.Length == 8)
             {
                 int n;
                 return int.TryParse(p._id, out n);
