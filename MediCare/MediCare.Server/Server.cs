@@ -81,7 +81,7 @@ namespace MediCare.Server
                                 HandleFirstConnectPacket(packet, incomingClient, sslStream);
                                 break;
                                 case "Disconnect":
-                                HandleDisconnectPacket(packet);
+                                HandleDisconnectPacket(packet, sslStream);
                                 break;
                                 case "Data":
                                 HandleDataPacket(packet);
@@ -174,7 +174,7 @@ namespace MediCare.Server
                 }
             }
         }
-
+        
         private void SendToDestination(Packet packet)
         {
             SslStream sslStream;
@@ -259,15 +259,16 @@ namespace MediCare.Server
          * Client stuurt een Disconnect type packet, en wordt hier afgehandeld.
          * Stuur het sluit bericht terug naar de client en sluit de connectie. 
          */
-        private void HandleDisconnectPacket(Packet p)
+        private void HandleDisconnectPacket(Packet p, SslStream sslStream)
         {
-            mIOv2.Remove_client(p); // do not remove, do not move and do not edit!
+            if (p._id != null)
+            {
+                mIOv2.Remove_client(p); // do not remove, do not move and do not edit!
+            }
             Packet response = new Packet("server", "Disconnect", p.GetID(), "LOGGED OFF");
-            SendToDestination(response);
-            Console.WriteLine(p.GetID() + " has disconnected");
-            TcpClient sender;
-            _clients.TryGetValue(p._id, out sender);
-            sender.Close();
+            SendPacket(sslStream, response);
+            Console.WriteLine("A client has disconnected");
+            sslStream.Close();
         }
 
         /**

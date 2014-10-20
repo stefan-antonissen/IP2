@@ -308,7 +308,7 @@ namespace MediCare.Client
             {
                 _client.sendMessage(p);
                 Packet p1 = _client.ReadMessage();
-                if (p1._message.Equals("LOGGED OFF") && (p1.GetDestination() == "52323232"))
+                if (p1._message.Equals("LOGGED OFF"))
                 {
                     _client.Close();
                 }
