@@ -203,7 +203,7 @@ namespace MediCare.ArtsClient
             this.Password_Label.Name = "Password_Label";
             this.Password_Label.Size = new System.Drawing.Size(53, 13);
             this.Password_Label.TabIndex = 23;
-            this.Password_Label.Text = "Pass33word";
+            this.Password_Label.Text = "Password";
             // 
             // Username_label
             // 

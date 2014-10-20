@@ -64,7 +64,7 @@ namespace MediCare.Server
                             //dataString = (String)formatter.Deserialize(sender.GetStream());
                             packet = Utils.GetPacket(dataString);
 
-                            if(!Packet.hasValidId(packet))
+                            if (!Packet.hasValidId(packet))
                                 Console.WriteLine("WARNING! PACKET HAS INVALID ID. ONE SHOULD NOT SEND PACKETS TO THE SERVER WHO HAVE AN ID THAT DOES NOT PASS THE hasValidId(p) METHOD! \nPACKET ID USED WHAS: " + packet._id);
 
                             //Console.WriteLine(dataString);
@@ -88,6 +88,9 @@ namespace MediCare.Server
                                 break;
                                 case "Registration":
                                 HandleRegistrationPacket(packet);
+                                break;
+                                case "ManageUsers":
+                                HandleManageUsersPacket(packet);
                                 break;
                                 case "Broadcast":
                                 HandleBroadcastMessagePacket(packet);
@@ -247,10 +250,10 @@ namespace MediCare.Server
             _loginIO.add("98765432:asd"); //TODO Remove
             _loginIO.add("87654321:asd"); //TODO Remove
 
-            // This part is for the Doctors signup tool.
-            // The signup tool connects with "DoctorID" + "r"
+            // This part is for the Doctors signup tool/manage users tool.
+            // The signup tool connects with "DoctorID" + "r" or "DoctorID" + "m"
             // this code checks if the doctor is connected if yes. its fine for the signuptool to connect without password
-            if (credentials.Split(':')[0].EndsWith("r"))
+            if (credentials.Split(':')[0].EndsWith("r") || credentials.Split(':')[0].EndsWith("m"))
             {
                 return _clients.ContainsKey(credentials.Split(':')[0].Substring(0, 8));
             }
@@ -347,7 +350,55 @@ namespace MediCare.Server
                 SendToDestination(response);
             }
         }
+        /**
+          * Handel het manage user proces af. Maak één lange string aan met alle ids en bijbehorende wachtwoorden
+          * de ids en wachtwoorden worden gesplit dmv een '@', zelf worden de ids en pass gesplit op een spatie
+          * Stuur een bericht terug 
+          */
+        private void HandleManageUsersPacket(Packet p)
+        {
+            if (p._message.Equals("GetLogins"))
+            {
+                string ids = string.Empty;
+                string passwords = string.Empty;
 
+                foreach (KeyValuePair<string, string> login in _loginIO._logins)
+                {
+                    // elke dokter kan van elke patient het ww wijzigen?
+                    if (!login.Key.StartsWith("9"))
+                    {
+                        ids += login.Key + " ";
+                        passwords += login.Value + " ";
+                    }
+                }
+                Packet response = new Packet("Server", "GetLogins", p._id, ids.Trim() + "@" + passwords.Trim());
+                SendToDestination(response);
+            }
+            else if (p._message.Substring(0, 7).Equals("NewPass"))
+            {
+                string[] credentials = p._message.Split('@');
+                string id = credentials[1];
+                string pass = credentials[2];
+                if (_loginIO.UserExist(id))
+                    _loginIO.del(id);
+                _loginIO.add(id + ":" + pass);
+                //_loginIO.SaveLogins(); // TODO: uncommenten
+                Packet response = new Packet("Server", "NewPass", p._id, "Pass changed");
+                SendToDestination(response);
+            }
+            else if (p._message.Substring(0, 10).Equals("DeleteUser"))
+            {
+                string[] credentials = p._message.Split('@');
+                string id = credentials[1];
+                string pass = credentials[2];
+                if (_loginIO.UserExist(id))
+                    _loginIO.del(id);
+
+                //_loginIO.SaveLogins(); // TODO: uncommenten
+                Packet response = new Packet("Server", "NewPass", p._id, "User deleted");
+                SendToDestination(response);
+            }
+        }
         /**
          * Handel een broadcast message af van de Doktor.
          * 
@@ -379,7 +430,6 @@ namespace MediCare.Server
                     ids += key + " ";
                 }
             }
-            //Console.WriteLine("Active clients: " + clients.Count.ToString());
             Packet response = new Packet("Server", "ActiveClients", p._id, ids.Trim());
             SendToDestination(response);
         }
