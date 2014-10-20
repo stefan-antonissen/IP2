@@ -402,6 +402,7 @@ namespace MediCare.Server
 
         private void HandleCommandPacket(Packet packet)
         {
+            Console.WriteLine("Received Command packet: " + packet._message);
             SendToDestination(packet);
         }
 

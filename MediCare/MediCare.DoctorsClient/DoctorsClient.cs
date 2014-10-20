@@ -535,6 +535,7 @@ namespace MediCare.ArtsClient
         private Button sendButtonClient = new Button();
 
         private Button updatePowerButton = new Button();
+        private Button resetButton = new Button();
         public TextBox newPowerBox = new TextBox();
         private Label newPowerLabel = new Label();
         private Label RPMLabel = new Label();
@@ -585,12 +586,12 @@ namespace MediCare.ArtsClient
             //ChatBox
             chatBox.AllowDrop = true;
             chatBox.BackColor = System.Drawing.Color.WhiteSmoke;
-            chatBox.Location = new System.Drawing.Point(20, 350);
+            chatBox.Location = new System.Drawing.Point(20, 390);
             chatBox.Multiline = true;
             chatBox.Name = "txtLog";
             chatBox.ReadOnly = true;
             chatBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            chatBox.Size = new System.Drawing.Size(980, 250);
+            chatBox.Size = new System.Drawing.Size(980, 210);
             chatBox.TabIndex = 6;
             chatBox.TextChanged += new System.EventHandler(this.txtLog_TextChanged);
 
@@ -621,6 +622,19 @@ namespace MediCare.ArtsClient
             updatePowerButton.TabIndex = 38;
             updatePowerButton.Text = "Update";
             updatePowerButton.UseVisualStyleBackColor = true;
+            #endregion
+
+            #region Reset Button
+            // 
+            // Reset Button
+            // 
+            resetButton.Location = new System.Drawing.Point(20, 350);
+            resetButton.Name = "resetButton";
+            resetButton.Size = new System.Drawing.Size(70, 35);
+            resetButton.TabIndex = 39;
+            resetButton.Text = "Reset";
+            resetButton.UseVisualStyleBackColor = true;
+            resetButton.Click += new System.EventHandler(this.resetButton_Click);
             #endregion
 
             #region TimeRunning
@@ -802,6 +816,7 @@ namespace MediCare.ArtsClient
             newPowerLabel.Text = "New power";
             #endregion
 
+
             #region add components
             //add components
             this.Controls.Add(closeButton);
@@ -812,6 +827,7 @@ namespace MediCare.ArtsClient
             this.Controls.Add(updatePowerButton);
             this.Controls.Add(newPowerBox);
             this.Controls.Add(newPowerLabel);
+            this.Controls.Add(resetButton);
             this.Controls.Add(RPMLabel);
             this.Controls.Add(Speed_Box);
             this.Controls.Add(Distance_Box);
@@ -839,6 +855,16 @@ namespace MediCare.ArtsClient
             //this.TabIndex = this.tabControl1.TabCount + 1; NOT NEEDED???
             this.Text = tabName;
             this.UseVisualStyleBackColor = true;
+        }
+
+        private void resetButton_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Are you sure you want to reset the bike?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                Packet p = new Packet(_id, "Command", _tabName, "reset");
+                _client.sendMessage(p);
+                MessageBox.Show("Bike reset!");
+            }
         }
 
         delegate void UpdateValueCallback(string[] text);
