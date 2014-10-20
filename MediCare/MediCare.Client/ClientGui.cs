@@ -74,7 +74,7 @@ namespace MediCare.Client
                     if (_userIsAuthenticated)
                     {
                         Packet packet = null;
-                        if (_client.isConnected())
+                        if (_client.isConnected() && !this.IsDisposed)
                         {
                             //Console.WriteLine("Reading message\n");
                             packet = _client.ReadMessage();
@@ -103,9 +103,18 @@ namespace MediCare.Client
                 case "Command":
                 HandleCommandPacket(p);
                 break;
+                case "Disconnect":
+                HandleDisconnectPacket(p);
+                break;
                 default: //nothing
                 break;
             }
+        }
+
+        private void HandleDisconnectPacket(Packet p)
+        {
+            _client.Close();
+            this.Close();
         }
 
         private void HandleCommandPacket(Packet p)
@@ -308,16 +317,6 @@ namespace MediCare.Client
             if (_client.isConnected())
             {
                 _client.sendMessage(p);
-                Packet p1 = _client.ReadMessage();
-                if (p1._message.Equals("LOGGED OFF"))
-                {
-                    _client.Close();
-                }
-                else
-                {
-                    e.Cancel = true;
-                    //show popup that said no response from server (or not). Maybe u shoudnt even cancel the closing operation...
-                }
             }
         }
 

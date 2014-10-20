@@ -75,10 +75,9 @@ namespace MediCare.ArtsClient
                     if (_userIsAuthenticated)
                     {
                         Packet packet = null;
-                        if (_client.isConnected())
+                        if (_client.isConnected() && !this.IsDisposed)
                         {
                             packet = _client.ReadMessage();
-
                             if (packet != null)
                             {
                                 processPacket(packet);
@@ -91,9 +90,16 @@ namespace MediCare.ArtsClient
 
         private void processPacket(Packet p)
         {
-            if (this.InvokeRequired)
+            if (this.InvokeRequired && _client.isConnected())
             {
-                this.Invoke(new Action<Packet>(processPacket), new object[] { p });
+                try
+                {
+                    this.Invoke(new Action<Packet>(processPacket), new object[] { p });
+                }
+                catch(Exception e)
+                {
+                    Console.WriteLine(e);
+                }
             }
             else
             {
@@ -116,10 +122,18 @@ namespace MediCare.ArtsClient
                     case "FileRequest":
                     HandleFileRequest(p);
                     break;
+                    case "Disconnect":
+                    HandleDisconnectPacket(p);
+                    break;
                     default: //nothing
                     break;
                 }
             }
+        }
+
+        private void HandleDisconnectPacket(Packet p)
+        {
+            _client.Close();
         }
         private void HandleFileRequest(Packet p)
         {
@@ -482,17 +496,6 @@ namespace MediCare.ArtsClient
             if (_client.isConnected())
             {
                 _client.sendMessage(p);
-                Packet p1 = _client.ReadMessage();
-                if (p1._message.Equals("LOGGED OFF"))
-                {
-                    _client.Close();
-
-                }
-                else
-                {
-                    e.Cancel = true;
-                    //show popup that said no response from server (or not). Maybe u shoudnt even cancel the closing operation...
-                }
             }
         }
         private void ManageUsersButton_Click(object sender, EventArgs e)
