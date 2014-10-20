@@ -263,7 +263,16 @@ namespace MediCare.Server
         {
             if (p._id != null)
             {
+                Console.WriteLine("Removing client from dictionary's: " + p._id);
                 mIOv2.Remove_client(p); // do not remove, do not move and do not edit!
+                if (_clients.ContainsKey(p._id))
+                {
+                    _clients.Remove(p._id);
+                }
+                if (_clientsStreams.ContainsKey(p._id))
+                {
+                    _clientsStreams.Remove(p._id);
+                }
             }
             Packet response = new Packet("server", "Disconnect", p.GetID(), "LOGGED OFF");
             SendPacket(sslStream, response);

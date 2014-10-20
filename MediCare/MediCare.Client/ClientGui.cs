@@ -114,7 +114,6 @@ namespace MediCare.Client
         private void HandleDisconnectPacket(Packet p)
         {
             _client.Close();
-            this.Close();
         }
 
         private void HandleCommandPacket(Packet p)
