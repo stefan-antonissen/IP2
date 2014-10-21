@@ -242,11 +242,6 @@ namespace MediCare.Client
         }
 
         # region Chat Box
-        private void txtLog_TextChanged(object sender, EventArgs e)
-        {
-            //kan weg?
-        }
-
         // ID = id van sender; type = type bericht; destination = ID van ontvanger; message = bericht
         private void sendButton_Click(object sender, EventArgs e)
         {
@@ -307,7 +302,6 @@ namespace MediCare.Client
             else
             {
                 txtLog.AppendText(Environment.NewLine + "Dokter " + id + ": " + message);
-                typeBox.Text = "";
                 txtLog_AlignTextToBottom();
                 txtLog_ScrollToBottom();
             }
@@ -354,9 +348,6 @@ namespace MediCare.Client
             }
         }
 
-        /**
-         * TODO: Logging in for real on the server
-         */
         private void login(object sender, EventArgs e)
         {
             if (String.IsNullOrEmpty(Username_Box.Text) || String.IsNullOrEmpty(Password_Box.Text))
