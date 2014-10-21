@@ -12,7 +12,8 @@ namespace MediCare.Controller
         private String _status = ""; //command that was sent in through the send method. excluding the value that has been added to the end.
         private int _value = 0; //value that was passed in with the command via send.
 
-        private long initialTimeInMillis;
+        private int initialTimeInSecs;
+        private int initialTimeInMins;
         
         private Boolean isCM = false;
 
@@ -22,13 +23,16 @@ namespace MediCare.Controller
         private int distance = 14;
         private int power = 200;
         private int energy = 1200;
-        private int time = 1111; //11minutes 11 seconds???? verify
+        private int timeSec = 0;
+        private int timeMin = 0;
+        private long time = 0; //11minutes 11 seconds???? verify
         private int currentPower = 150;
 
         public BikeSimulator(string port)
         {
             Console.WriteLine("PortName: " + port);
-            initialTimeInMillis = DateTime.Now.Millisecond;
+            initialTimeInSecs = DateTime.Now.Second;
+            initialTimeInMins = DateTime.Now.Minute;
         }
 
         override public void openConnection()
@@ -134,6 +138,23 @@ namespace MediCare.Controller
 
         private string GetStatus()
         {
+            string time = "";
+            if (timeMin < 10)
+            {
+                time += "0" + timeMin + ":";
+            }
+            else
+            {
+                time += timeMin + ":";
+            }
+            if (timeSec < 10)
+            {
+                time += "0" + timeSec;
+            }
+            else
+            {
+                time += timeSec;
+            }
             return heartrate + " " + rpm + " " + speed + " " + distance + " " + power + " " + energy + " " + time + " " + currentPower; // Heartrate, Rpm, Speed, Distance, Power, Energy, Time, Current Power
         }
 
@@ -179,9 +200,19 @@ namespace MediCare.Controller
                 currentPower = 400;
             }
 
-            long timePassed = DateTime.Now.Millisecond - initialTimeInMillis;
-            distance += (int)((speed * 3.6) * (timePassed / 1000));
-            energy += (int)(timePassed / 1000); //60 Kjoules per minuut, dus een per seconde (als je 30km/u gaat en 66Kg weegt).
+            timeSec = DateTime.Now.Second - initialTimeInSecs;
+            if (timeSec < 0)
+            {
+                timeSec = 60 + timeSec;
+            }
+            if (timeSec == 0)
+            {
+                timeMin++;
+            }
+            distance += (int)((speed * 3.6) * (timeSec + (60*timeMin)));
+            energy += (timeSec + (60*timeMin)); //60 Kjoules per minuut, dus een per seconde (als je 30km/u gaat en 66Kg weegt).
+            Console.WriteLine("timepassed: " + timeMin + ":" + timeSec);
+
             // TODO Add Time
         }
 
