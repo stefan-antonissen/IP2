@@ -114,6 +114,7 @@ namespace MediCare.Server
                                 break;
                             }
                         }
+                        Thread.Sleep(5);
                     } // end While
                 }).Start();
             }

@@ -23,8 +23,8 @@ namespace MediCare.ArtsClient
         private readonly System.Windows.Forms.Timer _getActiveClientsTimer;
         private readonly System.Windows.Forms.Timer _labelRemoveTimer;
 
-        private static string _server = "127.0.0.1";
-        private static int _port = 11000;
+        private static string _server = NetworkSettings.SERVERIP;
+        private static int _port = NetworkSettings.SERVERPORT;
         private ClientTcpConnector _client;
 
         private string _connectedIDs = "";
@@ -240,8 +240,11 @@ namespace MediCare.ArtsClient
 
         private void updateActiveClients(object sender, EventArgs e)
         {
-            Packet response = new Packet(_ID, "ActiveClients", "Server", "Get active clients");
-            _client.sendMessage(response);
+            if(_userIsAuthenticated)
+            {
+                Packet response = new Packet(_ID, "ActiveClients", "Server", "Get active clients");
+                _client.sendMessage(response);
+            }
         }
 
         private string getActiveClients()

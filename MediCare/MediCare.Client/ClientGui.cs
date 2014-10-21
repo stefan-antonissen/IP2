@@ -18,12 +18,11 @@ namespace MediCare.Client
     public partial class ClientGui : Form
     {
         private Controller.BikeController _bikeController;
-
         private Graph _graph;
         private Series[] _ChartData = new Series[8];
 
-        private static string _server = "127.0.0.1";
-        private static int _port = 11000;
+        private static string _server = NetworkSettings.SERVERIP;
+        private static int _port = NetworkSettings.SERVERPORT;
         private ClientTcpConnector _client;
 
         string _ID;
