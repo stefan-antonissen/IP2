@@ -474,7 +474,7 @@ namespace MediCare.Server
         private void HandleFileRequest(TcpClient client, Packet packet)
         {
             string FileRequested = packet._message;
-            //client.Client.SendFile(mIOv2.Get_File(FileRequested));
+            client.Client.SendFile(mIOv2.Get_File(FileRequested));
             //TODO return file data!
             Console.WriteLine(mIOv2.Get_File(FileRequested));
         }
