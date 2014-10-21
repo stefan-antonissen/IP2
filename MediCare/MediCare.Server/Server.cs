@@ -114,6 +114,7 @@ namespace MediCare.Server
                                 break;
                             }
                         }
+                        Thread.Sleep(5);
                     } // end While
                 }).Start();
             }
@@ -223,7 +224,6 @@ namespace MediCare.Server
                 {
                     Packet response = new Packet("Server", "FirstConnect", p._id, "Login failed, login credentials are invalid");
                     SendPacket(stream, response);
-
 #if DEBUG
                     Console.WriteLine("Login credentials are invalid");
 #endif

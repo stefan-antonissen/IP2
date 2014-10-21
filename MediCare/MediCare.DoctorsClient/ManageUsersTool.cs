@@ -16,8 +16,8 @@ namespace MediCare
     public partial class ManageUsersTool : Form
     {
         private readonly Timer _labelRemoveTimer;
-        private static string _server = "127.0.0.1";
-        private static int _port = 11000;
+        private static string _server = NetworkSettings.SERVERIP;
+        private static int _port = NetworkSettings.SERVERPORT;
         private ClientTcpConnector _client;
         private string _id;
         private string _prevCellValue;
