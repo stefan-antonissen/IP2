@@ -6,6 +6,8 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
+
 
 /**
  * @Author: Frank
@@ -19,6 +21,7 @@ using System.Threading.Tasks;
 
 namespace MediCare.DataHandling
 {
+    [Serializable()]
     public class Serializer
     {
         public Serializer()
