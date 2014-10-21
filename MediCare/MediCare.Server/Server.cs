@@ -504,7 +504,7 @@ namespace MediCare.Server
                 {
                     var t = sendQueue.Take();
 
-                    if (t.Item1 != null && t.Item2 != null)
+                    if (t.Item1 != null && t.Item1.CanWrite && t.Item2 != null)
                     {
                         BinaryFormatter formatter = new BinaryFormatter();
                         formatter.Serialize(t.Item1, Utils.GetPacketString(t.Item2));
