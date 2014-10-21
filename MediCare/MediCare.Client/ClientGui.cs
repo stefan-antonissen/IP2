@@ -18,12 +18,11 @@ namespace MediCare.Client
     public partial class ClientGui : Form
     {
         private Controller.BikeController _bikeController;
-
         private Graph _graph;
         private Series[] _ChartData = new Series[8];
 
-        private static string _server = "127.0.0.1";
-        private static int _port = 11000;
+        private static string _server = NetworkSettings.SERVERIP;
+        private static int _port = NetworkSettings.SERVERPORT;
         private ClientTcpConnector _client;
 
         string _ID;
@@ -378,8 +377,8 @@ namespace MediCare.Client
                 }
                 else
                 {
-                    _ID = Username_Box.Text;
-                    _client.sendFirstConnectPacket(_ID, Password_Box.Text);
+                    string tempID = Username_Box.Text;
+                    _client.sendFirstConnectPacket(tempID, Password_Box.Text);
 
                     while (!_userIsAuthenticated)
                     {
@@ -394,6 +393,7 @@ namespace MediCare.Client
                             {
                                 //todo check for authenticated packet from server 
                                 _userIsAuthenticated = true;
+                                _ID = tempID;
 
                                 setVisibility(true);
                                 _updateDataTimer.Start(); // automatisch updaten van de waardes
