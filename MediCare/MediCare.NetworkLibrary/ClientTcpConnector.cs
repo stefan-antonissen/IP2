@@ -10,6 +10,11 @@ using System.Threading.Tasks;
 
 namespace MediCare.NetworkLibrary
 {
+    /// <summary>
+    /// ClientTcpConnector.
+    /// 
+    /// This class is used by the Client, DoctorsClient and SignupTool to connect to the server
+    /// </summary>
     public class ClientTcpConnector
     {
         private TcpClient _client;

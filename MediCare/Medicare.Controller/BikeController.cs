@@ -25,7 +25,7 @@ namespace MediCare.Controller
             }
             else
             {
-                cc = new BikeSimulator(comPort); //TODO fix.. does not work.
+                cc = new BikeSimulator(comPort); //Bikesimulator
             }
 
             cc.openConnection();
