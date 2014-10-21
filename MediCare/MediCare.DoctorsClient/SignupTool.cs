@@ -83,42 +83,37 @@ namespace MediCare
             string response = _client.ReadMessage().GetMessage();
 
             Regex r = new Regex("^[0-9]{8}$");
-            if (name.Equals("") || pass.Equals("") || verifypass.Equals(""))
+
+            if (response.Equals("INVALID_PASS"))
             {
-                Error_Label.Text = "One or more fields are blank!";
+                DisplayError("Password contains invalid characters!");
+                this.ActiveControl = Password_TextBox;
+            }
+            //sender > enqueue
+            else if (name.Equals("") || pass.Equals("") || verifypass.Equals(""))
+            {
+                DisplayError("One or more fields are blank!");
                 this.ActiveControl = Username_TextBox;
-                _labelRemoveTimer.Start();
             }
             else if (!pass.Equals(verifypass))
             {
-                Error_Label.Text = "Passwords do not match!";
+                DisplayError("Passwords do not match!");
                 this.ActiveControl = Password_TextBox;
-                _labelRemoveTimer.Start();
             }
             else if (response.Equals("REGISTER_FAIL"))
             {
-                Error_Label.Text = "User aleady exists!";
+                DisplayError("User aleady exists!");
                 this.ActiveControl = Username_TextBox;
-                _labelRemoveTimer.Start();
             }
             else if ((!r.IsMatch(name) || Int32.Parse(name.Substring(0, 1)) == 9))
             {
-                Error_Label.Text = "Username must start with 1-8 \n and are 8 characters long";
+                DisplayError("Username must start with 1-8 \n and are 8 characters long");
                 this.ActiveControl = Username_TextBox;
-                _labelRemoveTimer.Start();
             }
             else if (name != "" && pass != "" && pass.Equals(verifypass) && (response.Equals("REGISTER_SUCCESS")))
             {
-                // client.sendMessage(new Packet(id + "r", "Registration", "Server", name + ":" + pass));
-
                 MessageBox.Show("Registered user " + name + " and saved!");
                 this.Hide();
-                // client.sendMessage(new Packet(id + "r", "Disconnect", Server", "Disconnecting"));
-                // if (client.ReadMessage().Equals("LOGGED OFF"))
-                // {
-                //    client.Close();
-                // }
-                //  this.Close();
             }
         }
 
@@ -127,6 +122,11 @@ namespace MediCare
         public void endConnection()
         {
             this.Close();
+        }
+        private void DisplayError(string message)
+        {
+            Error_Label.Text = message;
+            _labelRemoveTimer.Start();
         }
         private void UpdateLabel(object sender, EventArgs e)
         {
