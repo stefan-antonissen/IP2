@@ -71,7 +71,7 @@ namespace MediCare.Server
                             dataString = (String)formatter.Deserialize(sslStream);
                             //dataString = (String)formatter.Deserialize(sender.GetStream());
                             packet = Utils.GetPacket(dataString);
-
+                            Console.WriteLine("Packet received: " + packet.toString());
                             if (!Packet.hasValidId(packet))
                                 Console.WriteLine("WARNING! PACKET HAS INVALID ID. ONE SHOULD NOT SEND PACKETS TO THE SERVER WHO HAVE AN ID THAT DOES NOT PASS THE hasValidId(p) METHOD! \nPACKET ID USED WHAS: " + packet._id);
 
