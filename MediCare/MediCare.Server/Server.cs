@@ -17,7 +17,7 @@ namespace MediCare.Server
         private IPAddress _localIP = IPAddress.Parse("127.0.0.1");
         private Dictionary<string, TcpClient> _clients = new Dictionary<string, TcpClient>();
         private Dictionary<string, SslStream> _clientsStreams = new Dictionary<string, SslStream>();
-        //private ObjectIOv2 mIOv2; // do not remove, do not move and do not edit!
+        private ObjectIOv2 mIOv2; // do not remove, do not move and do not edit!
 
         private LoginIO _loginIO = new LoginIO();
 
@@ -39,7 +39,7 @@ namespace MediCare.Server
         {
             _loginIO.LoadLogins();
 
-            //mIOv2 = new ObjectIOv2(); // do not remove, do not move and do not edit!
+            mIOv2 = new ObjectIOv2(); // do not remove, do not move and do not edit!
 
             TcpListener server = new TcpListener(/*_localIP,*/ 11000);
             server.Start();
@@ -141,7 +141,7 @@ namespace MediCare.Server
             //first string is ID [0], 
             //second & third is the datetime [1](date) [2](time)
             string[] split = packet._message.Split();
-            //string resultstring = mIOv2.Remove_file(split[0], split[1] + " " + split[2]);
+            string resultstring = mIOv2.Remove_file(split[0], split[1] + " " + split[2]);
             Packet result = new Packet("Server", "Result", packet._id, resultstring);
             try
             {
