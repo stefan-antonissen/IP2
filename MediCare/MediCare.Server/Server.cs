@@ -8,6 +8,7 @@ using MediCare.NetworkLibrary;
 using MediCare.DataHandling;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
+using System.Collections.Concurrent;
 
 namespace MediCare.Server
 {
@@ -24,6 +25,10 @@ namespace MediCare.Server
         //README!!! - SSL certificate needs to be coppied from MediCare.Server\ssl_cert.pfx to C:\Windows\Temp\
         private X509Certificate certificate = new X509Certificate(@"C:\Windows\Temp\ssl_cert.pfx", "medicare");
 
+        //sendqueue
+        private BlockingCollection<Tuple<SslStream, Packet>> sendQueue = new BlockingCollection<Tuple<SslStream, Packet>>(new ConcurrentQueue<Tuple<SslStream, Packet>>());
+        private bool _running;
+
 
         static void Main(string[] args)
         {
@@ -38,6 +43,9 @@ namespace MediCare.Server
 
             TcpListener server = new TcpListener(/*_localIP,*/ 11000);
             server.Start();
+
+            startServerHelper();
+            _running = true;
 
             TcpClient incomingClient;
             Console.WriteLine("Waiting for connection...");
@@ -173,7 +181,7 @@ namespace MediCare.Server
                 if (IsDoctor(entry.Key))
                 {
                     SslStream sslStream = entry.Value;
-                    SendPacket(sslStream, packet);
+                    EnqueuePacket(sslStream, packet);
                     //Console.WriteLine("packetMessage: " + packet._message);
                 }
             }
@@ -183,7 +191,7 @@ namespace MediCare.Server
         {
             SslStream sslStream;
             _clientsStreams.TryGetValue(packet._destination, out sslStream);
-            SendPacket(sslStream, packet);
+            EnqueuePacket(sslStream, packet);
         }
 
         private bool IsDoctor(String id)
@@ -203,14 +211,14 @@ namespace MediCare.Server
             {
                 Console.WriteLine("Client already logged in!");
                 Packet response = new Packet("Server", "FirstConnect", p._id, "Login failed, this ID is already logged in.");
-                SendPacket(stream, response);
+                EnqueuePacket(stream, response);
             }
             else
             {
                 if (loginIsValid(p._message))
                 {
                     Packet response = new Packet("Server", "FirstConnect", p._id, "VERIFIED");
-                    SendPacket(stream, response);
+                    EnqueuePacket(stream, response);
 #if DEBUG
                     Console.WriteLine("Login succeeded");
 #endif
@@ -223,7 +231,7 @@ namespace MediCare.Server
                 else
                 {
                     Packet response = new Packet("Server", "FirstConnect", p._id, "Login failed, login credentials are invalid");
-                    SendPacket(stream, response);
+                    EnqueuePacket(stream, response);
 #if DEBUG
                     Console.WriteLine("Login credentials are invalid");
 #endif
@@ -286,7 +294,7 @@ namespace MediCare.Server
                 }
             }
             Packet response = new Packet("server", "Disconnect", p.GetID(), "LOGGED OFF");
-            SendPacket(sslStream, response);
+            EnqueuePacket(sslStream, response);
             Console.WriteLine("A client has disconnected");
             sslStream.Close();
         }
@@ -310,7 +318,7 @@ namespace MediCare.Server
                         //Console.WriteLine("Destination: " + s.Key);// + sslStream.ToString());
                         try
                         {
-                            SendPacket(s.Value, packet);
+                            EnqueuePacket(s.Value, packet);
                         }
                         catch (Exception e)
                         {
@@ -325,7 +333,7 @@ namespace MediCare.Server
                 //   Console.WriteLine("Destination: " + packet._destination + " packet id destination: ");// + sslStream.ToString());
                 try
                 {
-                    SendPacket(sslStream, packet);
+                    EnqueuePacket(sslStream, packet);
                 }
                 catch (Exception e)
                 {
@@ -477,10 +485,31 @@ namespace MediCare.Server
             SendToDestination(packet);
         }
 
-        private void SendPacket(SslStream stream, Packet p)
+        private void EnqueuePacket(SslStream stream, Packet p)
+        {
+            sendQueue.Add(new Tuple<SslStream, Packet>(stream, p));
+        }
+
+        public void sendPacket(SslStream stream, Packet p)
         {
             BinaryFormatter formatter = new BinaryFormatter();
             formatter.Serialize(stream, Utils.GetPacketString(p));
+        }
+
+        private void startServerHelper()
+        {
+            new Thread(() =>
+            {
+                while (_running)
+                {
+                    var t = sendQueue.Take();
+                    var stream = t.Item1;
+                    var p = t.Item2;
+
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    formatter.Serialize(stream, Utils.GetPacketString(p));
+                }
+            }).Start();
         }
 
         private void SaveMeasurement(Packet p)
