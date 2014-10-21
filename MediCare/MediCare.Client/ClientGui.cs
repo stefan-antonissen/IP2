@@ -74,7 +74,7 @@ namespace MediCare.Client
                     if (_userIsAuthenticated)
                     {
                         Packet packet = null;
-                        if (_client.isConnected())
+                        if (_client.isConnected() && !this.IsDisposed)
                         {
                             //Console.WriteLine("Reading message\n");
                             packet = _client.ReadMessage();
@@ -85,6 +85,7 @@ namespace MediCare.Client
                             }
                         }
                     }
+                    System.Threading.Thread.Sleep(5);
                 }
             }).Start();
         }
@@ -103,13 +104,37 @@ namespace MediCare.Client
                 case "Command":
                 HandleCommandPacket(p);
                 break;
+                case "Disconnect":
+                HandleDisconnectPacket(p);
+                break;
+                case "FirstConnect":
+                HandleFirstConnectPacket(p);
+                break;
                 default: //nothing
                 break;
             }
         }
 
+        private void HandleFirstConnectPacket(Packet p)
+        {
+            if (p._message == "VERIFIED")
+            {
+                Console.WriteLine("Succesfully logged in");
+            }
+            else
+            {
+                displayErrorMessage(p._message);
+            }
+        }
+
+        private void HandleDisconnectPacket(Packet p)
+        {
+            _client.Close();
+        }
+
         private void HandleCommandPacket(Packet p)
         {
+            Console.WriteLine("Received Command message: " + p._message);
             int value;
             if (p._message.Equals("reset"))
             {
@@ -307,16 +332,6 @@ namespace MediCare.Client
             if (_client.isConnected())
             {
                 _client.sendMessage(p);
-                Packet p1 = _client.ReadMessage();
-                if (p1._message.Equals("LOGGED OFF") && (p1.GetDestination() == "52323232"))
-                {
-                    _client.Close();
-                }
-                else
-                {
-                    e.Cancel = true;
-                    //show popup that said no response from server (or not). Maybe u shoudnt even cancel the closing operation...
-                }
             }
         }
 
@@ -385,7 +400,7 @@ namespace MediCare.Client
                             }
                             else
                             {
-                                displayErrorMessage("Your login is not valid!");
+                                displayErrorMessage(packet._message);
                                 break;
                             }
                         }
