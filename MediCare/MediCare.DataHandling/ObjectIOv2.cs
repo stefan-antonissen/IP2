@@ -17,7 +17,7 @@ namespace MediCare.DataHandling
         public string Status { get;  private set; }
         private Dictionary<string,string> _dirDictionary;
         private const string EncryptionKey = "X10j6CZgLK24OESeXAoq";
-        private Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
+        private byte[] salt = { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 };
 
         public ObjectIOv2()
         {
@@ -89,6 +89,7 @@ namespace MediCare.DataHandling
                 string encryptedData = "";
                 using (Aes encryptor = Aes.Create())
                 {
+                    Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, salt);
                     encryptor.Key = pdb.GetBytes(32);
                     encryptor.IV = pdb.GetBytes(16);
                     using (MemoryStream ms = new MemoryStream())
@@ -182,6 +183,7 @@ namespace MediCare.DataHandling
             byte[] cipherBytes = Convert.FromBase64String(cipherText);
             using (Aes encryptor = Aes.Create())
             {
+                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, salt);
                 encryptor.Key = pdb.GetBytes(32);
                 encryptor.IV = pdb.GetBytes(16);
                 using (MemoryStream ms = new MemoryStream())
