@@ -439,8 +439,9 @@ namespace MediCare.ArtsClient
             }
             else
             {
-                _ID = Username_Box.Text;
-                _client.sendFirstConnectPacket(_ID, Password_Box.Text);
+                string tempID = Username_Box.Text;
+                
+                _client.sendFirstConnectPacket(tempID, Password_Box.Text);
 
                 while (!_userIsAuthenticated)
                 {
@@ -455,6 +456,7 @@ namespace MediCare.ArtsClient
                         {
                             //todo check for authenticated packet from server 
                             _userIsAuthenticated = true;
+                            _ID = tempID;
 
                             setVisibility(true);
                             _getActiveClientsTimer.Start(); // automatisch ophalen van de actieve verbindingen
