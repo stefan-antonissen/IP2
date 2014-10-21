@@ -377,8 +377,8 @@ namespace MediCare.Client
                 }
                 else
                 {
-                    _ID = Username_Box.Text;
-                    _client.sendFirstConnectPacket(_ID, Password_Box.Text);
+                    string tempID = Username_Box.Text;
+                    _client.sendFirstConnectPacket(tempID, Password_Box.Text);
 
                     while (!_userIsAuthenticated)
                     {
@@ -393,6 +393,7 @@ namespace MediCare.Client
                             {
                                 //todo check for authenticated packet from server 
                                 _userIsAuthenticated = true;
+                                _ID = tempID;
 
                                 setVisibility(true);
                                 _updateDataTimer.Start(); // automatisch updaten van de waardes
