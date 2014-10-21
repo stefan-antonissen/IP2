@@ -23,7 +23,7 @@ namespace MediCare.ArtsClient
         private readonly System.Windows.Forms.Timer _getActiveClientsTimer;
         private readonly System.Windows.Forms.Timer _labelRemoveTimer;
 
-        private static string _server = "127.0.0.1";
+        private static string _server = "145.102.76.200";
         private static int _port = 11000;
         private ClientTcpConnector _client;
 

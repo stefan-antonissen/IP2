@@ -7,6 +7,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
 /**
  * @Author: Frank
@@ -23,13 +25,68 @@ namespace MediCare.DataHandling
     [Serializable()]
     public class ObjectIO
     {
-        public ArrayList measurements { get; set; }
-        Serializer serializer;
+        private Dictionary<string, Session> sessions = new Dictionary<string, Session>();
+        public string userID;
+        private string path;
 
         public ObjectIO()
         {
-            measurements = new ArrayList();
-            serializer = new Serializer();
+        }
+
+        public void add(string userID)
+        {
+            string timeStamp = Regex.Replace(DateTime.Now.ToString(), @"[\/\:\\]", "-"); ;
+            //sessions.Add(userID, new Session(userID, timeStamp));
+        }
+
+        public void del(int index)
+        {
+            //measurements.RemoveAt(index);
+        }
+
+        public void empty()
+        {
+            //measurements.Clear();
+        }
+
+        //public int getSize()
+        //{
+            //return measurements.Capacity;
+        //}
+
+        // save the arraylist of measurements to a file
+        public void SaveMeasurements()
+        {
+            foreach (var key in sessions.Keys)
+            {
+                Session session;
+                sessions.TryGetValue(key, out session);
+                session.Encrypt();
+            } 
+        }
+
+        // load the arraylist of measurements from a file, returns the arraylist
+
+    [Serializable()]
+    class Session
+    {
+        public int sessionID {get; set;}
+        DESCryptoServiceProvider des = new DESCryptoServiceProvider();
+        private byte[] key = Encoding.Unicode.GetBytes("IkHebEchtGeenFlauwIdeeWatIkNuDoe213312782@#");
+        private byte[] iv = { 4, 3, 7, 4, 0, 1, 2, 8 };
+        
+        ArrayList measurements {get; set;} 
+        string userID;
+        string timeTramp;
+        string path;
+
+        public Session(int sessionID, string userID, string timeTramp)
+        {
+            measurements = new ArrayList(); 
+            this.userID = userID;
+            this.timeTramp = timeTramp;
+            this.path = @"\MeasurementData\" + userID + "-" + timeTramp + ".edat";
+            this.sessionID = sessionID;
         }
 
         public void add(Measurement m)
@@ -64,21 +121,35 @@ namespace MediCare.DataHandling
             return measurements.Capacity;
         }
 
-        // save the arraylist of measurements to a file
-        public void SaveMeasurements(string filename)
-        {
-            serializer.SerializeObject(filename, measurements);
-        }
-
-        // load the arraylist of measurements from a file, returns the arraylist
-        public ArrayList LoadMeasurements(string filename)
+        public ArrayList LoadMeasurements()
         {
             ArrayList result = null;
-            if (File.Exists(filename))
+
+            if (File.Exists(userID))
             {
-                result = (ArrayList)serializer.DeSerializeObject(filename);
+                using (var fs = new FileStream(this.path, FileMode.Open, FileAccess.Read))
+                {
+                    var cryptoStream = new CryptoStream(fs, des.CreateDecryptor(key, iv), CryptoStreamMode.Read);
+                    BinaryFormatter formatter = new BinaryFormatter();
+
+                    result = (ArrayList)formatter.Deserialize(cryptoStream);
+                }
             }
+
             return result;
         }
+
+        public void Encrypt()
+        {
+            using (var fs = new FileStream(this.path, FileMode.Create, FileAccess.Write))
+            {
+                var cryptoStream = new CryptoStream(fs, des.CreateEncryptor(key, iv), CryptoStreamMode.Write);
+                BinaryFormatter formatter = new BinaryFormatter();
+
+                formatter.Serialize(cryptoStream, this.measurements);
+                cryptoStream.FlushFinalBlock();
+            }
+        }
+    }
     }
 }
