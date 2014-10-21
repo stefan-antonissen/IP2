@@ -177,7 +177,7 @@ namespace MediCare.Server
                 }
             }
         }
-        
+
         private void SendToDestination(Packet packet)
         {
             SslStream sslStream;
@@ -403,14 +403,18 @@ namespace MediCare.Server
             }
             else if (p._message.Substring(0, 10).Equals("DeleteUser"))
             {
-                string[] credentials = p._message.Split('@');
-                string id = credentials[1];
-                string pass = credentials[2];
-                if (_loginIO.UserExist(id))
-                    _loginIO.del(id);
-
+                //Deleteuser@id:pass@id:pass@id:pass@...
+                string[] data = p._message.Split('@');
+                for (int i = 1; i < data.Length; i++)
+                {
+                    string[] credentials = data[i].Split(':');
+                    string id = credentials[0];
+                    string pass = credentials[1];
+                    if (_loginIO.UserExist(id))
+                        _loginIO.del(id);
+                }
                 //_loginIO.SaveLogins(); // TODO: uncommenten
-                Packet response = new Packet("Server", "NewPass", p._id, "User deleted");
+                Packet response = new Packet("Server", "NewPass", p._id, "User(s) deleted");
                 SendToDestination(response);
             }
         }

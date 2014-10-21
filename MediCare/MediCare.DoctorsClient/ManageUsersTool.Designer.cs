@@ -34,6 +34,7 @@
             this.TitleLabel = new System.Windows.Forms.Label();
             this.Error_Label = new System.Windows.Forms.Label();
             this.DeleteUserButton = new System.Windows.Forms.Button();
+            this.DeleteAllUsersButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -53,7 +54,6 @@
             this.dataGridView1.RowHeadersWidth = 100;
             this.dataGridView1.Size = new System.Drawing.Size(365, 287);
             this.dataGridView1.TabIndex = 0;
-            this.dataGridView1.TopLeftHeaderCell.Value = "#";
             // 
             // ClientID
             // 
@@ -91,17 +91,30 @@
             this.DeleteUserButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
             this.DeleteUserButton.Location = new System.Drawing.Point(12, 350);
             this.DeleteUserButton.Name = "DeleteUserButton";
-            this.DeleteUserButton.Size = new System.Drawing.Size(365, 30);
+            this.DeleteUserButton.Size = new System.Drawing.Size(173, 30);
             this.DeleteUserButton.TabIndex = 3;
             this.DeleteUserButton.Text = "Delete user";
             this.DeleteUserButton.UseVisualStyleBackColor = false;
             this.DeleteUserButton.Click += new System.EventHandler(this.DeleteUserButton_Click);
+            // 
+            // DeleteAllUsersButton
+            // 
+            this.DeleteAllUsersButton.BackColor = System.Drawing.SystemColors.Control;
+            this.DeleteAllUsersButton.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.DeleteAllUsersButton.Location = new System.Drawing.Point(204, 350);
+            this.DeleteAllUsersButton.Name = "DeleteAllUsersButton";
+            this.DeleteAllUsersButton.Size = new System.Drawing.Size(173, 30);
+            this.DeleteAllUsersButton.TabIndex = 4;
+            this.DeleteAllUsersButton.Text = "Delete all users";
+            this.DeleteAllUsersButton.UseVisualStyleBackColor = false;
+            this.DeleteAllUsersButton.Click += DeleteAllUsersButton_Click;
             // 
             // ManageUsersTool
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(389, 392);
+            this.Controls.Add(this.DeleteAllUsersButton);
             this.Controls.Add(this.DeleteUserButton);
             this.Controls.Add(this.Error_Label);
             this.Controls.Add(this.TitleLabel);
@@ -122,5 +135,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn ClientID;
         private System.Windows.Forms.DataGridViewTextBoxColumn ClientPassword;
         private System.Windows.Forms.Button DeleteUserButton;
+        private System.Windows.Forms.Button DeleteAllUsersButton;
     }
 }

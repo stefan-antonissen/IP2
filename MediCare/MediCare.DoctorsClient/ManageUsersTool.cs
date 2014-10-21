@@ -57,9 +57,6 @@ namespace MediCare
             if (isRefresh)
                 this.dataGridView1.Rows.Clear();
 
-            this.dataGridView1.Rows.Add("hi", "sup");
-            this.dataGridView1.Rows.Add("yo", "hey");
-
             _client.sendMessage(new Packet(_id + "m", "ManageUsers", "Server", "GetLogins"));
             string[] response = _client.ReadMessage().GetMessage().Split('@');
             string[] ids = response[0].Split(' ');
@@ -81,22 +78,43 @@ namespace MediCare
             }
         }
 
-        // event handler voor delete button
+        // event handlers voor delete buttons
         private void DeleteUserButton_Click(object sender, System.EventArgs e)
         {
-            string id = (string)dataGridView1.CurrentRow.Cells[0].Value;
-            string pass = (string)dataGridView1.CurrentRow.Cells[1].Value;
-            var confirmResult = MessageBox.Show("Do you really want to remove the client " + id + " ?",
-                "Remove client",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning);
+            string loginsToDelete = string.Empty;
+            string displayIDs = string.Empty;
+            foreach (DataGridViewCell cell in dataGridView1.SelectedCells)
+            {
+                loginsToDelete += dataGridView1[0, cell.RowIndex].Value + ":" + dataGridView1[1, cell.RowIndex].Value + "@";
+                displayIDs += dataGridView1[0, cell.RowIndex].Value + ", ";
+            }
+            //Deleteuser@id:pass@id:pass@id:pass@...
+            displayIDs = displayIDs.Trim().Remove(displayIDs.Length - 2);
+            var confirmResult = MessageBox.Show("Do you really want to remove the client(s) " + displayIDs + "?", "Remove client", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (confirmResult == DialogResult.Yes)
             {
-                // if 'Yes' do something here 
-                _client.sendMessage(new Packet(_id + "m", "ManageUsers", "Server", "DeleteUser@" + id + "@" + pass));
+                _client.sendMessage(new Packet(_id + "m", "ManageUsers", "Server", "DeleteUser@" + loginsToDelete.Remove(loginsToDelete.Length - 1)));
                 if (_client.ReadMessage()._message.Equals("User deleted"))
-                    MessageBox.Show("Client " + id + " deleted!");
-                //DisplayLabelMessage("Client " + id + " deleted!"); // message via label ipv popup window
+                    MessageBox.Show("Client(s) " + displayIDs + " removed!");
+                //DisplayLabelMessage("Client(s) " + ids + " deleted!"); // message via label ipv popup window
+                LoadUsers(true);
+            }
+        }
+
+        private void DeleteAllUsersButton_Click(object sender, System.EventArgs e)
+        {
+            string loginsToDelete = string.Empty;
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                loginsToDelete += row.Cells[0].Value + ":" + row.Cells[1].Value + "@";
+            }
+            var confirmResult = MessageBox.Show("Do you really want to remove all clients?", "Remove all clients", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (confirmResult == DialogResult.Yes)
+            {
+                _client.sendMessage(new Packet(_id + "m", "ManageUsers", "Server", "DeleteUser@" + loginsToDelete.Remove(loginsToDelete.Length - 1)));
+                if (_client.ReadMessage()._message.Equals("User deleted"))
+                    MessageBox.Show("All users removed!");
+                //DisplayLabelMessage("Client(s) " + ids + " deleted!"); // message via label ipv popup window
                 LoadUsers(true);
             }
         }
