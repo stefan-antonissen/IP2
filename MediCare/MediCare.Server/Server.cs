@@ -71,7 +71,7 @@ namespace MediCare.Server
                             dataString = (String)formatter.Deserialize(sslStream);
                             //dataString = (String)formatter.Deserialize(sender.GetStream());
                             packet = Utils.GetPacket(dataString);
-
+                            Console.WriteLine("Packet received: " + packet.toString());
                             if (!Packet.hasValidId(packet))
                                 Console.WriteLine("WARNING! PACKET HAS INVALID ID. ONE SHOULD NOT SEND PACKETS TO THE SERVER WHO HAVE AN ID THAT DOES NOT PASS THE hasValidId(p) METHOD! \nPACKET ID USED WHAS: " + packet._id);
 
@@ -474,7 +474,7 @@ namespace MediCare.Server
         private void HandleFileRequest(TcpClient client, Packet packet)
         {
             string FileRequested = packet._message;
-            //client.Client.SendFile(mIOv2.Get_File(FileRequested));
+            client.Client.SendFile(mIOv2.Get_File(FileRequested));
             //TODO return file data!
             Console.WriteLine(mIOv2.Get_File(FileRequested));
         }
@@ -503,11 +503,12 @@ namespace MediCare.Server
                 while (_running)
                 {
                     var t = sendQueue.Take();
-                    var stream = t.Item1;
-                    var p = t.Item2;
 
-                    BinaryFormatter formatter = new BinaryFormatter();
-                    formatter.Serialize(stream, Utils.GetPacketString(p));
+                    if (t.Item1 != null && t.Item1.CanWrite && t.Item2 != null)
+                    {
+                        BinaryFormatter formatter = new BinaryFormatter();
+                        formatter.Serialize(t.Item1, Utils.GetPacketString(t.Item2));
+                    }
                 }
             }).Start();
         }
