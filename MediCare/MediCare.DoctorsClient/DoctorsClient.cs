@@ -317,8 +317,9 @@ namespace MediCare.ArtsClient
                     {
                         Packet p = new Packet(_ID + " [Broadcast]", "Chat", key, typeBox.Text);
                         _client.sendMessage(p);
+                        _tabIdDict[key].UpdateChatBox("Me [Broadcast]", typeBox.Text);
                     }
-                    txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
+                    txtLog.AppendText(Environment.NewLine + "Me [Broadcast]: " + typeBox.Text);
                     txtLog_AlignTextToBottom();
                     txtLog_ScrollToBottom();
                     typeBox.Text = "";
