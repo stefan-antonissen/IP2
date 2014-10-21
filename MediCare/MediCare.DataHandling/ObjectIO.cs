@@ -26,27 +26,37 @@ namespace MediCare.DataHandling
     public class ObjectIO
     {
         private Dictionary<string, Session> sessions = new Dictionary<string, Session>();
+        private ArrayList sessionIndex = new ArrayList();
         public string userID;
-        private string path;
+        private string path = "measurementData/Index.Dat";
 
         public ObjectIO()
         {
+            
         }
 
         public void add(string userID)
         {
-            string timeStamp = Regex.Replace(DateTime.Now.ToString(), @"[\/\:\\]", "-"); ;
+             ;
             //sessions.Add(userID, new Session(userID, timeStamp));
         }
 
-        public void del(int index)
+        public void closeSession(int index)
         {
-            //measurements.RemoveAt(index);
+            // save Session to disk
+            // remove from Live Sessions
+            // add to Idex Sessions
         }
 
-        public void empty()
+        public void startSession(string UserID)
         {
-            //measurements.Clear();
+            // create new Session on disk
+            DateTime date = DateTime.Now;
+            string timeStamp = Regex.Replace(date.ToString(), @"[\/\:\\]", "-");
+            Session session = new Session(getNewSessionID(), userID, timeStamp);
+            Tuple<string, DateTime, string> userData = new Tuple<string, DateTime, string>(userID, date, "Path");
+            // add to Live Sessions
+            // add to Idex Sessions
         }
 
         //public int getSize()
@@ -65,7 +75,11 @@ namespace MediCare.DataHandling
             } 
         }
 
-        // load the arraylist of measurements from a file, returns the arraylist
+        private int getNewSessionID() 
+        {
+            return 0;
+        }
+    }
 
     [Serializable()]
     class Session
@@ -82,7 +96,7 @@ namespace MediCare.DataHandling
 
         public Session(int sessionID, string userID, string timeTramp)
         {
-            measurements = new ArrayList(); 
+            measurements = new ArrayList();
             this.userID = userID;
             this.timeTramp = timeTramp;
             this.path = @"\MeasurementData\" + userID + "-" + timeTramp + ".edat";
@@ -125,7 +139,7 @@ namespace MediCare.DataHandling
         {
             ArrayList result = null;
 
-            if (File.Exists(userID))
+            if (File.Exists(path))
             {
                 using (var fs = new FileStream(this.path, FileMode.Open, FileAccess.Read))
                 {
@@ -152,4 +166,3 @@ namespace MediCare.DataHandling
         }
     }
     }
-}
