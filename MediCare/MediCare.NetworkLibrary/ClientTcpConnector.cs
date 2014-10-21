@@ -23,7 +23,8 @@ namespace MediCare.NetworkLibrary
         private String _server;
 
         private SslStream stream;
-        private BlockingCollection<Tuple<SslStream, Packet>> sendQueue = new BlockingCollection<Tuple<SslStream, Packet>>(new ConcurrentQueue<Tuple<SslStream, Packet>>());
+        private BlockingCollection<Packet> sendQueue = new BlockingCollection<Packet>(new ConcurrentQueue<Packet>());
+      
         public ClientTcpConnector(TcpClient client, String server)
         {
             this._client = client;
@@ -41,15 +42,9 @@ namespace MediCare.NetworkLibrary
         //First part of the method is old code. second part is new to be used when SSL is working
         public void sendMessage(Packet packet)
         {
-            EnqueuePacket(stream, packet);
-            //SSL Stream
-           // BinaryFormatter formatter = new BinaryFormatter();
-           // formatter.Serialize(stream, Utils.GetPacketString(packet)); // the serialization process
+            sendQueue.Add(packet);
         }
-        private void EnqueuePacket(SslStream stream, Packet p)
-        {
-            sendQueue.Add(new Tuple<SslStream, Packet>(stream, p));
-        }
+
         public Packet ReadMessage()
         {
             BinaryFormatter formatter = new BinaryFormatter();
@@ -62,12 +57,12 @@ namespace MediCare.NetworkLibrary
             {
                 while (true)
                 {
-                    var t = sendQueue.Take();
+                    var p = sendQueue.Take();
 
-                    if (t.Item1 != null && t.Item1.CanWrite && t.Item2 != null)
+                    if (stream != null && stream.CanWrite && p != null)
                     {
                         BinaryFormatter formatter = new BinaryFormatter();
-                        formatter.Serialize(t.Item1, Utils.GetPacketString(t.Item2));
+                        formatter.Serialize(stream, Utils.GetPacketString(p));
                     }
                 }
             }).Start();
