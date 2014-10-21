@@ -46,7 +46,7 @@ namespace MediCare.DataHandling
             //chartArea1.AxisX.Title = "Time in seconds";
             //chartArea1.AxisY.Maximum = 100D;
             //chartArea1.AxisY.Minimum = 0D;
-            //chartArea1.Name = "ChartArea1";
+            chartArea1.Name = "ChartArea1";
             this.GraphChart.ChartAreas.Add(chartArea1);
             legend1.Name = "Legend1";
             this.GraphChart.Legends.Add(legend1);
