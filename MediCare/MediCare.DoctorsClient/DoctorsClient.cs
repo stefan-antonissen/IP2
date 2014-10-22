@@ -1,4 +1,7 @@
-﻿using MediCare.DataHandling;
+﻿using System.Collections;
+using System.Media;
+using System.Security.AccessControl;
+using MediCare.DataHandling;
 using MediCare.NetworkLibrary;
 using System;
 using System.Collections.Generic;
@@ -123,6 +126,9 @@ namespace MediCare.ArtsClient
                     case "FileRequest":
                     HandleFileRequest(p);
                     break;
+                    case "FileFollowup":
+                    HandleFollowup(p);
+                    break;
                     case "Disconnect":
                     HandleDisconnectPacket(p);
                     break;
@@ -138,15 +144,45 @@ namespace MediCare.ArtsClient
         }
         private void HandleFileRequest(Packet p)
         {
-            throw new NotImplementedException();
-            String[] files = p._message.Split('-');
-            foreach (string file in files)
+            string[] data = p._message.Split('-');
+            if (!tabControl1.Controls.ContainsKey(data[1] + "-" + data[2]))
             {
-                MessageBox.Show(file);
-                Packet request = new Packet("98765432", "FileRequest", "server", "12345678-" + file);
-                _client.sendMessage(request);
+                if (_client.isConnected())
+                {
+                    clientTab tab = new clientTab(data[1] + "-" + data[2], _client, _ID, true);
+                    if (!_tabs.Contains(tab))
+                        _tabs.Add(tab);
+                    if (!_tabIdDict.ContainsKey(data[1] + "-" + data[2]))
+                        _tabIdDict.Add(data[1] + "-" + data[2], tab);
+
+                    tab.closeAllButThisButton.Click += new System.EventHandler(On_Tab_Close_All_Event);
+                    tab.closeButton.Click += new System.EventHandler(On_Tab_Closed_Event);
+                    this.tabControl1.Controls.Add(tab);
+                    this.tabControl1.SelectedTab = tab;
+                    tab.setMaxMeasurements(int.Parse(data[3]));
+                }
             }
         }
+
+        private void HandleFollowup(Packet p)
+        {
+            string[] data = p._message.Split('-'); // message = 10 metingen per packet
+            string[] graphData = { data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12] }; // graphdata = de 10 metingen afgezonderd
+
+            Console.WriteLine(data[1] + "-" + data[2]);
+            if (_tabIdDict.ContainsKey(data[1] + "-" + data[2]))
+            {
+                foreach (string s in graphData)
+                {
+                    string[] splitString = s.Split(' ');
+                    _tabIdDict[data[1] + "-" + data[2]].addData(splitString);
+                }
+                //foreach (string s in graphData)
+                //{
+                //  _tabIdDict[data[1] + "-" + data[2]].UpdateValues(s.Split(' '));
+                //}
+            }
+    }
         private void HandleChatPacket(Packet p)
         {
             on_message_receive_event(p._id, p._message);
@@ -205,7 +241,7 @@ namespace MediCare.ArtsClient
             {
                 if (_client.isConnected())
                 {
-                    clientTab tab = new clientTab(id, _client, _ID);
+                    clientTab tab = new clientTab(id, _client, _ID, false);
                     if (!_tabs.Contains(tab))
                         _tabs.Add(tab);
                     if (!_tabIdDict.ContainsKey(id))
@@ -216,6 +252,16 @@ namespace MediCare.ArtsClient
                     this.tabControl1.Controls.Add(tab);
                     this.tabControl1.SelectedTab = tab;
                 }
+            }
+        }
+
+        private void Filelist_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            int index = this.Filelist.IndexFromPoint(e.Location);
+            if (index != System.Windows.Forms.ListBox.NoMatches)
+            {
+                Packet p = new Packet(_ID, "FileRequest", "server", OverviewTable.CurrentCell.Value.ToString() + "-" + Filelist.Items[index].ToString());
+                _client.sendMessage(p);
             }
         }
 
@@ -260,7 +306,7 @@ namespace MediCare.ArtsClient
             {
                 if (!this.tabControl1.Controls.ContainsKey(ids[i]))
                 {
-                    clientTab tab = new clientTab(ids[i], _client, _ID);
+                    clientTab tab = new clientTab(ids[i], _client, _ID, false);
                     this.tabControl1.Controls.Add(tab);
                 }
             }
@@ -521,15 +567,6 @@ namespace MediCare.ArtsClient
                 _signupTool.Show();
         }
 
-        private void Filelist_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            int index = this.Filelist.IndexFromPoint(e.Location);
-            if (index != System.Windows.Forms.ListBox.NoMatches)
-            {
-
-                MessageBox.Show(Filelist.Items[index].ToString());
-            }
-        }
     }
 
     #region Tab generation
@@ -564,13 +601,17 @@ namespace MediCare.ArtsClient
         private Label distanceLabel = new Label();
         private TextBox TimeRunning_Box = new TextBox();
         private Label timeRunningLabel = new Label();
+        private NumericUpDown measurementNumber = new NumericUpDown();
+        private Label measurementTime = new Label();
         #endregion
 
         private ClientTcpConnector _client;
         private string _tabName;
         private string _id;
+        private ArrayList _data;
+        private TimeSpan t;
 
-        public clientTab(string tabName, ClientTcpConnector client, string id) //loads of data etc... (joke)
+        public clientTab(string tabName, ClientTcpConnector client, string id, bool old) //loads of data etc... (joke)
         {
             this._client = client;
             this._id = id;
@@ -581,6 +622,9 @@ namespace MediCare.ArtsClient
             graph.InitializeChart_Doctor();
             graph.InitializeGraph();
             AddGraphToForm();
+
+            measurementNumber.Enabled = false;
+            _data = new ArrayList();
 
             #region Close Buttons
             //close button
@@ -826,6 +870,19 @@ namespace MediCare.ArtsClient
             newPowerLabel.Text = "New power";
             #endregion
 
+            measurementTime.Enabled = true;
+            measurementTime.Location = new System.Drawing.Point(220, 355);
+            measurementTime.Name = "measurementTime";
+            measurementTime.Size = new System.Drawing.Size(200, 40);
+            measurementTime.TabIndex = 37;
+            measurementTime.Text = "00:00:00";
+
+            measurementNumber.Enabled = true;
+            measurementNumber.Location = new System.Drawing.Point(220, 310);
+            measurementNumber.Name = "measurementNumber";
+            measurementNumber.Size = new System.Drawing.Size(200, 40);
+            measurementNumber.TabIndex = 36;
+            measurementNumber.ValueChanged += new System.EventHandler(measurementNumber_ValueChanged);
 
             #region add components
             //add components
@@ -835,8 +892,6 @@ namespace MediCare.ArtsClient
             this.Controls.Add(typeBox);
             this.Controls.Add(sendButtonClient);
             this.Controls.Add(updatePowerButton);
-            this.Controls.Add(newPowerBox);
-            this.Controls.Add(newPowerLabel);
             this.Controls.Add(resetButton);
             this.Controls.Add(RPMLabel);
             this.Controls.Add(Speed_Box);
@@ -854,6 +909,17 @@ namespace MediCare.ArtsClient
             this.Controls.Add(distanceLabel);
             this.Controls.Add(TimeRunning_Box);
             this.Controls.Add(timeRunningLabel);
+            if (old)
+            {
+                this.Controls.Add(measurementNumber);
+                this.Controls.Add(measurementTime);
+            }
+            else
+            {
+                this.Controls.Add(newPowerBox);
+                this.Controls.Add(newPowerLabel);
+            }
+
             #endregion
 
             //set tab Settings
@@ -865,6 +931,24 @@ namespace MediCare.ArtsClient
             //this.TabIndex = this.tabControl1.TabCount + 1; NOT NEEDED???
             this.Text = tabName;
             this.UseVisualStyleBackColor = true;
+        }
+
+        private void measurementNumber_ValueChanged(Object sender, EventArgs e)
+        {
+            string[] data = (string[])_data[(int)measurementNumber.Value];
+            UpdateValues((string[])_data[(int)measurementNumber.Value]);
+            t = TimeSpan.FromSeconds((int)measurementNumber.Value);
+            measurementTime.Text = t.ToString("c");
+        }
+
+        public void addData(string[] data)
+        {
+            _data.Add(data);
+        }
+
+        public void setMaxMeasurements(int maxMeasurements)
+        {
+            measurementNumber.Maximum = maxMeasurements;
         }
 
         private void resetButton_Click(object sender, EventArgs e)

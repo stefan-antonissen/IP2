@@ -32,6 +32,7 @@ namespace MediCare.ArtsClient
         private void InitializeComponent()
         {
             this.IndexTab = new System.Windows.Forms.TabPage();
+            this.ManageUsersButton = new System.Windows.Forms.Button();
             this.Filelist = new System.Windows.Forms.ListBox();
             this.OverviewTable = new System.Windows.Forms.DataGridView();
             this.ClientID = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -52,7 +53,6 @@ namespace MediCare.ArtsClient
             this.label3 = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
             this.Error_Label = new System.Windows.Forms.Label();
-            this.ManageUsersButton = new System.Windows.Forms.Button();
             this.IndexTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.OverviewTable)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -76,6 +76,16 @@ namespace MediCare.ArtsClient
             this.IndexTab.TabIndex = 0;
             this.IndexTab.Text = "Overview";
             this.IndexTab.UseVisualStyleBackColor = true;
+            // 
+            // ManageUsersButton
+            // 
+            this.ManageUsersButton.Location = new System.Drawing.Point(1131, 601);
+            this.ManageUsersButton.Name = "ManageUsersButton";
+            this.ManageUsersButton.Size = new System.Drawing.Size(95, 23);
+            this.ManageUsersButton.TabIndex = 15;
+            this.ManageUsersButton.Text = "Manage users";
+            this.ManageUsersButton.UseVisualStyleBackColor = true;
+            this.ManageUsersButton.Click += new System.EventHandler(this.ManageUsersButton_Click);
             // 
             // Filelist
             // 
@@ -277,16 +287,6 @@ namespace MediCare.ArtsClient
             this.Error_Label.Name = "Error_Label";
             this.Error_Label.Size = new System.Drawing.Size(0, 13);
             this.Error_Label.TabIndex = 26;
-            // 
-            // ManageUsersButton
-            // 
-            this.ManageUsersButton.Location = new System.Drawing.Point(1131, 601);
-            this.ManageUsersButton.Name = "ManageUsersButton";
-            this.ManageUsersButton.Size = new System.Drawing.Size(95, 23);
-            this.ManageUsersButton.TabIndex = 15;
-            this.ManageUsersButton.Text = "Manage users";
-            this.ManageUsersButton.UseVisualStyleBackColor = true;
-            this.ManageUsersButton.Click += new System.EventHandler(this.ManageUsersButton_Click);
             // 
             // DoctorClient
             // 

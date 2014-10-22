@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Threading;
@@ -483,9 +484,23 @@ namespace MediCare.Server
         private void HandleFileRequest(TcpClient client, Packet packet)
         {
             string FileRequested = packet._message;
-            client.Client.SendFile(mIOv2.Get_File(FileRequested));
             //TODO return file data!
-            Console.WriteLine(mIOv2.Get_File(FileRequested));
+            ArrayList lines = mIOv2.Read_file(mIOv2.Get_File(FileRequested));
+            int packetAmount;
+            packetAmount = (int)Math.Ceiling((double)lines.Count / 10);
+            Packet p = new Packet("server", "FileRequest", packet._id, packetAmount.ToString() + "-" + FileRequested + "-" + lines.Count.ToString());
+            SendToDestination(p);
+            for (var j = 0; j < packetAmount; j++)
+            {
+                string datalines = packetAmount.ToString() + "-" + FileRequested;
+                for (int i = 0; i < 10; i++)
+                {
+                    datalines += "-" + lines[i];
+                }
+                Packet followupPacket = new Packet("server", "FileFollowup", packet._id, datalines);
+                SendToDestination(followupPacket);
+                Console.WriteLine("sending followup packet");
+            }
         }
 
         private void HandleCommandPacket(Packet packet)

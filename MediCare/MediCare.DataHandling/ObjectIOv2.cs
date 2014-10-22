@@ -89,6 +89,7 @@ namespace MediCare.DataHandling
                 string encryptedData = "";
                 using (Aes encryptor = Aes.Create())
                 {
+                    encryptor.Padding = PaddingMode.Zeros;
                     Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, salt);
                     encryptor.Key = pdb.GetBytes(32);
                     encryptor.IV = pdb.GetBytes(16);
@@ -166,13 +167,12 @@ namespace MediCare.DataHandling
             return new Packet("server", "Filelist", p._id, "No files found");
         }
 
-        public ArrayList Read_file(Packet p)
+        public ArrayList Read_file(string p)
         {
-            string[] lines = File.ReadAllLines(Path.Combine(_dir,p._id,_dirDictionary[p._id] + _fileExt));
+            string[] lines = File.ReadAllLines(p);
             ArrayList resultList = new ArrayList();
             foreach (var line in lines)
             {
-                Console.WriteLine(Decrypt(line));
                 resultList.Add(Decrypt(line));
             }
             return resultList;
@@ -183,6 +183,7 @@ namespace MediCare.DataHandling
             byte[] cipherBytes = Convert.FromBase64String(cipherText);
             using (Aes encryptor = Aes.Create())
             {
+                encryptor.Padding = PaddingMode.Zeros;
                 Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, salt);
                 encryptor.Key = pdb.GetBytes(32);
                 encryptor.IV = pdb.GetBytes(16);
