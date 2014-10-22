@@ -173,6 +173,7 @@ namespace MediCare.Controller
             heartrate = (int)(heartrate * random);
             rpm = (int)(rpm * random);
             speed = (int)(speed * random);
+            power = (int)(170 * ((random + 1) * 1));
             currentPower = (int)(currentPower * random);
             if (currentPower > 400)
             {
