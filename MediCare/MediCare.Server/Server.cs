@@ -9,6 +9,7 @@ using MediCare.DataHandling;
 using System.Security.Cryptography.X509Certificates;
 using System.Net.Security;
 using System.Collections.Concurrent;
+using System.Text.RegularExpressions;
 
 namespace MediCare.Server
 {
@@ -83,43 +84,43 @@ namespace MediCare.Server
                                 //sender = incoming client
                                 //packet = data van de client
                                 case "Chat":
-                                HandleChatPacket(packet);
-                                break;
+                                    HandleChatPacket(packet);
+                                    break;
                                 case "FirstConnect":
-                                HandleFirstConnectPacket(packet, incomingClient, sslStream);
-                                break;
+                                    HandleFirstConnectPacket(packet, incomingClient, sslStream);
+                                    break;
                                 case "Disconnect":
-                                HandleDisconnectPacket(packet, sslStream);
-                                break;
+                                    HandleDisconnectPacket(packet, sslStream);
+                                    break;
                                 case "Data":
-                                HandleDataPacket(packet);
-                                break;
+                                    HandleDataPacket(packet);
+                                    break;
                                 case "Registration":
-                                HandleRegistrationPacket(packet);
-                                break;
+                                    HandleRegistrationPacket(packet);
+                                    break;
                                 case "ManageUsers":
-                                HandleManageUsersPacket(packet);
-                                break;
+                                    HandleManageUsersPacket(packet);
+                                    break;
                                 case "Timestamp":
-                                HandleTimestampPacket(packet);
-                                break;
+                                    HandleTimestampPacket(packet);
+                                    break;
                                 case "ActiveClients":
-                                HandleActiveClients(packet);
-                                break;
+                                    HandleActiveClients(packet);
+                                    break;
                                 case "Filelist":
-                                HandleFileList(packet);
-                                break;
+                                    HandleFileList(packet);
+                                    break;
                                 case "FileRequest":
-                                HandleFileRequest(incomingClient, packet);
-                                break;
+                                    HandleFileRequest(incomingClient, packet);
+                                    break;
                                 case "FileDelete":
-                                HandleFileDeleteRequest(incomingClient, packet);
-                                break;
+                                    HandleFileDeleteRequest(incomingClient, packet);
+                                    break;
                                 case "Command":
-                                HandleCommandPacket(packet);
-                                break;
+                                    HandleCommandPacket(packet);
+                                    break;
                                 default: //nothing
-                                break;
+                                    break;
                             }
                         }
                         Thread.Sleep(5);
@@ -359,8 +360,16 @@ namespace MediCare.Server
         {
             string[] credentials = p.GetMessage().Split(':');
             string name = credentials[0];
+            string pass = credentials[1];
             Console.WriteLine("Server: " + name);
-            if (_loginIO.UserExist(name))
+
+            bool doesthepasswordcontainweirdcharsthatyoudontwantinapassword = Regex.IsMatch(pass, @"[^A-Za-z0-9]+");
+            if (doesthepasswordcontainweirdcharsthatyoudontwantinapassword)
+            {
+                Packet response = new Packet("Server", "Registration", p.GetID(), "INVALID_PASS");
+                SendToDestination(response);
+            }
+            else if (_loginIO.UserExist(name))
             {
                 Packet response = new Packet("Server", "Registration", p.GetID(), "REGISTER_FAIL");
                 SendToDestination(response);
@@ -558,9 +567,9 @@ namespace MediCare.Server
             switch (temp)
             {
                 case "9":
-                return "Doctor";
+                    return "Doctor";
                 default:
-                return "Client";
+                    return "Client";
             }
         }
     }

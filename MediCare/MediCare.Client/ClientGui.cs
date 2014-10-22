@@ -45,7 +45,7 @@ namespace MediCare.Client
             _graph.Initialize_Checkboxes_Client();
             _graph.InitializeChart_Client();
             _graph.InitializeGraph();
-            //AddGraphToForm();
+            AddGraphToForm();
 
             this.FormClosing += on_Window_Closed_Event;
             setVisibility(false);
@@ -201,7 +201,7 @@ namespace MediCare.Client
                 TimeRunning_Box.Text = data[6];
                 Brake_Box.Text = data[7];
                 SendMeasurementData(data, "Data");
-                //_graph.process_Graph_Data(data);
+                _graph.process_Graph_Data(data);
             }
         }
 
@@ -408,7 +408,7 @@ namespace MediCare.Client
 
         private void setVisibility(bool v)
         {
-            //_graph.SetVisibibility(v);
+            _graph.SetVisibibility(v);
             label1.Visible = v;
             TimeRunning_Box.Visible = v;
             label2.Visible = v;

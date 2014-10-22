@@ -6,9 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
-using System.Windows.Forms.DataVisualization.Charting;
-using System.Collections;
-
 namespace MediCare.DataHandling
 {
     public class Graph
@@ -26,9 +23,6 @@ namespace MediCare.DataHandling
         private System.Windows.Forms.CheckBox HeartBeats_CheckBox;
         private System.Windows.Forms.CheckBox RPM_CheckBox;
         private bool[] checkbox_Status = { false, false, false, false, false, false, false, false };
-        private ArrayList[] graphData = new ArrayList[8];
-        private int datacounter = 0;
-
         public Graph()
         {
             this.GraphChart = new System.Windows.Forms.DataVisualization.Charting.Chart();
@@ -44,20 +38,14 @@ namespace MediCare.DataHandling
             this.HeartBeats_CheckBox = new System.Windows.Forms.CheckBox();
             this.RPM_CheckBox = new System.Windows.Forms.CheckBox();
             this.ChartData = new System.Windows.Forms.DataVisualization.Charting.Series[8];
-
-            for (int i = 0; i < graphData.Length; i++)
-            {
-                graphData[i] = new ArrayList();
-            }
         }
-
         public void InitializeChart_Client()
         {
-            chartArea1.AxisX.Maximum = 120D;
-            chartArea1.AxisX.Minimum = 0D;
-            chartArea1.AxisX.Title = "Time in seconds";
-            chartArea1.AxisY.Maximum = 100D;
-            chartArea1.AxisY.Minimum = 0D;
+            //chartArea1.AxisX.Maximum = 120D;
+            //chartArea1.AxisX.Minimum = 0D;
+            //chartArea1.AxisX.Title = "Time in seconds";
+            //chartArea1.AxisY.Maximum = 100D;
+            //chartArea1.AxisY.Minimum = 0D;
             chartArea1.Name = "ChartArea1";
             this.GraphChart.ChartAreas.Add(chartArea1);
             legend1.Name = "Legend1";
@@ -68,15 +56,14 @@ namespace MediCare.DataHandling
             this.GraphChart.TabIndex = 26;
             this.GraphChart.Text = "Graph";
         }
-
         public void InitializeChart_Doctor()
         {
-            chartArea1.AxisX.Maximum = 120D;
-            chartArea1.AxisX.Minimum = 0D;
-            chartArea1.AxisX.Title = "Time in seconds";
-            chartArea1.AxisY.Maximum = 100D;
-            chartArea1.AxisY.Minimum = 0D;
-            chartArea1.Name = "ChartArea1";
+            //chartArea1.AxisX.Maximum = 120D;
+            //chartArea1.AxisX.Minimum = 0D;
+            //chartArea1.AxisX.Title = "Time in seconds";
+            //chartArea1.AxisY.Maximum = 100D;
+            //chartArea1.AxisY.Minimum = 0D;
+            //chartArea1.Name = "ChartArea1";
             this.GraphChart.ChartAreas.Add(chartArea1);
             legend1.Name = "Legend1";
             this.GraphChart.Legends.Add(legend1);
@@ -86,12 +73,11 @@ namespace MediCare.DataHandling
             this.GraphChart.TabIndex = 26;
             this.GraphChart.Text = "Graph";
         }
-
         public void Initialize_Checkboxes_Client()
         {
-            // 
+            //
             // Distance_CheckBox
-            // 
+            //
             this.Distance_CheckBox.AutoSize = true;
             this.Distance_CheckBox.Location = new System.Drawing.Point(480, 155);
             this.Distance_CheckBox.Name = "Distance_CheckBox";
@@ -99,9 +85,9 @@ namespace MediCare.DataHandling
             this.Distance_CheckBox.TabIndex = 29;
             this.Distance_CheckBox.UseVisualStyleBackColor = true;
             this.Distance_CheckBox.CheckedChanged += new System.EventHandler(this.on_Distance_CheckBox_Click);
-            // 
+            //
             // Brake_CheckBox
-            // 
+            //
             this.Brake_CheckBox.AutoSize = true;
             this.Brake_CheckBox.Location = new System.Drawing.Point(480, 195);
             this.Brake_CheckBox.Name = "Brake_CheckBox";
@@ -109,9 +95,9 @@ namespace MediCare.DataHandling
             this.Brake_CheckBox.TabIndex = 30;
             this.Brake_CheckBox.UseVisualStyleBackColor = true;
             this.Brake_CheckBox.CheckedChanged += new System.EventHandler(this.on_Brake_CheckBox_Click);
-            // 
+            //
             // Power_CheckBox
-            // 
+            //
             this.Power_CheckBox.AutoSize = true;
             this.Power_CheckBox.Location = new System.Drawing.Point(480, 235);
             this.Power_CheckBox.Name = "Power_CheckBox";
@@ -119,9 +105,9 @@ namespace MediCare.DataHandling
             this.Power_CheckBox.TabIndex = 31;
             this.Power_CheckBox.UseVisualStyleBackColor = true;
             this.Power_CheckBox.CheckedChanged += new System.EventHandler(this.on_Power_CheckBox_Click);
-            // 
+            //
             // Energy_CheckBox
-            // 
+            //
             this.Energy_CheckBox.AutoSize = true;
             this.Energy_CheckBox.Location = new System.Drawing.Point(480, 275);
             this.Energy_CheckBox.Name = "Energy_CheckBox";
@@ -129,9 +115,9 @@ namespace MediCare.DataHandling
             this.Energy_CheckBox.TabIndex = 32;
             this.Energy_CheckBox.UseVisualStyleBackColor = true;
             this.Energy_CheckBox.CheckedChanged += new System.EventHandler(this.on_Energy_CheckBox_Click);
-            // 
+            //
             // HeartBeats_CheckBox
-            // 
+            //
             this.HeartBeats_CheckBox.AutoSize = true;
             this.HeartBeats_CheckBox.Location = new System.Drawing.Point(480, 315);
             this.HeartBeats_CheckBox.Name = "HeartBeats_CheckBox";
@@ -139,9 +125,9 @@ namespace MediCare.DataHandling
             this.HeartBeats_CheckBox.TabIndex = 33;
             this.HeartBeats_CheckBox.UseVisualStyleBackColor = true;
             this.HeartBeats_CheckBox.CheckedChanged += new System.EventHandler(this.on_HeartBeats_CheckBox_Click);
-            // 
+            //
             // RPM_CheckBox
-            // 
+            //
             this.RPM_CheckBox.AutoSize = true;
             this.RPM_CheckBox.Location = new System.Drawing.Point(480, 355);
             this.RPM_CheckBox.Name = "RPM_CheckBox";
@@ -149,9 +135,9 @@ namespace MediCare.DataHandling
             this.RPM_CheckBox.TabIndex = 34;
             this.RPM_CheckBox.UseVisualStyleBackColor = true;
             this.RPM_CheckBox.CheckedChanged += new System.EventHandler(this.on_RPM_CheckBox_Click);
-            // 
+            //
             // Time_Running_CheckBox
-            // 
+            //
             this.Time_Running_CheckBox.AutoSize = true;
             this.Time_Running_CheckBox.ForeColor = System.Drawing.SystemColors.ControlText;
             this.Time_Running_CheckBox.Location = new System.Drawing.Point(480, 75);
@@ -160,9 +146,9 @@ namespace MediCare.DataHandling
             this.Time_Running_CheckBox.TabIndex = 27;
             this.Time_Running_CheckBox.UseVisualStyleBackColor = true;
             this.Time_Running_CheckBox.CheckedChanged += new System.EventHandler(this.on_Time_Running_CheckBox_Click);
-            // 
+            //
             // Speed_CheckBox
-            // 
+            //
             this.Speed_CheckBox.AutoSize = true;
             this.Speed_CheckBox.Location = new System.Drawing.Point(480, 115);
             this.Speed_CheckBox.Name = "Speed_CheckBox";
@@ -171,12 +157,13 @@ namespace MediCare.DataHandling
             this.Speed_CheckBox.UseVisualStyleBackColor = true;
             this.Speed_CheckBox.CheckedChanged += new System.EventHandler(this.on_Speed_CheckBox_Click);
         }
-
         public void Initialize_Checkboxes_Doctor()
         {
-            // 
+            int CorrectionY = 45;
+            int CorrectionX = 50;
+            //
             // Distance_CheckBox
-            // 
+            //
             this.Distance_CheckBox.AutoSize = true;
             this.Distance_CheckBox.Location = new System.Drawing.Point(425, 98);
             this.Distance_CheckBox.Name = "Distance_CheckBox";
@@ -184,9 +171,9 @@ namespace MediCare.DataHandling
             this.Distance_CheckBox.TabIndex = 29;
             this.Distance_CheckBox.UseVisualStyleBackColor = true;
             this.Distance_CheckBox.CheckedChanged += new System.EventHandler(this.on_Distance_CheckBox_Click);
-            // 
+            //
             // Brake_CheckBox
-            // 
+            //
             this.Brake_CheckBox.AutoSize = true;
             this.Brake_CheckBox.Location = new System.Drawing.Point(425, 133);
             this.Brake_CheckBox.Name = "Brake_CheckBox";
@@ -194,9 +181,9 @@ namespace MediCare.DataHandling
             this.Brake_CheckBox.TabIndex = 30;
             this.Brake_CheckBox.UseVisualStyleBackColor = true;
             this.Brake_CheckBox.CheckedChanged += new System.EventHandler(this.on_Brake_CheckBox_Click);
-            // 
+            //
             // Power_CheckBox
-            // 
+            //
             this.Power_CheckBox.AutoSize = true;
             this.Power_CheckBox.Location = new System.Drawing.Point(425, 167);
             this.Power_CheckBox.Name = "Power_CheckBox";
@@ -204,9 +191,9 @@ namespace MediCare.DataHandling
             this.Power_CheckBox.TabIndex = 31;
             this.Power_CheckBox.UseVisualStyleBackColor = true;
             this.Power_CheckBox.CheckedChanged += new System.EventHandler(this.on_Power_CheckBox_Click);
-            // 
+            //
             // Energy_CheckBox
-            // 
+            //
             this.Energy_CheckBox.AutoSize = true;
             this.Energy_CheckBox.Location = new System.Drawing.Point(425, 202);
             this.Energy_CheckBox.Name = "Energy_CheckBox";
@@ -214,9 +201,9 @@ namespace MediCare.DataHandling
             this.Energy_CheckBox.TabIndex = 32;
             this.Energy_CheckBox.UseVisualStyleBackColor = true;
             this.Energy_CheckBox.CheckedChanged += new System.EventHandler(this.on_Energy_CheckBox_Click);
-            // 
+            //
             // HeartBeats_CheckBox
-            // 
+            //
             this.HeartBeats_CheckBox.AutoSize = true;
             this.HeartBeats_CheckBox.Location = new System.Drawing.Point(425, 238);
             this.HeartBeats_CheckBox.Name = "HeartBeats_CheckBox";
@@ -224,9 +211,9 @@ namespace MediCare.DataHandling
             this.HeartBeats_CheckBox.TabIndex = 33;
             this.HeartBeats_CheckBox.UseVisualStyleBackColor = true;
             this.HeartBeats_CheckBox.CheckedChanged += new System.EventHandler(this.on_HeartBeats_CheckBox_Click);
-            // 
+            //
             // RPM_CheckBox
-            // 
+            //
             this.RPM_CheckBox.AutoSize = true;
             this.RPM_CheckBox.Location = new System.Drawing.Point(425, 275);
             this.RPM_CheckBox.Name = "RPM_CheckBox";
@@ -234,9 +221,9 @@ namespace MediCare.DataHandling
             this.RPM_CheckBox.TabIndex = 34;
             this.RPM_CheckBox.UseVisualStyleBackColor = true;
             this.RPM_CheckBox.CheckedChanged += new System.EventHandler(this.on_RPM_CheckBox_Click);
-            // 
+            //
             // Time_Running_CheckBox
-            // 
+            //
             this.Time_Running_CheckBox.AutoSize = true;
             this.Time_Running_CheckBox.ForeColor = System.Drawing.SystemColors.ControlText;
             this.Time_Running_CheckBox.Location = new System.Drawing.Point(425, 30);
@@ -245,9 +232,9 @@ namespace MediCare.DataHandling
             this.Time_Running_CheckBox.TabIndex = 27;
             this.Time_Running_CheckBox.UseVisualStyleBackColor = true;
             this.Time_Running_CheckBox.CheckedChanged += new System.EventHandler(this.on_Time_Running_CheckBox_Click);
-            // 
+            //
             // Speed_CheckBox
-            // 
+            //
             this.Speed_CheckBox.AutoSize = true;
             this.Speed_CheckBox.Location = new System.Drawing.Point(425, 63);
             this.Speed_CheckBox.Name = "Speed_CheckBox";
@@ -256,55 +243,46 @@ namespace MediCare.DataHandling
             this.Speed_CheckBox.UseVisualStyleBackColor = true;
             this.Speed_CheckBox.CheckedChanged += new System.EventHandler(this.on_Speed_CheckBox_Click);
         }
-
         private void on_Time_Running_CheckBox_Click(object sender, EventArgs e)
         {
             checkbox_Status[0] = !checkbox_Status[0];
             updateGraph(0);
         }
-
         private void on_Speed_CheckBox_Click(object sender, EventArgs e)
         {
             checkbox_Status[1] = !checkbox_Status[1];
             updateGraph(1);
         }
-
         private void on_Distance_CheckBox_Click(object sender, EventArgs e)
         {
             checkbox_Status[2] = !checkbox_Status[2];
             updateGraph(2);
         }
-
         private void on_Brake_CheckBox_Click(object sender, EventArgs e)
         {
             checkbox_Status[3] = !checkbox_Status[3];
             updateGraph(3);
         }
-
         private void on_Power_CheckBox_Click(object sender, EventArgs e)
         {
             checkbox_Status[4] = !checkbox_Status[4];
             updateGraph(4);
         }
-
         private void on_Energy_CheckBox_Click(object sender, EventArgs e)
         {
             checkbox_Status[5] = !checkbox_Status[5];
             updateGraph(5);
         }
-
         private void on_HeartBeats_CheckBox_Click(object sender, EventArgs e)
         {
             checkbox_Status[6] = !checkbox_Status[6];
             updateGraph(6);
         }
-
         private void on_RPM_CheckBox_Click(object sender, EventArgs e)
         {
             checkbox_Status[7] = !checkbox_Status[7];
             updateGraph(7);
         }
-
         private void updateGraph(int box_ID)
         {
             GraphChart.Series.Clear();
@@ -320,14 +298,12 @@ namespace MediCare.DataHandling
                 }
             }
         }
-
         public void InitializeGraph()
         {
             for (int i = 0; i < ChartData.Length; i++)
             {
                 System.Windows.Forms.DataVisualization.Charting.Series s = new System.Windows.Forms.DataVisualization.Charting.Series();
                 s.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
-
                 switch (i)
                 {
                     case 0:
@@ -371,35 +347,24 @@ namespace MediCare.DataHandling
                 ChartData[0].Points.Add(1, 1);
             }
         }
-
         /**************************************\
         * TODO: Implement Small Cashing System *
         \**************************************/
-
         public void process_Graph_Data(String[] data)
         {
+            // if (data.Length != 1) // maybe not needed if called from updatevalues
+            // {
             for (int i = 0; i < data.Length; i++)
             {
-                graphData[i].Add(double.Parse(data[i]));    
+                ChartData[i].Points.Add(double.Parse(data[i]));
+                //ChartData[i].Points.
             }
-
-            if (datacounter < 120) { datacounter++; }
-
-            for (int i = 0; i < graphData.Length; i++)
-            {
-                for (int j = 0; j < datacounter; j++)
-                {
-                    double[] temp = Array.ConvertAll<object, double>(graphData[i].GetRange(graphData[i].Count - datacounter, datacounter).ToArray(), o => (double)o);
-                    ChartData[i].Points.Add(temp);// graphData[i].IndexOf(graphData[i].Count - j));
-                }
-            }
+            // }
         }
-
         public object[] getComponents()
         {
             return new object[] { GraphChart, Time_Running_CheckBox, Distance_CheckBox, Brake_CheckBox, Speed_CheckBox, Power_CheckBox, Energy_CheckBox, HeartBeats_CheckBox, RPM_CheckBox };
         }
-
         public void SetVisibibility(bool v)
         {
             GraphChart.Visible = v;
