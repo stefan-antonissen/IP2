@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Net.Configuration;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
@@ -305,6 +306,7 @@ namespace MediCare.Client
         //TODO Destination is hard-coded
         private void SendMeasurementData(string[] data, string type)
         {
+            bool success = false;
             string s;
             if (data.Length < 8)
             {
@@ -317,7 +319,24 @@ namespace MediCare.Client
             Packet p = new Packet(_ID, type, _defaultDestination, s);
             if (_client.isConnected())
             {
-                _client.sendMessage(p);
+                try
+                {
+                    _client.sendMessage(p);
+                    success = true;
+                }
+                catch (TimeoutException)
+                {
+                    MessageBox.Show("An timeout occured, retrying");
+                    success = false;
+                }
+                finally
+                {
+                    if (!success)
+                    {
+                        _client.sendMessage(p);
+                    }
+                    success = false;
+                }
             }
         }
 
@@ -342,10 +361,28 @@ namespace MediCare.Client
         // ID = id van sender; type = type bericht; destination = ID van ontvanger; message = bericht
         private void sendButton_Click(object sender, EventArgs e)
         {
+            bool success = false;
             if (typeBox.Text != "")
             {
                 Packet p = new Packet(_ID, "Chat", _defaultDestination, typeBox.Text);
-                _client.sendMessage(p);
+                try
+                {
+                    _client.sendMessage(p);
+                    success = true;
+                }
+                catch (TimeoutException)
+                {
+                    MessageBox.Show("An timeout occured, retrying");
+                    success = false;
+                }
+                finally
+                {
+                    if (!success)
+                    {
+                        _client.sendMessage(p);
+                    }
+                    success = false;
+                }
                 txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                 txtLog_AlignTextToBottom();
                 txtLog_ScrollToBottom();
@@ -355,12 +392,30 @@ namespace MediCare.Client
 
         private void txtLog_KeyDown(object sender, KeyEventArgs e)
         {
+            bool success = false;
             if (e.KeyCode == Keys.Enter)
             {
                 if (typeBox.Text != "")
                 {
                     Packet p = new Packet(_ID, "Chat", _defaultDestination, typeBox.Text);
-                    _client.sendMessage(p);
+                    try
+                    {
+                        _client.sendMessage(p);
+                        success = true;
+                    }
+                    catch (TimeoutException)
+                    {
+                        MessageBox.Show("An timeout occured, retrying");
+                        success = false;
+                    }
+                    finally
+                    {
+                        if (!success)
+                        {
+                            _client.sendMessage(p);
+                        }
+                        success = false;
+                    }
                     txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                     txtLog_AlignTextToBottom();
                     txtLog_ScrollToBottom();
@@ -417,6 +472,7 @@ namespace MediCare.Client
 
         private void on_Window_Closed_Event(object sender, FormClosingEventArgs e)
         {
+            bool success = false;
             DialogResult result = MessageBox.Show("Weet u zeker dat u wilt afsluiten ?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.No)
             {
@@ -428,7 +484,24 @@ namespace MediCare.Client
                 //send message to server that ur dying
                 if (_client.isConnected())
                 {
-                    _client.sendMessage(p);
+                    try
+                    {
+                        _client.sendMessage(p);
+                        success = true;
+                    }
+                    catch (TimeoutException)
+                    {
+                        MessageBox.Show("An timeout occured, retrying");
+                        success = false;
+                    }
+                    finally
+                    {
+                        if (!success)
+                        {
+                            _client.sendMessage(p);
+                        }
+                        success = false;
+                    }
                 }
             }
         }
@@ -455,6 +528,7 @@ namespace MediCare.Client
 
         private void login(object sender, EventArgs e)
         {
+            bool success = false;
             if (String.IsNullOrEmpty(Username_Box.Text) || String.IsNullOrEmpty(Password_Box.Text))
             {
                 displayErrorMessage("One or more fields are blank!");
@@ -474,7 +548,25 @@ namespace MediCare.Client
                 else
                 {
                     string tempID = Username_Box.Text;
-                    _client.sendFirstConnectPacket(tempID, Password_Box.Text);
+                    
+                    try
+                    {
+                        _client.sendFirstConnectPacket(tempID, Password_Box.Text);
+                        success = true;
+                    }
+                    catch (TimeoutException)
+                    {
+                        MessageBox.Show("An timeout occured, retrying");
+                        success = false;
+                    }
+                    finally
+                    {
+                        if (!success)
+                        {
+                            _client.sendFirstConnectPacket(tempID, Password_Box.Text);
+                        }
+                        success = false;
+                    }
 
                     while (!_userIsAuthenticated)
                     {

@@ -306,20 +306,54 @@ namespace MediCare.ArtsClient
 
         private void Filelist_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+            bool success = false;
             int index = this.Filelist.IndexFromPoint(e.Location);
             if (index != System.Windows.Forms.ListBox.NoMatches)
             {
                 Packet p = new Packet(_ID, "FileRequest", "server", OverviewTable.CurrentCell.Value.ToString() + "-" + Filelist.Items[index].ToString());
-                _client.sendMessage(p);
+                try
+                {
+                    _client.sendMessage(p);
+                    success = true;
+                }
+                catch (TimeoutException)
+                {
+                    MessageBox.Show("An timeout error occured, trying again");
+                    success = false;
+                }
+                finally
+                {
+                    if (!success)
+                    {
+                        _client.sendMessage(p);
+                    }
+                }
             }
         }
 
         private void dataGridView1_SelectionChanged(object sender, EventArgs e)
         {
+            bool success = false;
             string patientID = (string)OverviewTable.CurrentCell.Value;
             Packet p = new Packet(_ID, "Filelist", "server", patientID);
             Console.WriteLine("Patient id : " + patientID);
-            _client.sendMessage(p);
+            try
+            {
+                _client.sendMessage(p);
+                success = true;
+            }
+            catch (TimeoutException)
+            {
+                MessageBox.Show("An timeout error occured, trying again");
+                success = false;
+            }
+            finally
+            {
+                if (!success)
+                {
+                    _client.sendMessage(p);
+                }
+            }
         }
 
         /**
@@ -335,10 +369,28 @@ namespace MediCare.ArtsClient
 
         private void updateActiveClients(object sender, EventArgs e)
         {
+            bool success = false;
             if(_userIsAuthenticated)
             {
                 Packet response = new Packet(_ID, "ActiveClients", "Server", "Get active clients");
-                _client.sendMessage(response);
+                
+                try
+                {
+                    _client.sendMessage(response);
+                    success = true;
+                }
+                catch (TimeoutException)
+                {
+                    MessageBox.Show("An timeout error occured, trying again");
+                    success = false;
+                }
+                finally
+                {
+                    if (!success)
+                    {
+                        _client.sendMessage(response);
+                    }
+                }
             }
         }
 
@@ -386,6 +438,7 @@ namespace MediCare.ArtsClient
         }
         # endregion
 
+
         # region Chat Box
         private void txtLog_TextChanged(object sender, EventArgs e)
         {
@@ -404,6 +457,7 @@ namespace MediCare.ArtsClient
 
         private void txtLog_KeyDown(object sender, KeyEventArgs e)
         {
+            bool success = false;
             if (e.KeyCode == Keys.Enter)
             {
                 if (typeBox.Text != "")
@@ -411,7 +465,23 @@ namespace MediCare.ArtsClient
                     foreach (string key in _tabIdDict.Keys)
                     {
                         Packet p = new Packet(_ID + " [Broadcast]", "Chat", key, typeBox.Text);
-                        _client.sendMessage(p);
+                        try
+                        {
+                            _client.sendMessage(p);
+                            success = true;
+                        }
+                        catch (TimeoutException)
+                        {
+                            MessageBox.Show("An timeout occured, trying again");
+                            success = false;
+                        }
+                        finally
+                        {
+                            if (!success)
+                            {
+                                _client.sendMessage(p);
+                            }
+                        }
                         _tabIdDict[key].UpdateChatBox("Me [Broadcast]", typeBox.Text);
                     }
                     txtLog.AppendText(Environment.NewLine + "Me [Broadcast]: " + typeBox.Text);
@@ -468,6 +538,7 @@ namespace MediCare.ArtsClient
         //Depricated read and send methods should not be used.. use the ClientTcpConnector instead
         # endregion
 
+
         #region login
 
         private void setVisibility(bool v)
@@ -519,6 +590,7 @@ namespace MediCare.ArtsClient
 
         private void login(object sender, EventArgs e)
         {
+            bool success = false;
             //Login to server bla bla bla
             Regex r = new Regex(@"^[0-9]{8}$");
             if (String.IsNullOrEmpty(Username_Box.Text) || String.IsNullOrEmpty(Password_Box.Text))
@@ -536,9 +608,24 @@ namespace MediCare.ArtsClient
             else
             {
                 string tempID = Username_Box.Text;
-                
-                _client.sendFirstConnectPacket(tempID, Password_Box.Text);
 
+                try
+                {
+                    _client.sendFirstConnectPacket(tempID, Password_Box.Text);
+                    success = true;
+                }
+                catch (TimeoutException)
+                {
+                    MessageBox.Show("an timeout occured, trying again");
+                    success = false;
+                }
+                finally
+                {
+                    if (!success)
+                    {
+                        _client.sendFirstConnectPacket(tempID, Password_Box.Text);
+                    }
+                }
                 while (!_userIsAuthenticated)
                 {
                     //pol for packets. if packet == authenticated!
@@ -593,6 +680,7 @@ namespace MediCare.ArtsClient
 
         private void on_Window_Closed_Event(object sender, FormClosingEventArgs e)
         {
+            bool success = false;
             DialogResult result = MessageBox.Show("Weet u zeker dat u wilt afsluiten ?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.No)
             {
@@ -604,10 +692,27 @@ namespace MediCare.ArtsClient
                 //send message to server that ur dying
                 if (_client.isConnected())
                 {
-                    _client.sendMessage(p);
+                    try
+                    {
+                        _client.sendMessage(p);
+                        success = true;
+                    }
+                    catch (TimeoutException)
+                    {
+                        MessageBox.Show("An timeout occured, retrying");
+                        success = false;
+                    }
+                    finally
+                    {
+                        if (!success)
+                        {
+                            _client.sendMessage(p);
+                        }
+                    }
                 }
             }
         }
+
         private void ManageUsersButton_Click(object sender, EventArgs e)
         {
             if (_signupTool.Visible)
@@ -1013,8 +1118,28 @@ namespace MediCare.ArtsClient
         {
             if (MessageBox.Show("Are you sure you want to reset the bike?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
+                bool success = false;
                 Packet p = new Packet(_id, "Command", _tabName, "reset");
-                _client.sendMessage(p);
+                if (_client.isConnected())
+                {
+                    try
+                    {
+                        _client.sendMessage(p);
+                        success = true;
+                    }
+                    catch (TimeoutException)
+                    {
+                        MessageBox.Show("An timeout occured, retrying");
+                        success = false;
+                    }
+                    finally
+                    {
+                        if (!success)
+                        {
+                            _client.sendMessage(p);
+                        }
+                    }
+                }
                 MessageBox.Show("Bike reset!");
             }
         }
@@ -1088,12 +1213,32 @@ namespace MediCare.ArtsClient
 
         private void txtLog_KeyDown(object sender, KeyEventArgs e)
         {
+            bool success = false;
             if (e.KeyCode == Keys.Enter)
             {
                 if (typeBox.Text != "")
                 {
                     Packet p = new Packet(_id, "Chat", _tabName, typeBox.Text);
-                    _client.sendMessage(p);
+                    if (_client.isConnected())
+                    {
+                        try
+                        {
+                            _client.sendMessage(p);
+                            success = true;
+                        }
+                        catch (TimeoutException)
+                        {
+                            MessageBox.Show("An timeout occured, retrying");
+                            success = false;
+                        }
+                        finally
+                        {
+                            if (!success)
+                            {
+                                _client.sendMessage(p);
+                            }
+                        }
+                    }
                     //txtLog.AppendText("");
                     chatBox.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                     chatBox_AlignTextToBottom();
@@ -1147,12 +1292,32 @@ namespace MediCare.ArtsClient
         // 'Actionlistener' voor de new power textbox
         private void newPowerBox_KeyDown(object sender, KeyEventArgs e)
         {
+            bool success = false;
             if (e.KeyCode == Keys.Enter)
             {
                 if (newPowerBox.Text != "")
                 {
                     Packet p = new Packet(_id, "Command", _tabName, newPowerBox.Text);
-                    _client.sendMessage(p);
+                    if (_client.isConnected())
+                    {
+                        try
+                        {
+                            _client.sendMessage(p);
+                            success = true;
+                        }
+                        catch (TimeoutException)
+                        {
+                            MessageBox.Show("An timeout occured, retrying");
+                            success = false;
+                        }
+                        finally
+                        {
+                            if (!success)
+                            {
+                                _client.sendMessage(p);
+                            }
+                        }
+                    }
                     newPowerBox.Text = "";
                 }
             }
