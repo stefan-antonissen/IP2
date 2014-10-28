@@ -224,11 +224,53 @@ namespace MediCare.Client
         // onderstaande drie methodes zijn om de waarden in de GUI aan te passen
         private void updateValues(String[] data)
         {
+            bool success = false;
+
             if (first)
             {
                 string[] timestamp = DateTime.Now.ToString(_DateFileFormat).Split();
-                SendMeasurementData(timestamp, "Timestamp");
-                _client.sendMessage(new Packet(_ID, "Filelist", "98765432", "12345678"));
+                #region SendTimeStamp
+                try
+                {
+                    SendMeasurementData(timestamp, "Timestamp");
+                    success = true;
+                }
+                catch (TimeoutException)
+                {
+                    MessageBox.Show("A time-out occured, trying again");
+                    success = false;
+                }
+                finally
+                {
+                    if (!success)
+                    {
+                        SendMeasurementData(timestamp, "Timestamp");
+                    }
+                    success = false;
+                }
+                #endregion
+                #region sendmessage(packet filelist)
+
+                try
+                {
+                    _client.sendMessage(new Packet(_ID, "Filelist", "98765432", "12345678"));
+                    success = true;
+                }
+                catch (TimeoutException)
+                {
+                    MessageBox.Show("an timeout occured, retrying");
+                    success = false;
+                }
+                finally
+                {
+                    if (!success)
+                    {
+                        _client.sendMessage(new Packet(_ID, "Filelist", "98765432", "12345678"));
+                    }
+                    success = false;
+                }
+
+                #endregion
                 first = false;
             }
 
@@ -255,8 +297,27 @@ namespace MediCare.Client
                 Energy_Box.Text = data[5];
                 TimeRunning_Box.Text = data[6];
                 Brake_Box.Text = data[7];
-                SendMeasurementData(data, "Data");
-            _graph.process_Graph_Data(data);
+                #region send measurement data
+                try
+                {
+                    SendMeasurementData(data, "Data");
+                    success = true;
+                }
+                catch (TimeoutException)
+                {
+                    MessageBox.Show("A time-out occured, trying again");
+                    success = false;
+                }
+                finally
+                {
+                    if (!success)
+                    {
+                        SendMeasurementData(data, "Data");
+                    }
+                    success = false;
+                }
+                #endregion
+                _graph.process_Graph_Data(data);
             }
         }
 
