@@ -319,7 +319,7 @@ namespace MediCare.ArtsClient
             int index = this.Filelist.IndexFromPoint(e.Location);
             if (index != System.Windows.Forms.ListBox.NoMatches)
             {
-                Packet p = new Packet(_ID, "FileRequest", "server", OverviewTable.CurrentCell.Value.ToString() + "-" + Filelist.Items[index].ToString());
+                Packet p = new Packet(_ID, "FileRequest", "server", clientIDLabel.Text + "-" + Filelist.Items[index].ToString());
                 try
                 {
                     _client.sendMessage(p);
