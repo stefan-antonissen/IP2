@@ -523,24 +523,26 @@ namespace MediCare.Server
 
         private void startServerHelper()
         {
-                new Thread(() =>
+            new Thread(() =>
+            {
+                while (_running)
                 {
-                    while (_running)
-                    {
-                        var t = sendQueue.Take();
+                    var t = sendQueue.Take();
 
-                        if (t.Item1 != null && t.Item1.CanWrite && t.Item2 != null)
+                    if (t.Item1 != null && t.Item1.CanWrite && t.Item2 != null)
+                    {
+                        BinaryFormatter formatter = new BinaryFormatter();
+                        try
                         {
-                            BinaryFormatter formatter = new BinaryFormatter();
                             formatter.Serialize(t.Item1, Utils.GetPacketString(t.Item2));
                         }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e);
+                        }
                     }
-                }).Start();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("an error occured: " + e.Message);
-            }
+                }
+            }).Start();
         }
 
         private void SaveMeasurement(Packet p)
