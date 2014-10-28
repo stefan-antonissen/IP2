@@ -245,23 +245,23 @@ namespace MediCare.DataHandling
         }
         private void on_Time_Running_CheckBox_Click(object sender, EventArgs e)
         {
-            checkbox_Status[0] = !checkbox_Status[0];
-            updateGraph(0);
+            checkbox_Status[6] = !checkbox_Status[6];
+            updateGraph(6);
         }
         private void on_Speed_CheckBox_Click(object sender, EventArgs e)
-        {
-            checkbox_Status[1] = !checkbox_Status[1];
-            updateGraph(1);
-        }
-        private void on_Distance_CheckBox_Click(object sender, EventArgs e)
         {
             checkbox_Status[2] = !checkbox_Status[2];
             updateGraph(2);
         }
-        private void on_Brake_CheckBox_Click(object sender, EventArgs e)
+        private void on_Distance_CheckBox_Click(object sender, EventArgs e)
         {
             checkbox_Status[3] = !checkbox_Status[3];
             updateGraph(3);
+        }
+        private void on_Brake_CheckBox_Click(object sender, EventArgs e)
+        {
+            checkbox_Status[7] = !checkbox_Status[7];
+            updateGraph(7);
         }
         private void on_Power_CheckBox_Click(object sender, EventArgs e)
         {
@@ -275,13 +275,13 @@ namespace MediCare.DataHandling
         }
         private void on_HeartBeats_CheckBox_Click(object sender, EventArgs e)
         {
-            checkbox_Status[6] = !checkbox_Status[6];
-            updateGraph(6);
+            checkbox_Status[0] = !checkbox_Status[0];
+            updateGraph(0);
         }
         private void on_RPM_CheckBox_Click(object sender, EventArgs e)
         {
-            checkbox_Status[7] = !checkbox_Status[7];
-            updateGraph(7);
+            checkbox_Status[1] = !checkbox_Status[1];
+            updateGraph(1);
         }
         private void updateGraph(int box_ID)
         {
@@ -307,20 +307,20 @@ namespace MediCare.DataHandling
                 switch (i)
                 {
                     case 0:
-                        s.Color = Color.BurlyWood;
-                        s.Name = "Time Running";
+                        s.Color = Color.Magenta;
+                        s.Name = "Heart Beats";
                         break;
                     case 1:
+                        s.Color = Color.MistyRose;
+                        s.Name = "RPM";
+                        break;
+                    case 2:
                         s.Color = Color.Blue;
                         s.Name = "Speed";
                         break;
-                    case 2:
+                    case 3:
                         s.Color = Color.Cyan;
                         s.Name = "Distance";
-                        break;
-                    case 3:
-                        s.Color = Color.DarkOrange;
-                        s.Name = "Brake";
                         break;
                     case 4:
                         s.Color = Color.ForestGreen;
@@ -331,12 +331,12 @@ namespace MediCare.DataHandling
                         s.Name = "Energy";
                         break;
                     case 6:
-                        s.Color = Color.Magenta;
-                        s.Name = "Heart Beats";
+                        s.Color = Color.BurlyWood;
+                        s.Name = "Time Running";
                         break;
                     case 7:
-                        s.Color = Color.MistyRose;
-                        s.Name = "RPM";
+                        s.Color = Color.DarkOrange;
+                        s.Name = "Brake";
                         break;
                     default:
                         s.Color = Color.Black;

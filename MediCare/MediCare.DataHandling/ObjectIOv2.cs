@@ -170,7 +170,16 @@ namespace MediCare.DataHandling
 
         public ArrayList Read_file(string p)
         {
-            string[] lines = File.ReadAllLines(p);
+            string[] lines = new string[] {};
+            try
+            {
+                lines = File.ReadAllLines(p);
+            }
+            catch (Exception e)
+            {
+                ArrayList list = new ArrayList();
+                list.Add("geen files");
+            }
             ArrayList resultList = new ArrayList();
             foreach (var line in lines)
             {
