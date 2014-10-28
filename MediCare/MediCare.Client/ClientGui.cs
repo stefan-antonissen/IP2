@@ -63,7 +63,8 @@ namespace MediCare.Client
             _labelRemoveTimer.Interval = 3000;
             _labelRemoveTimer.Tick += UpdateLabel;
 
-            Connect("");
+            Connect("SIM");
+            _bikeController.LockPower();
 
             try
             {

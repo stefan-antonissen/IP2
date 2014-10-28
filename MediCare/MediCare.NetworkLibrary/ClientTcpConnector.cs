@@ -81,6 +81,7 @@ namespace MediCare.NetworkLibrary
                 }
             }).Start();
         }
+
         public void Close()
         {
             _client.Close();

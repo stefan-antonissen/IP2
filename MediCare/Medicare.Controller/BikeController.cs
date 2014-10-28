@@ -28,7 +28,7 @@ namespace MediCare.Controller
             }
             else
             {
-                //cc = new BikeSimulator(comPort); //Bikesimulator
+                cc = new BikeSimulator(comPort); //Bikesimulator
             }
 
             cc.openConnection();
@@ -113,6 +113,10 @@ namespace MediCare.Controller
             try
             {
                 cc.send(Enums.GetValue(Enums.BikeCommands.RESET));
+                cc.read();
+                cc.send(Enums.GetValue(Enums.BikeCommands.CONTROLMODE));
+                cc.read();
+                cc.send(Enums.GetValue(Enums.BikeCommands.LOCK));
                 return cc.read();
             }
             catch (Exception e)
@@ -237,6 +241,21 @@ namespace MediCare.Controller
         public string GetConnectedPort()
         {
             return _comPort;
+        }
+
+        public void LockPower()
+        {
+            try
+            {
+                cc.send(Enums.GetValue(Enums.BikeCommands.CONTROLMODE));
+                cc.read();
+                cc.send(Enums.GetValue(Enums.BikeCommands.LOCK));
+                cc.read();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message.ToString()); 
+            }
         }
     }
 }
