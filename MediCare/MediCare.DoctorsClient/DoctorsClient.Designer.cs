@@ -32,6 +32,8 @@ namespace MediCare.ArtsClient
         private void InitializeComponent()
         {
             this.IndexTab = new System.Windows.Forms.TabPage();
+            this.clientSearchButton = new System.Windows.Forms.Button();
+            this.clientSearchText = new System.Windows.Forms.TextBox();
             this.ManageUsersButton = new System.Windows.Forms.Button();
             this.Filelist = new System.Windows.Forms.ListBox();
             this.OverviewTable = new System.Windows.Forms.DataGridView();
@@ -53,8 +55,8 @@ namespace MediCare.ArtsClient
             this.label3 = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
             this.Error_Label = new System.Windows.Forms.Label();
-            this.clientSearchText = new System.Windows.Forms.TextBox();
-            this.clientSearchButton = new System.Windows.Forms.Button();
+            this.currentClientLabel = new System.Windows.Forms.Label();
+            this.clientIDLabel = new System.Windows.Forms.Label();
             this.IndexTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.OverviewTable)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -62,6 +64,8 @@ namespace MediCare.ArtsClient
             // 
             // IndexTab
             // 
+            this.IndexTab.Controls.Add(this.clientIDLabel);
+            this.IndexTab.Controls.Add(this.currentClientLabel);
             this.IndexTab.Controls.Add(this.clientSearchButton);
             this.IndexTab.Controls.Add(this.clientSearchText);
             this.IndexTab.Controls.Add(this.ManageUsersButton);
@@ -80,6 +84,24 @@ namespace MediCare.ArtsClient
             this.IndexTab.TabIndex = 0;
             this.IndexTab.Text = "Overview";
             this.IndexTab.UseVisualStyleBackColor = true;
+            // 
+            // clientSearchButton
+            // 
+            this.clientSearchButton.Location = new System.Drawing.Point(298, 85);
+            this.clientSearchButton.Name = "clientSearchButton";
+            this.clientSearchButton.Size = new System.Drawing.Size(140, 23);
+            this.clientSearchButton.TabIndex = 17;
+            this.clientSearchButton.Text = "search client";
+            this.clientSearchButton.UseVisualStyleBackColor = true;
+            this.clientSearchButton.Click += new System.EventHandler(this.clientSearchButton_Click);
+            // 
+            // clientSearchText
+            // 
+            this.clientSearchText.Location = new System.Drawing.Point(298, 58);
+            this.clientSearchText.Name = "clientSearchText";
+            this.clientSearchText.Size = new System.Drawing.Size(140, 20);
+            this.clientSearchText.TabIndex = 16;
+            this.clientSearchText.Text = "clientID";
             // 
             // ManageUsersButton
             // 
@@ -292,22 +314,22 @@ namespace MediCare.ArtsClient
             this.Error_Label.Size = new System.Drawing.Size(0, 13);
             this.Error_Label.TabIndex = 26;
             // 
-            // clientSearchText
+            // currentClientLabel
             // 
-            this.clientSearchText.Location = new System.Drawing.Point(298, 58);
-            this.clientSearchText.Name = "clientSearchText";
-            this.clientSearchText.Size = new System.Drawing.Size(140, 20);
-            this.clientSearchText.TabIndex = 16;
+            this.currentClientLabel.AutoSize = true;
+            this.currentClientLabel.Location = new System.Drawing.Point(444, 39);
+            this.currentClientLabel.Name = "currentClientLabel";
+            this.currentClientLabel.Size = new System.Drawing.Size(71, 13);
+            this.currentClientLabel.TabIndex = 18;
+            this.currentClientLabel.Text = "current client:";
             // 
-            // clientSearchButton
+            // clientIDLabel
             // 
-            this.clientSearchButton.Location = new System.Drawing.Point(298, 85);
-            this.clientSearchButton.Name = "clientSearchButton";
-            this.clientSearchButton.Size = new System.Drawing.Size(140, 23);
-            this.clientSearchButton.TabIndex = 17;
-            this.clientSearchButton.Text = "search client";
-            this.clientSearchButton.UseVisualStyleBackColor = true;
-            this.clientSearchButton.Click += new System.EventHandler(this.clientSearchButton_Click);
+            this.clientIDLabel.AutoSize = true;
+            this.clientIDLabel.Location = new System.Drawing.Point(522, 39);
+            this.clientIDLabel.Name = "clientIDLabel";
+            this.clientIDLabel.Size = new System.Drawing.Size(0, 13);
+            this.clientIDLabel.TabIndex = 19;
             // 
             // DoctorClient
             // 
@@ -358,6 +380,8 @@ namespace MediCare.ArtsClient
         private System.Windows.Forms.Button ManageUsersButton;
         private System.Windows.Forms.Button clientSearchButton;
         private System.Windows.Forms.TextBox clientSearchText;
+        private System.Windows.Forms.Label clientIDLabel;
+        private System.Windows.Forms.Label currentClientLabel;
 
     }
 }

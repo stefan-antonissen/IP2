@@ -25,7 +25,7 @@ namespace MediCare.Server
 
         private string _toAllDoctors = "Dokter";
         //README!!! - SSL certificate needs to be coppied from MediCare.Server\ssl_cert.pfx to C:\Windows\Temp\
-        private X509Certificate certificate = new X509Certificate(@"C:\Windows\Temp\ssl_cert.pfx", "medicare");
+        private X509Certificate2 certificate = new X509Certificate2(@"C:\Windows\Temp\ssl_cert.pfx", "medicare");
 
         //sendqueue
         private BlockingCollection<Tuple<SslStream, Packet>> sendQueue = new BlockingCollection<Tuple<SslStream, Packet>>(new ConcurrentQueue<Tuple<SslStream, Packet>>());

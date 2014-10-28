@@ -349,6 +349,7 @@ namespace MediCare.ArtsClient
             try
             {
                 _client.sendMessage(p);
+                clientIDLabel.Text = patientID;
                 success = true;
             }
             catch (TimeoutException)
@@ -743,15 +744,19 @@ namespace MediCare.ArtsClient
         private void clientSearchButton_Click(object sender, EventArgs e)
         {
             bool success = false;
-            Packet p = new Packet(_ID, "FileRequest", "server", OverviewTable.CurrentCell.Value.ToString() + "-" + clientSearchText.Text);
+            string patientID = clientSearchText.Text;
+            Packet p = new Packet(_ID, "Filelist", "server", patientID);
+            Console.WriteLine("Patient id : " + patientID);
             try
             {
                 _client.sendMessage(p);
+                clientIDLabel.Text = patientID;
+                clientSearchText.Text = "";
                 success = true;
             }
             catch (TimeoutException)
             {
-                MessageBox.Show("A timeout error occured, trying again");
+                MessageBox.Show("An timeout error occured, trying again");
                 success = false;
             }
             finally
