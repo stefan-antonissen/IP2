@@ -45,6 +45,11 @@ namespace MediCare.NetworkLibrary
             sendQueue.Add(packet);
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public Packet ReadMessage()
         {
             BinaryFormatter formatter = new BinaryFormatter();
@@ -59,6 +64,7 @@ namespace MediCare.NetworkLibrary
             }
             return null;
         }
+
         private void StartClientHelper()
         {
             new Thread(() =>

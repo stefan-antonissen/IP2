@@ -49,19 +49,10 @@ namespace MediCare.ArtsClient
         {
             InitializeComponent();
 
+            bool success = false;
+
             setVisibility(false);
             this.FormClosing += on_Window_Closed_Event;
-
-            //opzetten tcp connectie
-            TcpClient TcpClient = new TcpClient(_server, _port);
-            _client = new ClientTcpConnector(TcpClient, _server);
-
-
-            // haalt de de actieve clients op elke 1s
-            _getActiveClientsTimer = new System.Windows.Forms.Timer();
-            _getActiveClientsTimer.Interval = 1000;
-            _getActiveClientsTimer.Tick += updateActiveClients;
-
 
             // timer voor het verwijderen van de errortekst na 3s, 'cosmetisch'
             _labelRemoveTimer = new System.Windows.Forms.Timer();
@@ -71,25 +62,82 @@ namespace MediCare.ArtsClient
             // height van de table moet je handmatig setten.....
             OverviewTable.RowTemplate.MinimumHeight = 50;
 
-            new Thread(() =>
+            try
             {
-                while (true)
+                //opzetten tcp connectie
+                TcpClient TcpClient = new TcpClient(_server, _port);
+                _client = new ClientTcpConnector(TcpClient, _server);
+
+                // haalt de de actieve clients op elke 1s
+                _getActiveClientsTimer = new System.Windows.Forms.Timer();
+                _getActiveClientsTimer.Interval = 1000;
+                _getActiveClientsTimer.Tick += updateActiveClients;
+
+                new Thread(() =>
                 {
-                    if (_userIsAuthenticated)
+                    while (true)
                     {
-                        Packet packet = null;
-                        if (_client.isConnected() && !this.IsDisposed)
+                        if (_userIsAuthenticated)
                         {
-                            packet = _client.ReadMessage();
-                            if (packet != null)
+                            Packet packet = null;
+                            if (_client.isConnected() && !this.IsDisposed)
                             {
-                                processPacket(packet);
+                                packet = _client.ReadMessage();
+                                if (packet != null)
+                                {
+                                    processPacket(packet);
+                                }
                             }
                         }
+                        Thread.Sleep(5);
                     }
-                    Thread.Sleep(5);
+                }).Start();
+                success = true;
+            }
+            catch (SocketException)
+            {
+                MessageBox.Show("Could not connect to the server, trying to reconnect");
+                success = false;
+            }
+            catch (TimeoutException)
+            {
+                MessageBox.Show("Server Time Out, trying to reconnect");
+                success = false;
+            }
+            finally
+            {
+                if (!success)
+                {
+                    //opzetten tcp connectie
+                    TcpClient TcpClient = new TcpClient(_server, _port);
+                    _client = new ClientTcpConnector(TcpClient, _server);
+
+                    // haalt de de actieve clients op elke 1s
+                    _getActiveClientsTimer = new System.Windows.Forms.Timer();
+                    _getActiveClientsTimer.Interval = 1000;
+                    _getActiveClientsTimer.Tick += updateActiveClients;
+
+                    new Thread(() =>
+                    {
+                        while (true)
+                        {
+                            if (_userIsAuthenticated)
+                            {
+                                Packet packet = null;
+                                if (_client.isConnected() && !this.IsDisposed)
+                                {
+                                    packet = _client.ReadMessage();
+                                    if (packet != null)
+                                    {
+                                        processPacket(packet);
+                                    }
+                                }
+                            }
+                            Thread.Sleep(5);
+                        }
+                    }).Start();
                 }
-            }).Start();
+            }
         }
 
         private void processPacket(Packet p)

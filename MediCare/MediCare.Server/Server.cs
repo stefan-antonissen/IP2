@@ -40,10 +40,11 @@ namespace MediCare.Server
         public Server()
         {
             _loginIO.LoadLogins();
+            //_loginIO.add();
 
             mIOv2 = new ObjectIOv2(); // do not remove, do not move and do not edit!
 
-            TcpListener server = new TcpListener(/*_localIP,*/ 11000);
+            TcpListener server = new TcpListener(_localIP, 11000);
             server.Start();
 
             startServerHelper();
@@ -522,28 +523,24 @@ namespace MediCare.Server
 
         private void startServerHelper()
         {
-            new Thread(() =>
-            {
-                while (_running)
+                new Thread(() =>
                 {
-                    var t = sendQueue.Take();
-
-                    if (t.Item1 != null && t.Item1.CanWrite && t.Item2 != null)
+                    while (_running)
                     {
-                        Console.WriteLine("before bug");
-                        BinaryFormatter formatter = new BinaryFormatter();
-                        try
+                        var t = sendQueue.Take();
+
+                        if (t.Item1 != null && t.Item1.CanWrite && t.Item2 != null)
                         {
+                            BinaryFormatter formatter = new BinaryFormatter();
                             formatter.Serialize(t.Item1, Utils.GetPacketString(t.Item2));
                         }
-                        catch(Exception e)
-                        {
-                            Console.WriteLine(e);
-                        }
-                        Console.WriteLine("after bug");
                     }
-                }
-            }).Start();
+                }).Start();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("an error occured: " + e.Message);
+            }
         }
 
         private void SaveMeasurement(Packet p)

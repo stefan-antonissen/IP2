@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using MediCare.Controller;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -40,6 +41,7 @@ namespace MediCare.Client
 
         public ClientGui()
         {
+            bool success = false;
             InitializeComponent();
             _graph = new Graph();
             _graph.Initialize_Checkboxes_Client();
@@ -62,32 +64,85 @@ namespace MediCare.Client
 
             Connect("");
 
-            //opzetten tcp connectie
-            TcpClient TcpClient = new TcpClient(_server, _port);
-            _client = new ClientTcpConnector(TcpClient, _server);
-
-            new System.Threading.Thread(() =>
+            try
             {
-                while (true)
-                {
-                    if (_userIsAuthenticated)
-                    {
-                        Packet packet = null;
-                        if (_client.isConnected() && !this.IsDisposed)
-                        {
-                            //Console.WriteLine("Reading message\n");
-                            packet = _client.ReadMessage();
+                //opzetten tcp connectie
+                TcpClient TcpClient = new TcpClient(_server, _port);
+                _client = new ClientTcpConnector(TcpClient, _server);
 
-                            if (packet != null)
+                new System.Threading.Thread(() =>
+                {
+                    while (true)
+                    {
+                        if (_userIsAuthenticated)
+                        {
+                            Packet packet = null;
+                            if (_client.isConnected() && !this.IsDisposed)
                             {
-                                processPacket(packet);
+                                //Console.WriteLine("Reading message\n");
+                                packet = _client.ReadMessage();
+
+                                if (packet != null)
+                                {
+                                    processPacket(packet);
+                                }
                             }
                         }
+                        System.Threading.Thread.Sleep(5);
                     }
-                    System.Threading.Thread.Sleep(5);
+                }).Start();
+                success = true;
+
+            }
+            catch (SocketException)
+            {
+                MessageBox.Show("Could not connect to the server, trying to reconnect");
+                success = false;
+            }
+            catch (TimeoutException)
+            {
+                MessageBox.Show("Lost connection to the server (timed out), trying to reconnect");
+                success = false;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("An error occured: " + e.Message);
+                success = false;
+            }
+                //rewrite this to make the the reconnection
+            finally
+            {
+                if (!success)
+                {
+                    //opzetten tcp connectie
+                    TcpClient TcpClient = new TcpClient(_server, _port);
+                    _client = new ClientTcpConnector(TcpClient, _server);
+
+                    new System.Threading.Thread(() =>
+                    {
+                        while (true)
+                        {
+                            if (_userIsAuthenticated)
+                            {
+                                Packet packet = null;
+                                if (_client.isConnected() && !this.IsDisposed)
+                                {
+                                    //Console.WriteLine("Reading message\n");
+                                    packet = _client.ReadMessage();
+
+                                    if (packet != null)
+                                    {
+                                        processPacket(packet);
+                                    }
+                                }
+                            }
+                            System.Threading.Thread.Sleep(5);
+                        }
+                    }).Start();
                 }
-            }).Start();
+            }
         }
+
 
         private void processPacket(Packet p)
         {
@@ -189,7 +244,7 @@ namespace MediCare.Client
                 TimeRunning_Box.Text = "0";
                 Brake_Box.Text = "0";
             }
-            // anders pak je de waarden van de bike
+                // anders pak je de waarden van de bike
             else
             {
                 Heartbeats_Box.Text = data[0];
@@ -201,7 +256,7 @@ namespace MediCare.Client
                 TimeRunning_Box.Text = data[6];
                 Brake_Box.Text = data[7];
                 SendMeasurementData(data, "Data");
-                _graph.process_Graph_Data(data);
+            _graph.process_Graph_Data(data);
             }
         }
 
