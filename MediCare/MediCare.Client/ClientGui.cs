@@ -473,7 +473,7 @@ namespace MediCare.Client
         private void on_Window_Closed_Event(object sender, FormClosingEventArgs e)
         {
             bool success = false;
-            DialogResult result = MessageBox.Show("Weet u zeker dat u wilt afsluiten ?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult result = MessageBox.Show("Are you sure you want to exit ?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.No)
             {
                 e.Cancel = true;

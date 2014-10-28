@@ -692,7 +692,7 @@ namespace MediCare.ArtsClient
         private void on_Window_Closed_Event(object sender, FormClosingEventArgs e)
         {
             bool success = false;
-            DialogResult result = MessageBox.Show("Weet u zeker dat u wilt afsluiten ?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult result = MessageBox.Show("Are you sure you want to exit ?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.No)
             {
                 e.Cancel = true;
@@ -739,6 +739,30 @@ namespace MediCare.ArtsClient
             else
                 _signupTool.Show();
         }
+
+        private void clientSearchButton_Click(object sender, EventArgs e)
+        {
+            bool success = false;
+            Packet p = new Packet(_ID, "FileRequest", "server", OverviewTable.CurrentCell.Value.ToString() + "-" + clientSearchText.Text);
+            try
+            {
+                _client.sendMessage(p);
+                success = true;
+            }
+            catch (TimeoutException)
+            {
+                MessageBox.Show("A timeout error occured, trying again");
+                success = false;
+            }
+            finally
+            {
+                if (!success)
+                {
+                    _client.sendMessage(p);
+                }
+            }
+        }
+        
 
     }
 
