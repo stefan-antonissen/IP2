@@ -220,6 +220,12 @@ namespace MediCare.Server
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="p"></param>
+        /// <param name="incomingClient"></param>
+        /// <param name="stream"></param>
         private void addNewClient(Packet p, TcpClient incomingClient, SslStream stream)
         {
             clients.Add(p.GetID(), incomingClient);
@@ -233,11 +239,21 @@ namespace MediCare.Server
             #endregion
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         private bool clientIsKnown(String id)
         {
             return clients.ContainsKey(id);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="credentials"></param>
+        /// <returns></returns>
         private bool loginIsValid(string credentials)
         {
             loginIO.add("12345678:dsa"); //TODO Remove
@@ -366,6 +382,7 @@ namespace MediCare.Server
             Packet response = new Packet("Server", "ActiveClients", p._id, ids.Trim());
             SendToDestination(response);
         }
+
         /// <summary>
         /// Methode die aangeroepen wordt als de server een request voor de files binnenkrijgt
         /// </summary>
@@ -401,6 +418,10 @@ namespace MediCare.Server
             Console.WriteLine(mIOv2.Get_File(FileRequested));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="packet"></param>
         private void HandleCommandPacket(Packet packet)
         {
             SendToDestination(packet);
@@ -412,6 +433,10 @@ namespace MediCare.Server
             formatter.Serialize(stream, Utils.GetPacketString(p));
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="p"></param>
         private void SaveMeasurement(Packet p)
         {
             /*
@@ -440,6 +465,9 @@ namespace MediCare.Server
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         private void printClientList()
         {
             Console.WriteLine("\n############################################# ");
@@ -451,6 +479,11 @@ namespace MediCare.Server
             Console.WriteLine("#############################################\n");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         private string ResolveID(string id)
         {
             string temp = id.Substring(0, 1);

@@ -45,12 +45,18 @@ namespace MediCare.NetworkLibrary
             sendQueue.Add(packet);
         }
 
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         public Packet ReadMessage()
         {
             BinaryFormatter formatter = new BinaryFormatter();
             String dataString = (String)formatter.Deserialize(stream);
             return Utils.GetPacket(dataString);
         }
+
         private void StartClientHelper()
         {
             new Thread(() =>
