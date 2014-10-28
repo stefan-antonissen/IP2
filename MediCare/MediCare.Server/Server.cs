@@ -496,7 +496,10 @@ namespace MediCare.Server
                 string datalines = packetAmount.ToString() + "-" + FileRequested;
                 for (int i = 0; i < 10; i++)
                 {
-                    datalines += "-" + lines[i];
+                    if (i + (j * 10) < lines.Count)
+                    {
+                        datalines += "-" + lines[i + (j * 10)];
+                    }
                 }
                 Packet followupPacket = new Packet("server", "FileFollowup", packet._id, datalines);
                 SendToDestination(followupPacket);

@@ -215,8 +215,16 @@ namespace MediCare.ArtsClient
         private void HandleFollowup(Packet p)
         {
             string[] data = p._message.Split('-'); // message = 10 metingen per packet
-            string[] graphData = { data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12] }; // graphdata = de 10 metingen afgezonderd
-
+            string[] graphData = new string[data.Length-3];
+           // string[] graphData = { data[3], data[4], data[5], data[6], data[7], data[8], data[9], data[10], data[11], data[12] }; // graphdata = de 10 metingen afgezonderd
+           
+            int index = 0;
+            for (int i = 3; i < data.Length; i++)
+            {
+                graphData[index] = data[i];
+                index++;
+            }
+            
             Console.WriteLine(data[1] + "-" + data[2]);
             if (_tabIdDict.ContainsKey(data[1] + "-" + data[2]))
             {
@@ -226,6 +234,7 @@ namespace MediCare.ArtsClient
                     //Console.WriteLine("Graphdata: " + test);
                     _tabIdDict[data[1] + "-" + data[2]].addData(splitString);
                 }
+                _tabIdDict[data[1] + "-" + data[2]].init();
                 //foreach (string s in graphData)
                 //{
                 //  _tabIdDict[data[1] + "-" + data[2]].UpdateValues(s.Split(' '));
@@ -449,6 +458,8 @@ namespace MediCare.ArtsClient
         {
             if (typeBox.Text != "")
             {
+                Packet p = new Packet(_ID, "Broadcast", "Server", typeBox.Text);
+                _client.sendMessage(p);
                 txtLog.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                 typeBox.Text = "";
 
@@ -1040,12 +1051,12 @@ namespace MediCare.ArtsClient
             measurementTime.Text = "00:00:00";
 
             measurementNumber.Enabled = true;
+            measurementNumber.Value = 1;
             measurementNumber.Location = new System.Drawing.Point(220, 310);
             measurementNumber.Name = "measurementNumber";
             measurementNumber.Size = new System.Drawing.Size(200, 40);
             measurementNumber.TabIndex = 36;
             measurementNumber.ValueChanged += new System.EventHandler(measurementNumber_ValueChanged);
-
             #region add components
             //add components
             this.Controls.Add(closeButton);
@@ -1097,9 +1108,8 @@ namespace MediCare.ArtsClient
 
         private void measurementNumber_ValueChanged(Object sender, EventArgs e)
         {
-            string[] data = (string[])_data[(int)measurementNumber.Value];
-            Console.WriteLine(data[6]);
-            UpdateValues((string[])_data[(int)measurementNumber.Value]);
+            string[] data = (string[])_data[(int)measurementNumber.Value-1];
+            UpdateValues(data);
             t = TimeSpan.FromSeconds((int)measurementNumber.Value);
             measurementTime.Text = t.ToString("c");
         }
@@ -1112,6 +1122,7 @@ namespace MediCare.ArtsClient
         public void setMaxMeasurements(int maxMeasurements)
         {
             measurementNumber.Maximum = maxMeasurements;
+            measurementNumber.Minimum = 1;
         }
 
         private void resetButton_Click(object sender, EventArgs e)
@@ -1206,6 +1217,8 @@ namespace MediCare.ArtsClient
         {
             if (typeBox.Text != "")
             {
+                Packet p = new Packet(_id, "Chat", _tabName, typeBox.Text);
+                _client.sendMessage(p);
                 chatBox.AppendText(Environment.NewLine + "Me: " + typeBox.Text);
                 typeBox.Text = "";
             }
@@ -1338,6 +1351,14 @@ namespace MediCare.ArtsClient
             }
         }
         #endregion
+
+        internal void init()
+        {
+            string[] data = (string[])_data[(int)measurementNumber.Value];
+            UpdateValues(data);
+            t = TimeSpan.FromSeconds((int)measurementNumber.Value);
+            measurementTime.Text = t.ToString("c");
+        }
     }
     #endregion
 }
