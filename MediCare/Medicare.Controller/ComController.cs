@@ -10,4 +10,6 @@ abstract class ComController
     abstract public List<string> GetCorrectPort();
 
     abstract public string getPort();
+
+    abstract public bool IsConnected();
 }

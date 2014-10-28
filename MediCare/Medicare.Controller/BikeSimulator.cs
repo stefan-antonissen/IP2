@@ -33,6 +33,11 @@ namespace MediCare.Controller
             initialTime = DateTime.Now.Ticks;
         }
 
+        public override bool IsConnected()
+        {
+            return true;
+        }
+
         override public void openConnection()
         {
             _status = "open";

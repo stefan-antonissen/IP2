@@ -9,6 +9,7 @@ namespace MediCare.Controller
     public class BikeController
     {
         private ComController cc;
+        private string _comPort;
 
         public BikeController(string comPort)
         {
@@ -16,6 +17,8 @@ namespace MediCare.Controller
             {
                 cc = new SerialController();
                 comPort = cc.getPort();
+                _comPort = comPort;
+                Console.WriteLine("COMPORT IS: " + comPort);
             }
             
             if (comPort.Contains("COM"))
@@ -25,10 +28,15 @@ namespace MediCare.Controller
             }
             else
             {
-                cc = new BikeSimulator(comPort); //Bikesimulator
+                //cc = new BikeSimulator(comPort); //Bikesimulator
             }
 
             cc.openConnection();
+        }
+
+        public bool IsConnected()
+        {
+            return cc.IsConnected();
         }
 
 
@@ -225,5 +233,10 @@ namespace MediCare.Controller
         }
 
         #endregion
+
+        public string GetConnectedPort()
+        {
+            return _comPort;
+        }
     }
 }

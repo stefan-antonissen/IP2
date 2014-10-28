@@ -25,6 +25,11 @@ namespace MediCare.Controller
             _comPort = new SerialPort(port, 9600);
         }
 
+        override public bool IsConnected()
+        {
+            return _comPort.IsOpen;
+        }
+
         /**
          * AutoPort Detection.
          * 
@@ -75,7 +80,7 @@ namespace MediCare.Controller
             {
                 //MessageBox.Show("No physical device found.\nUsing Simulator.");
                 Console.WriteLine("No physical device found.\nUsing Simulator.");
-                correctport.Add("SIM");
+                //correctport.Add("SIM");
                 return correctport;
                 //return null;
             }

@@ -342,8 +342,36 @@ namespace MediCare.Client
 
         private async void UpdateGUI(object sender, EventArgs e)
         {
-            var result = await DoWorkAsync();
-            updateValues(result);
+            try
+            {
+                var result = await DoWorkAsync();
+                updateValues(result);
+            }
+            catch
+            {
+                _updateDataTimer.Stop();
+                Form f = new Form();
+                f.Text = "Waiting for reconnect...";
+                MessageBox.Show("Bike Connection error, please reconnect the bike!");
+                    //MessageBox.Show("Bike Connection error, please reconnect the bike!");
+                f.Show(this);         //Make sure we're the owner
+                this.Enabled = false; //Disable ourselves
+                while(!_bikeController.IsConnected())
+                {
+                    try
+                    {
+                        Connect("");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex);
+                    }
+                }
+                this.Enabled = true;  //We're done, enable ourselves
+                f.Close();            //Dispose message form
+                MessageBox.Show("Bike Connection restored");
+                _updateDataTimer.Start();
+            }
         }
 
         private async Task<string[]> DoWorkAsync()
@@ -354,7 +382,8 @@ namespace MediCare.Client
             //string num = r.Next(1, 100).ToString();
             //string[] str = new string[] { num, num, num, num, num, num, num, num };
             // return str;
-            return _bikeController.GetStatus();
+            string[] data = _bikeController.GetStatus();
+            return new string[] { data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7] };
         }
 
         # region Chat Box
