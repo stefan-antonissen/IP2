@@ -530,8 +530,17 @@ namespace MediCare.Server
 
                     if (t.Item1 != null && t.Item1.CanWrite && t.Item2 != null)
                     {
+                        Console.WriteLine("before bug");
                         BinaryFormatter formatter = new BinaryFormatter();
-                        formatter.Serialize(t.Item1, Utils.GetPacketString(t.Item2));
+                        try
+                        {
+                            formatter.Serialize(t.Item1, Utils.GetPacketString(t.Item2));
+                        }
+                        catch(Exception e)
+                        {
+                            Console.WriteLine(e);
+                        }
+                        Console.WriteLine("after bug");
                     }
                 }
             }).Start();

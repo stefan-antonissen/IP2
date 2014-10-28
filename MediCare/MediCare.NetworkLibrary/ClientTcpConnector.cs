@@ -48,8 +48,16 @@ namespace MediCare.NetworkLibrary
         public Packet ReadMessage()
         {
             BinaryFormatter formatter = new BinaryFormatter();
-            String dataString = (String)formatter.Deserialize(stream);
-            return Utils.GetPacket(dataString);
+            try
+            {
+                String dataString = (String)formatter.Deserialize(stream);
+                return Utils.GetPacket(dataString);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+            return null;
         }
         private void StartClientHelper()
         {
