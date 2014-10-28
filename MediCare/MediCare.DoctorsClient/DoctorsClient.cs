@@ -592,11 +592,19 @@ namespace MediCare.ArtsClient
 
         private void on_Window_Closed_Event(object sender, FormClosingEventArgs e)
         {
-            Packet p = new Packet(_ID, "Disconnect", "Server", "Disconnecting");
-            //send message to server that ur dying
-            if (_client.isConnected())
+            DialogResult result = MessageBox.Show("Weet u zeker dat u wilt afsluiten ?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (result == DialogResult.No)
             {
-                _client.sendMessage(p);
+                e.Cancel = true;
+            }
+            else
+            {
+                Packet p = new Packet(_ID, "Disconnect", "Server", "Disconnecting");
+                //send message to server that ur dying
+                if (_client.isConnected())
+                {
+                    _client.sendMessage(p);
+                }
             }
         }
         private void ManageUsersButton_Click(object sender, EventArgs e)
