@@ -54,7 +54,7 @@ namespace MediCare.Client
 
             // update waarden met de data van de fiets
             _updateDataTimer = new Timer();
-            _updateDataTimer.Interval = 500;
+            _updateDataTimer.Interval = 1000;
             _updateDataTimer.Tick += UpdateGUI;
 
             // timer voor het verwijderen van de errortekst, 'cosmetisch'
@@ -256,7 +256,7 @@ namespace MediCare.Client
                 TimeRunning_Box.Text = data[6];
                 Brake_Box.Text = data[7];
                 SendMeasurementData(data, "Data");
-            _graph.process_Graph_Data(data);
+                _graph.process_Graph_Data(data);
             }
         }
 

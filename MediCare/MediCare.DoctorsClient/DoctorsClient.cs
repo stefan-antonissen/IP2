@@ -223,6 +223,7 @@ namespace MediCare.ArtsClient
                 foreach (string s in graphData)
                 {
                     string[] splitString = s.Split(' ');
+                    //Console.WriteLine("Graphdata: " + test);
                     _tabIdDict[data[1] + "-" + data[2]].addData(splitString);
                 }
                 //foreach (string s in graphData)
@@ -984,6 +985,7 @@ namespace MediCare.ArtsClient
         private void measurementNumber_ValueChanged(Object sender, EventArgs e)
         {
             string[] data = (string[])_data[(int)measurementNumber.Value];
+            Console.WriteLine(data[6]);
             UpdateValues((string[])_data[(int)measurementNumber.Value]);
             t = TimeSpan.FromSeconds((int)measurementNumber.Value);
             measurementTime.Text = t.ToString("c");
@@ -1032,7 +1034,7 @@ namespace MediCare.ArtsClient
                     UpdateValueCallback d = new UpdateValueCallback(UpdateValues);
                     this.Invoke(d, new object[] { data });
                 }
-                else
+                else if (data.Length >= 8)
                 {
                     Heartbeats_Box.Text = data[0];
                     RPM_Box.Text = data[1];
@@ -1043,7 +1045,6 @@ namespace MediCare.ArtsClient
                     TimeRunning_Box.Text = data[6];
                     Brake_Box.Text = data[7];
                     graph.process_Graph_Data(data);
-
                 }
             }
         }

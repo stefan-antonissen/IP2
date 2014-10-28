@@ -355,13 +355,19 @@ namespace MediCare.DataHandling
             // if (data.Length != 1) // maybe not needed if called from updatevalues
             // {
             string[] temp = data[6].Split(':');
-            int minutes = int.Parse(temp[0]);
-            int seconds = int.Parse(temp[1]);
-            data[6] = "" + ((minutes * 60) + seconds);
-            for (int i = 0; i < data.Length; i++)
+            if (temp.Length > 1)
             {
-                ChartData[i].Points.Add(double.Parse(data[i]));
-                //ChartData[i].Points.
+
+                int minutes = int.Parse(temp[0]);
+                int seconds = int.Parse(temp[1]);
+                string tempData = data[6];
+                data[6] = "" + ((minutes * 60) + seconds);
+                for (int i = 0; i < data.Length; i++)
+                {
+                    ChartData[i].Points.Add(double.Parse(data[i]));
+                    //ChartData[i].Points.
+                }
+                data[6] = tempData;
             }
             // }
         }
