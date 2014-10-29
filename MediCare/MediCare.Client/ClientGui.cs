@@ -27,6 +27,8 @@ namespace MediCare.Client
         private static int _port = NetworkSettings.SERVERPORT;
         private ClientTcpConnector _client;
 
+        private const bool SIM_ON = false;
+
         string _ID;
         private Boolean _userIsAuthenticated = false;
 
@@ -63,7 +65,15 @@ namespace MediCare.Client
             _labelRemoveTimer.Interval = 3000;
             _labelRemoveTimer.Tick += UpdateLabel;
 
-            Connect("SIM");
+            if(SIM_ON)
+            {
+                Connect("SIM");
+            }
+            else
+            {
+                Connect("");
+            }
+
             _bikeController.LockPower();
 
             try
