@@ -32,6 +32,8 @@ namespace MediCare.Client
         string _ID;
         private Boolean _userIsAuthenticated = false;
 
+        private const bool SIM_ON = false;
+
         private readonly Timer _updateDataTimer;
         private readonly Timer _labelRemoveTimer;
 
