@@ -180,9 +180,20 @@ namespace MediCare.ArtsClient
                     case "Disconnect":
                     HandleDisconnectPacket(p);
                     break;
+                    case "CycleTestFinished":
+                    HandleCycleTestFinishedPacket(p);
+                    break;
                     default: //nothing
                     break;
                 }
+            }
+        }
+
+        private void HandleCycleTestFinishedPacket(Packet p)
+        {
+            if (_tabIdDict.ContainsKey(p._id))
+            {
+                _tabIdDict[p._id].CycleTestFinished(p);
             }
         }
 
@@ -1276,6 +1287,12 @@ namespace MediCare.ArtsClient
             {
                 MessageBox.Show("Cycle test started!");
             }
+        }
+
+        public void CycleTestFinished(Packet p)
+        {
+            string result = p._message;
+            MessageBox.Show("The test has finished. The result is: " + result, "Confirmation", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         delegate void UpdateValueCallback(string[] text);
