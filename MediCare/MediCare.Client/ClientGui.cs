@@ -180,11 +180,16 @@ namespace MediCare.Client
                 HandleFirstConnectPacket(p);
                 break;
                 case "CycleTest":
-                HandleStartTestPacket();
+                HandleStartTestPacket(p);
                 break;
                 default: //nothing
                 break;
             }
+        }
+
+        private void handleFinishTestPacket()
+        {
+            throw new NotImplementedException();
         }
 
         private void HandleStartTestPacket(Packet p)
