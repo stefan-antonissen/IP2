@@ -200,7 +200,6 @@ namespace MediCare.Client
                     {
                         if (time > 20)
                         {
-                            
                         }
                     }
                     time++;
