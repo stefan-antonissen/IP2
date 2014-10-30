@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Drawing;
 using System.Net.Configuration;
 using System.Threading;
@@ -201,8 +202,11 @@ namespace MediCare.Client
                 {
                     _bikeController.SetPower(50);
                     int time = 0;
+                    int testTimeCompleted = 0;
+                    ArrayList heartbeatList = new ArrayList();
                     int currentPower = 50;
                     int powerIncrement = 0;
+                    bool correctRPM = false;
                     if (p._message == "male")
                     {
                         powerIncrement = 50;
@@ -214,19 +218,50 @@ namespace MediCare.Client
                     on_message_receive_event("", "Inspanningstest : " + "Welkom bij de inspanningstest, probeert u een omwentelingen per min van ong. 60 te behouden tijdens de gehele test");
                     while (true)
                     {
-                        if (int.Parse(Heartbeats_Box.Text) < 140)
+                        if (int.Parse(RPM_Box.Text) < 50 && correctRPM && (time % 10 == 0))
                         {
-                            if (time > 20)
+                            on_message_receive_event("", "Please cycle faster to get your rpm up to 60");
+                            correctRPM = false;
+                        }
+                        else if (int.Parse(RPM_Box.Text) > 70 && correctRPM && (time % 10 == 0))
+                        {
+                            on_message_receive_event("", "Please cycle slower to get your rpm down to 60");
+                            correctRPM = false;
+                        }
+                        else
+                        {
+                            correctRPM = true;
+                        }
+                        if (int.Parse(Heartbeats_Box.Text) < 140 && time > 20 && currentPower < 400)
+                        {
+                            currentPower += powerIncrement;
+                            _bikeController.SetPower(currentPower);
+                            on_message_receive_event("", "Inspanningstest : " + "Power opgevoerd naar " + currentPower);
+                            time = 0;
+                        }
+                        else if (int.Parse(Heartbeats_Box.Text) > 140)
+                        {
+                            testTimeCompleted++;
+                            if (testTimeCompleted%60 == 0)
                             {
-                                _bikeController.SetPower(currentPower += 25);
-                                on_message_receive_event("", "Inspanningstest : " + "Power opgevoerd naar " + currentPower);
-                                time = 0;
-                                Thread.Sleep(1000);
+                                on_message_receive_event("", "Heartbeat added");
+                                heartbeatList.Add(int.Parse(Heartbeats_Box.Text));
+                            }
+                            if (testTimeCompleted%360 == 0)
+                            {
+                                on_message_receive_event("", "Test completed, sending results");
+                                //todo send results
                             }
                         }
-                        on_message_receive_event("", "Inspanningstest : " + "Time :  " + time);
                         time++;
-                        Thread.Sleep(1000);
+                        try
+                        {
+                            Thread.Sleep(1000);
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                        }
                     }
                 }).Start();
             }
