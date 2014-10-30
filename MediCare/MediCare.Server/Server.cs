@@ -121,6 +121,9 @@ namespace MediCare.Server
                                 case "Command":
                                     HandleCommandPacket(packet);
                                     break;
+                                case "CycleTest":
+                                    HandleCycleTestPacket(packet);
+                                    break;
                                 default: //nothing
                                     break;
                             }
@@ -510,6 +513,12 @@ namespace MediCare.Server
         private void HandleCommandPacket(Packet packet)
         {
             Console.WriteLine("Received Command packet: " + packet._message);
+            SendToDestination(packet);
+        }
+
+        private void HandleCycleTestPacket(Packet packet)
+        {
+            Console.WriteLine("Received Cycle Test packet: " + packet._message);
             SendToDestination(packet);
         }
 

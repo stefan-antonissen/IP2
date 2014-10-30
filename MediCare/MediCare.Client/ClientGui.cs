@@ -27,12 +27,10 @@ namespace MediCare.Client
         private static int _port = NetworkSettings.SERVERPORT;
         private ClientTcpConnector _client;
 
-        private const bool SIM_ON = false;
+        private const bool SIM_ON = true;
 
         string _ID;
         private Boolean _userIsAuthenticated = false;
-
-        private const bool SIM_ON = false;
 
         private readonly Timer _updateDataTimer;
         private readonly Timer _labelRemoveTimer;

@@ -779,6 +779,7 @@ namespace MediCare.ArtsClient
         #region define Controls
         public Button closeButton = new Button();
         public Button closeAllButThisButton = new Button();
+        public Button cycleTestButton = new Button();
         private TextBox chatBox = new TextBox();
         private TextBox typeBox = new TextBox();
         private Button sendButtonClient = new Button();
@@ -836,6 +837,13 @@ namespace MediCare.ArtsClient
             //close all but this button
             closeAllButThisButton.Location = new System.Drawing.Point(1150, 600);
             closeAllButThisButton.Text = "Close all";
+            #endregion
+
+            #region Cycle Test Button
+            cycleTestButton.Location = new System.Drawing.Point(95, 350);
+            cycleTestButton.Text = "Start cycle test";
+            cycleTestButton.Size = new System.Drawing.Size(70, 35);
+            cycleTestButton.Click += new System.EventHandler(this.cycleTestButton_Click);
             #endregion
 
             #region chatbox
@@ -1090,6 +1098,7 @@ namespace MediCare.ArtsClient
             //add components
             this.Controls.Add(closeButton);
             this.Controls.Add(closeAllButThisButton);
+            this.Controls.Add(cycleTestButton);
             this.Controls.Add(chatBox);
             this.Controls.Add(typeBox);
             this.Controls.Add(sendButtonClient);
@@ -1181,6 +1190,36 @@ namespace MediCare.ArtsClient
                     }
                 }
                 MessageBox.Show("Bike reset!");
+            }
+        }
+
+        private void cycleTestButton_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Are you sure you want start a cycle test?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                bool success = false;
+                Packet p = new Packet(_id, "CycleTest", _tabName, "Start cycle test");
+                if (_client.isConnected())
+                {
+                    try
+                    {
+                        _client.sendMessage(p);
+                        success = true;
+                    }
+                    catch (TimeoutException)
+                    {
+                        MessageBox.Show("An timeout occured, retrying");
+                        success = false;
+                    }
+                    finally
+                    {
+                        if (!success)
+                        {
+                            _client.sendMessage(p);
+                        }
+                    }
+                }
+                MessageBox.Show("Cycle test started!");
             }
         }
 
