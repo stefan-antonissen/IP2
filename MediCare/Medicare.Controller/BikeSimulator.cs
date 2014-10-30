@@ -196,7 +196,7 @@ namespace MediCare.Controller
             Random rnd = new Random();
             double random = rnd.NextDouble() * (1.2 - 0.8) + 0.8;
 
-            heartrate = (int)(heartrate * random);
+            //heartrate = (int)(heartrate * random);
             rpm = (int)(rpm * random);
             speed = (int)(speed * random);
             currentPower = (int)(currentPower * random);

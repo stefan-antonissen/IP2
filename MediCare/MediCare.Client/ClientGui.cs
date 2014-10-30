@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Net.Configuration;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
@@ -14,6 +15,7 @@ using System.Text;
 using MediCare.DataHandling;
 using System.Text.RegularExpressions;
 using System.Windows.Forms.DataVisualization.Charting;
+using Timer = System.Windows.Forms.Timer;
 
 namespace MediCare.Client
 {
@@ -185,7 +187,7 @@ namespace MediCare.Client
             }
         }
 
-        private void HandleStartTestPacket()
+        private void HandleStartTestPacket(Packet p)
         {
             if(!testBusy)
             {
@@ -195,6 +197,15 @@ namespace MediCare.Client
                     _bikeController.SetPower(50);
                     int time = 0;
                     int currentPower = 50;
+                    int powerIncrement = 0;
+                    if (p._message == "male")
+                    {
+                        powerIncrement = 50;
+                    }
+                    else if (p._message == "female")
+                    {
+                        powerIncrement = 25;
+                    }
                     on_message_receive_event("", "Inspanningstest : " + "Welkom bij de inspanningstest, probeert u een omwentelingen per min van ong. 60 te behouden tijdens de gehele test");
                     while (true)
                     {
@@ -203,10 +214,14 @@ namespace MediCare.Client
                             if (time > 20)
                             {
                                 _bikeController.SetPower(currentPower += 25);
+                                on_message_receive_event("", "Inspanningstest : " + "Power opgevoerd naar " + currentPower);
                                 time = 0;
+                                Thread.Sleep(1000);
                             }
                         }
+                        on_message_receive_event("", "Inspanningstest : " + "Time :  " + time);
                         time++;
+                        Thread.Sleep(1000);
                     }
                 }).Start();
             }
