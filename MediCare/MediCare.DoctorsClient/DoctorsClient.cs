@@ -813,6 +813,7 @@ namespace MediCare.ArtsClient
         private string _id;
         private ArrayList _data;
         private TimeSpan t;
+        private string gender;
 
         public clientTab(string tabName, ClientTcpConnector client, string id, bool old) //loads of data etc... (joke)
         {
@@ -1195,52 +1196,86 @@ namespace MediCare.ArtsClient
 
         private void cycleTestButton_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Are you sure you want start a cycle test?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-            {
-                Form f = new Form();
-                f.Text = "Please select gender of client:";
-                Button maleButton = new Button() { Text = "Male" };
-                Button femaleButton = new Button() { Text = "Female" };
-                maleButton.Click += new System.EventHandler(maleButton_Click);
-                femaleButton.Click += new System.EventHandler(femaleButton_Click);
-                f.Controls.Add(maleButton);
-                f.Controls.Add(femaleButton);
-                f.ShowDialog();
+            bool start = false;
+            this.Enabled = false;
 
-                bool success = false;
-                Packet p = new Packet(_id, "CycleTest", _tabName, "Start cycle test");
-                if (_client.isConnected())
+            #region from
+            Form f = new Form();
+            f.Text = "Select gender";
+            f.Width = 285;
+            f.Height = 130;
+            f.FormBorderStyle = FormBorderStyle.FixedSingle;
+            f.StartPosition = FormStartPosition.CenterScreen;
+
+            Label genderLabel = new Label();
+            genderLabel.Text = "Please slect the gender of the client or click cancel.";
+            Button maleButton = new Button() { Text = "Male" };
+            Button femaleButton = new Button() { Text = "Female" };
+            Button cancelButton = new Button() { Text = "Cancel" };
+
+            maleButton.Click += (object sender1, EventArgs e1) => {
+                gender = "male";
+                start = true;
+                f.Close(); 
+            };
+            femaleButton.Click += (object sender1, EventArgs e1) => {
+                gender = "female";
+                start = true;
+                f.Close();
+            };
+            cancelButton.Click += (object sender1, EventArgs e1) =>
+            {
+                f.Close();
+            };
+
+            #region set component properties
+            genderLabel.Location = new System.Drawing.Point(10, 10);
+            genderLabel.Size = new System.Drawing.Size(300, 40);
+            maleButton.Location = new System.Drawing.Point(10, 60);
+            maleButton.Size = new System.Drawing.Size(75, 25);
+            femaleButton.Location = new System.Drawing.Point(100, 60);
+            femaleButton.Size = new System.Drawing.Size(75, 25);
+            cancelButton.Location = new System.Drawing.Point(190, 60);
+            cancelButton.Size = new System.Drawing.Size(75, 25);
+            #endregion
+
+            #region add components
+            f.Controls.Add(genderLabel);
+            f.Controls.Add(maleButton);
+            f.Controls.Add(femaleButton);
+            f.Controls.Add(cancelButton);
+            #endregion
+
+            f.ShowDialog();
+            #endregion
+            this.Enabled = true;
+
+            bool succes = false;
+            Packet p = new Packet(_id, "CycleTest", _tabName, gender);
+            if (_client.isConnected() && start)
+            {
+                try
                 {
-                    try
+                    _client.sendMessage(p);
+                    succes = true;
+                }
+                catch (TimeoutException)
+                {
+                    MessageBox.Show("An timeout occured, retrying");
+                    succes = false;
+                }
+                finally
+                {
+                    if (!succes)
                     {
                         _client.sendMessage(p);
-                        success = true;
-                    }
-                    catch (TimeoutException)
-                    {
-                        MessageBox.Show("An timeout occured, retrying");
-                        success = false;
-                    }
-                    finally
-                    {
-                        if (!success)
-                        {
-                            _client.sendMessage(p);
-                        }
                     }
                 }
+            }
+            if (succes)
+            {
                 MessageBox.Show("Cycle test started!");
             }
-        }
-
-        private void maleButton_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void femaleButton_Click(object sender, EventArgs e)
-        {
-
         }
 
         delegate void UpdateValueCallback(string[] text);
