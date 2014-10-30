@@ -41,6 +41,7 @@ namespace MediCare.Client
         private string _DateFileFormat = "yyyy_MM_dd HH_mm_ss";
 
         private bool first = true;
+        private bool testBusy = false;
 
         public ClientGui()
         {
@@ -176,7 +177,7 @@ namespace MediCare.Client
                 case "FirstConnect":
                 HandleFirstConnectPacket(p);
                 break;
-                case "StartTest":
+                case "CycleTest":
                 HandleStartTestPacket();
                 break;
                 default: //nothing
@@ -186,25 +187,29 @@ namespace MediCare.Client
 
         private void HandleStartTestPacket()
         {
-            new System.Threading.Thread(() =>
+            if(!testBusy)
             {
-                _bikeController.SetPower(50);
-                txtLog.AppendText(Environment.NewLine + "Inspanningstest : " + "Welkom bij de inspanningstest, probeert u een omwentelingen per min van ong. 60 te behouden tijdens de gehele test");
-                txtLog_AlignTextToBottom();
-                txtLog_ScrollToBottom();
-                int time = 0;
-                int currentPower = 50;
-                while (true)
+                testBusy = true;
+                new System.Threading.Thread(() =>
                 {
-                    if (int.Parse(Heartbeats_Box.Text) < 140)
+                    _bikeController.SetPower(50);
+                    int time = 0;
+                    int currentPower = 50;
+                    on_message_receive_event("", "Inspanningstest : " + "Welkom bij de inspanningstest, probeert u een omwentelingen per min van ong. 60 te behouden tijdens de gehele test");
+                    while (true)
                     {
-                        if (time > 20)
+                        if (int.Parse(Heartbeats_Box.Text) < 140)
                         {
+                            if (time > 20)
+                            {
+                                _bikeController.SetPower(currentPower += 25);
+                                time = 0;
+                            }
                         }
+                        time++;
                     }
-                    time++;
-                }
-            }).Start();
+                }).Start();
+            }
         }
 
         private void HandleFirstConnectPacket(Packet p)
