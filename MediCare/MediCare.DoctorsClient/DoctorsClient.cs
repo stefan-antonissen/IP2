@@ -1197,6 +1197,16 @@ namespace MediCare.ArtsClient
         {
             if (MessageBox.Show("Are you sure you want start a cycle test?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
+                Form f = new Form();
+                f.Text = "Please select gender of client:";
+                Button maleButton = new Button() { Text = "Male" };
+                Button femaleButton = new Button() { Text = "Female" };
+                maleButton.Click += new System.EventHandler(maleButton_Click);
+                femaleButton.Click += new System.EventHandler(femaleButton_Click);
+                f.Controls.Add(maleButton);
+                f.Controls.Add(femaleButton);
+                f.ShowDialog();
+
                 bool success = false;
                 Packet p = new Packet(_id, "CycleTest", _tabName, "Start cycle test");
                 if (_client.isConnected())
@@ -1221,6 +1231,16 @@ namespace MediCare.ArtsClient
                 }
                 MessageBox.Show("Cycle test started!");
             }
+        }
+
+        private void maleButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void femaleButton_Click(object sender, EventArgs e)
+        {
+
         }
 
         delegate void UpdateValueCallback(string[] text);
