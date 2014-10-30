@@ -176,9 +176,36 @@ namespace MediCare.Client
                 case "FirstConnect":
                 HandleFirstConnectPacket(p);
                 break;
+                case "StartTest":
+                HandleStartTestPacket();
+                break;
                 default: //nothing
                 break;
             }
+        }
+
+        private void HandleStartTestPacket()
+        {
+            new System.Threading.Thread(() =>
+            {
+                _bikeController.SetPower(50);
+                txtLog.AppendText(Environment.NewLine + "Inspanningstest : " + "Welkom bij de inspanningstest, probeert u een omwentelingen per min van ong. 60 te behouden tijdens de gehele test");
+                txtLog_AlignTextToBottom();
+                txtLog_ScrollToBottom();
+                int time = 0;
+                int currentPower = 50;
+                while (true)
+                {
+                    if (int.Parse(Heartbeats_Box.Text) < 140)
+                    {
+                        if (time > 20)
+                        {
+                            
+                        }
+                    }
+                    time++;
+                }
+            }).Start();
         }
 
         private void HandleFirstConnectPacket(Packet p)
