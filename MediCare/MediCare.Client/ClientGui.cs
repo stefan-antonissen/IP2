@@ -1,50 +1,39 @@
 ﻿using System;
 using System.Collections;
-using System.Drawing;
-using System.Net.Configuration;
+using System.Net.Sockets;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
-using MediCare.Controller;
-using System.Net.Sockets;
-using System.Runtime.Serialization.Formatters.Binary;
-using MediCare.NetworkLibrary;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using MediCare.DataHandling;
-using System.Text.RegularExpressions;
 using System.Windows.Forms.DataVisualization.Charting;
+using MediCare.Controller;
+using MediCare.DataHandling;
+using MediCare.NetworkLibrary;
 using Timer = System.Windows.Forms.Timer;
 
 namespace MediCare.Client
 {
     public partial class ClientGui : Form
     {
-        private Controller.BikeController _bikeController;
-        private Graph _graph;
-        private Series[] _ChartData = new Series[8];
-
+        private const bool SIM_ON = false;
         private static string _server = NetworkSettings.SERVERIP;
         private static int _port = NetworkSettings.SERVERPORT;
-        private ClientTcpConnector _client;
+        private readonly ClientTcpConnector _client;
+        private readonly Graph _graph;
 
-        private const bool SIM_ON = true;
-
-        string _ID;
-        private Boolean _userIsAuthenticated = false;
-
-        private readonly Timer _updateDataTimer;
         private readonly Timer _labelRemoveTimer;
-
-        private string _defaultDestination = "Dokter";
+        private readonly Timer _updateDataTimer;
+        private Series[] _ChartData = new Series[8];
 
         //USE THIS FORMAT WHEN SENDING DATETIME PACKET!
         private string _DateFileFormat = "yyyy_MM_dd HH_mm_ss";
+        private string _ID;
+        private BikeController _bikeController;
+        private string _defaultDestination = "Dokter";
+        private Boolean _userIsAuthenticated;
 
         private bool first = true;
-        private bool testBusy = false;
+        private bool testBusy;
 
         public ClientGui()
         {
@@ -56,7 +45,7 @@ namespace MediCare.Client
             _graph.InitializeGraph();
             AddGraphToForm();
 
-            this.FormClosing += on_Window_Closed_Event;
+            FormClosing += on_Window_Closed_Event;
             setVisibility(false);
 
             // update waarden met de data van de fiets
@@ -69,31 +58,28 @@ namespace MediCare.Client
             _labelRemoveTimer.Interval = 3000;
             _labelRemoveTimer.Tick += UpdateLabel;
 
-            if(SIM_ON)
+            if (SIM_ON)
             {
                 Connect("SIM");
             }
-            else
-            {
-                Connect("");
-            }
+            Connect("COM3");
 
             _bikeController.LockPower();
 
             try
             {
                 //opzetten tcp connectie
-                TcpClient TcpClient = new TcpClient(_server, _port);
+                var TcpClient = new TcpClient(_server, _port);
                 _client = new ClientTcpConnector(TcpClient, _server);
 
-                new System.Threading.Thread(() =>
+                new Thread(() =>
                 {
                     while (true)
                     {
                         if (_userIsAuthenticated)
                         {
                             Packet packet = null;
-                            if (_client.isConnected() && !this.IsDisposed)
+                            if (_client.isConnected() && !IsDisposed)
                             {
                                 //Console.WriteLine("Reading message\n");
                                 packet = _client.ReadMessage();
@@ -104,11 +90,10 @@ namespace MediCare.Client
                                 }
                             }
                         }
-                        System.Threading.Thread.Sleep(5);
+                        Thread.Sleep(5);
                     }
                 }).Start();
                 success = true;
-
             }
             catch (SocketException)
             {
@@ -131,17 +116,17 @@ namespace MediCare.Client
                 if (!success)
                 {
                     //opzetten tcp connectie
-                    TcpClient TcpClient = new TcpClient(_server, _port);
+                    var TcpClient = new TcpClient(_server, _port);
                     _client = new ClientTcpConnector(TcpClient, _server);
 
-                    new System.Threading.Thread(() =>
+                    new Thread(() =>
                     {
                         while (true)
                         {
                             if (_userIsAuthenticated)
                             {
                                 Packet packet = null;
-                                if (_client.isConnected() && !this.IsDisposed)
+                                if (_client.isConnected() && !IsDisposed)
                                 {
                                     //Console.WriteLine("Reading message\n");
                                     packet = _client.ReadMessage();
@@ -152,7 +137,7 @@ namespace MediCare.Client
                                     }
                                 }
                             }
-                            System.Threading.Thread.Sleep(5);
+                            Thread.Sleep(5);
                         }
                     }).Start();
                 }
@@ -166,25 +151,25 @@ namespace MediCare.Client
             //Console.WriteLine("Received packet with message: " + p._message);
             switch (p._type)
             {
-                //sender = incoming client
-                //packet = data van de client
+                    //sender = incoming client
+                    //packet = data van de client
                 case "Chat":
-                HandleChatPacket(p);
-                break;
+                    HandleChatPacket(p);
+                    break;
                 case "Command":
-                HandleCommandPacket(p);
-                break;
+                    HandleCommandPacket(p);
+                    break;
                 case "Disconnect":
-                HandleDisconnectPacket(p);
-                break;
+                    HandleDisconnectPacket(p);
+                    break;
                 case "FirstConnect":
-                HandleFirstConnectPacket(p);
-                break;
+                    HandleFirstConnectPacket(p);
+                    break;
                 case "CycleTest":
-                HandleStartTestPacket(p);
-                break;
+                    HandleStartTestPacket(p);
+                    break;
                 default: //nothing
-                break;
+                    break;
             }
         }
 
@@ -195,15 +180,17 @@ namespace MediCare.Client
 
         private void HandleStartTestPacket(Packet p)
         {
-            if(!testBusy)
+            if (!testBusy)
             {
                 testBusy = true;
-                new System.Threading.Thread(() =>
+                new Thread(() =>
                 {
+                    _bikeController.ResetBike();
+                    Thread.Sleep(1000);
                     _bikeController.SetPower(50);
                     int time = 0;
                     int testTimeCompleted = 0;
-                    ArrayList heartbeatList = new ArrayList();
+                    var heartbeatList = new ArrayList();
                     int currentPower = 50;
                     int powerIncrement = 0;
                     bool correctRPM = false;
@@ -215,15 +202,17 @@ namespace MediCare.Client
                     {
                         powerIncrement = 25;
                     }
-                    on_message_receive_event("", "Inspanningstest : " + "Welkom bij de inspanningstest, probeert u een omwentelingen per min van ong. 60 te behouden tijdens de gehele test");
+                    on_message_receive_event("",
+                        "Inspanningstest : " +
+                        "Welkom bij de inspanningstest, probeert u een omwentelingen per min van ong. 60 te behouden tijdens de gehele test");
                     while (true)
                     {
-                        if (int.Parse(RPM_Box.Text) < 50 && correctRPM && (time % 10 == 0))
+                        if (int.Parse(RPM_Box.Text) < 50 && correctRPM && (time%10 == 0))
                         {
                             on_message_receive_event("", "Please cycle faster to get your rpm up to 60");
                             correctRPM = false;
                         }
-                        else if (int.Parse(RPM_Box.Text) > 70 && correctRPM && (time % 10 == 0))
+                        else if (int.Parse(RPM_Box.Text) > 70 && correctRPM && (time%10 == 0))
                         {
                             on_message_receive_event("", "Please cycle slower to get your rpm down to 60");
                             correctRPM = false;
@@ -232,14 +221,14 @@ namespace MediCare.Client
                         {
                             correctRPM = true;
                         }
-                        if (int.Parse(Heartbeats_Box.Text) < 140 && time > 20 && currentPower < 400)
+                        if (int.Parse(Heartbeats_Box.Text) < 80 && time > 20 && currentPower < 400)
                         {
                             currentPower += powerIncrement;
                             _bikeController.SetPower(currentPower);
                             on_message_receive_event("", "Inspanningstest : " + "Power opgevoerd naar " + currentPower);
                             time = 0;
                         }
-                        else if (int.Parse(Heartbeats_Box.Text) > 140)
+                        else if (int.Parse(Heartbeats_Box.Text) > 80)
                         {
                             testTimeCompleted++;
                             if (testTimeCompleted%60 == 0)
@@ -247,10 +236,24 @@ namespace MediCare.Client
                                 on_message_receive_event("", "Heartbeat added");
                                 heartbeatList.Add(int.Parse(Heartbeats_Box.Text));
                             }
-                            if (testTimeCompleted%360 == 0)
+                            if (testTimeCompleted%60 == 0)
                             {
                                 on_message_receive_event("", "Test completed, sending results");
-                                //todo send results
+                                testBusy = false;
+                                double workload = currentPower * 6.12;
+                                double result = 0;
+                                if (p._message == "female")
+                                {
+                                    result = (0.00193*workload + 0.326)/
+                                                    (0.769*(int) heartbeatList[heartbeatList.Count - 1] - 56.1)*100;
+                                }
+                                else if (p._message == "male")
+                                {
+                                    result = (0.00212 * workload + 0.299) /
+                                                    (0.769 * (int)heartbeatList[heartbeatList.Count - 1] - 48.5) * 100;
+                                }
+                                Packet responsePacket = new Packet(_ID, "CycleTestFinished", p._id, result.ToString());
+                                _client.sendMessage(responsePacket);
                             }
                         }
                         time++;
@@ -327,7 +330,9 @@ namespace MediCare.Client
             if (first)
             {
                 string[] timestamp = DateTime.Now.ToString(_DateFileFormat).Split();
+
                 #region SendTimeStamp
+
                 try
                 {
                     SendMeasurementData(timestamp, "Timestamp");
@@ -346,7 +351,9 @@ namespace MediCare.Client
                     }
                     success = false;
                 }
+
                 #endregion
+
                 #region sendmessage(packet filelist)
 
                 try
@@ -369,6 +376,7 @@ namespace MediCare.Client
                 }
 
                 #endregion
+
                 first = false;
             }
 
@@ -411,9 +419,10 @@ namespace MediCare.Client
             }
             else
             {
-                s = data[0] + " " + data[1] + " " + data[2] + " " + data[3] + " " + data[4] + " " + data[5] + " " + data[6] + " " + data[7];
+                s = data[0] + " " + data[1] + " " + data[2] + " " + data[3] + " " + data[4] + " " + data[5] + " " +
+                    data[6] + " " + data[7];
             }
-            Packet p = new Packet(_ID, type, _defaultDestination, s);
+            var p = new Packet(_ID, type, _defaultDestination, s);
             if (_client.isConnected())
             {
                 try
@@ -441,19 +450,19 @@ namespace MediCare.Client
         {
             try
             {
-                var result = await DoWorkAsync();
+                string[] result = await DoWorkAsync();
                 updateValues(result);
             }
             catch
             {
                 _updateDataTimer.Stop();
-                Form f = new Form();
+                var f = new Form();
                 f.Text = "Waiting for reconnect...";
                 MessageBox.Show("Bike Connection error, please reconnect the bike!");
-                    //MessageBox.Show("Bike Connection error, please reconnect the bike!");
-                f.Show(this);         //Make sure we're the owner
-                this.Enabled = false; //Disable ourselves
-                while(!_bikeController.IsConnected())
+                //MessageBox.Show("Bike Connection error, please reconnect the bike!");
+                f.Show(this); //Make sure we're the owner
+                Enabled = false; //Disable ourselves
+                while (!_bikeController.IsConnected())
                 {
                     try
                     {
@@ -464,8 +473,8 @@ namespace MediCare.Client
                         Console.WriteLine(ex);
                     }
                 }
-                this.Enabled = true;  //We're done, enable ourselves
-                f.Close();            //Dispose message form
+                Enabled = true; //We're done, enable ourselves
+                f.Close(); //Dispose message form
                 MessageBox.Show("Bike Connection restored");
                 _updateDataTimer.Start();
             }
@@ -480,17 +489,18 @@ namespace MediCare.Client
             //string[] str = new string[] { num, num, num, num, num, num, num, num };
             // return str;
             string[] data = _bikeController.GetStatus();
-            return new string[] { data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7] };
+            return new[] {data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7]};
         }
 
         # region Chat Box
+
         // ID = id van sender; type = type bericht; destination = ID van ontvanger; message = bericht
         private void sendButton_Click(object sender, EventArgs e)
         {
             bool success = false;
             if (typeBox.Text != "")
             {
-                Packet p = new Packet(_ID, "Chat", _defaultDestination, typeBox.Text);
+                var p = new Packet(_ID, "Chat", _defaultDestination, typeBox.Text);
                 try
                 {
                     _client.sendMessage(p);
@@ -523,7 +533,7 @@ namespace MediCare.Client
             {
                 if (typeBox.Text != "")
                 {
-                    Packet p = new Packet(_ID, "Chat", _defaultDestination, typeBox.Text);
+                    var p = new Packet(_ID, "Chat", _defaultDestination, typeBox.Text);
                     try
                     {
                         _client.sendMessage(p);
@@ -552,7 +562,7 @@ namespace MediCare.Client
 
         private void txtLog_AlignTextToBottom()
         {
-            int visibleLines = (int)(txtLog.Height / txtLog.Font.GetHeight()) - 50;
+            int visibleLines = (int) (txtLog.Height/txtLog.Font.GetHeight()) - 50;
             if (visibleLines > txtLog.Lines.Length)
             {
                 int emptyLines = (visibleLines - txtLog.Lines.Length);
@@ -568,14 +578,13 @@ namespace MediCare.Client
             txtLog.SelectionStart = txtLog.Text.Length;
             txtLog.ScrollToCaret();
         }
-        delegate void UpdateChat(string identification, string text);
 
         public void on_message_receive_event(string id, string message)
         {
             if (txtLog.InvokeRequired)
             {
-                UpdateChat d = new UpdateChat(on_message_receive_event);
-                this.Invoke(d, new object[] { id, message });
+                UpdateChat d = on_message_receive_event;
+                Invoke(d, new object[] {id, message});
             }
             else
             {
@@ -585,9 +594,12 @@ namespace MediCare.Client
             }
         }
 
+        private delegate void UpdateChat(string identification, string text);
+
         # endregion
 
         #region TCPclient tools
+
         //SENDMESSAGE TO SERVER
         //to send messages to the server use object client. of type TcpClientConnector declared as attribute to send messages to the server
         //usage client.sendmessage(packet);
@@ -599,14 +611,15 @@ namespace MediCare.Client
         private void on_Window_Closed_Event(object sender, FormClosingEventArgs e)
         {
             bool success = false;
-            DialogResult result = MessageBox.Show("Are you sure you want to exit ?", "Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult result = MessageBox.Show("Are you sure you want to exit ?", "Confirmation",
+                MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.No)
             {
                 e.Cancel = true;
             }
             else
             {
-                Packet p = new Packet(_ID, "Disconnect", _defaultDestination, "Disconnecting");
+                var p = new Packet(_ID, "Disconnect", _defaultDestination, "Disconnecting");
                 //send message to server that ur dying
                 if (_client.isConnected())
                 {
@@ -640,7 +653,7 @@ namespace MediCare.Client
         {
             if (e.KeyCode == Keys.Enter && Username_Box.Focused)
             {
-                this.ActiveControl = Password_Box;
+                ActiveControl = Password_Box;
             }
         }
 
@@ -658,23 +671,23 @@ namespace MediCare.Client
             if (String.IsNullOrEmpty(Username_Box.Text) || String.IsNullOrEmpty(Password_Box.Text))
             {
                 displayErrorMessage("One or more fields are blank!");
-                this.ActiveControl = Username_Box;
+                ActiveControl = Username_Box;
             }
             else
             {
                 string value = Username_Box.Text.Substring(0, 1);
                 int id;
                 bool isNum = int.TryParse(value, out id);
-                Regex r = new Regex(@"^[0-9]{8}$");
+                var r = new Regex(@"^[0-9]{8}$");
                 if ((!isNum) || (id < 1) || (id > 8) || (!r.IsMatch(Username_Box.Text)))
                 {
                     displayErrorMessage("Client ID must start with 1-8 and is 8 digits long!");
-                    this.ActiveControl = Username_Box;
+                    ActiveControl = Username_Box;
                 }
                 else
                 {
                     string tempID = Username_Box.Text;
-                    
+
                     try
                     {
                         _client.sendFirstConnectPacket(tempID, Password_Box.Text);
@@ -761,19 +774,20 @@ namespace MediCare.Client
             Login_ERROR_Label.Visible = !v;
             if (!v)
             {
-                this.ActiveControl = Username_Box;
+                ActiveControl = Username_Box;
             }
             else
             {
-                this.ActiveControl = typeBox;
+                ActiveControl = typeBox;
             }
-
         }
+
         private void UpdateLabel(object sender, EventArgs e)
         {
             Login_ERROR_Label.Text = "";
             _labelRemoveTimer.Stop();
         }
+
         #endregion
 
         # region Graph Datahandlers and EventListeners
@@ -781,14 +795,13 @@ namespace MediCare.Client
         private void AddGraphToForm()
         {
             object[] data = _graph.getComponents();
-            this.Controls.Add((System.Windows.Forms.DataVisualization.Charting.Chart)data[0]);
+            Controls.Add((Chart) data[0]);
             for (int i = 1; i < data.Length; i++)
             {
-                this.Controls.Add((System.Windows.Forms.CheckBox)data[i]);
+                Controls.Add((CheckBox) data[i]);
             }
         }
 
         #endregion
-
     }
 }
