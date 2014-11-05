@@ -34,6 +34,11 @@ namespace MediCare.Controller
             cc.openConnection();
         }
 
+        public void disconnect()
+        {
+            cc.closeConnection();
+        }
+
         public bool IsConnected()
         {
             return cc.IsConnected();

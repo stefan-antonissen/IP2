@@ -194,6 +194,7 @@ namespace MediCare.Client
                     int currentPower = 50;
                     int powerIncrement = 0;
                     bool correctRPM = false;
+                    bool testReallyBusy = false;
                     if (p._message == "male")
                     {
                         powerIncrement = 50;
@@ -203,49 +204,59 @@ namespace MediCare.Client
                         powerIncrement = 25;
                     }
                     on_message_receive_event("",
-                        "Inspanningstest : " +
-                        "Welkom bij de inspanningstest, probeert u een omwentelingen per min van ong. 60 te behouden tijdens de gehele test");
+                        "AstrandTest : Welcome to the astrand test, try to keep your RPM around 60 for the entirety of the test");
                     while (true)
                     {
                         if (int.Parse(RPM_Box.Text) < 50 && correctRPM && (time%10 == 0))
                         {
-                            on_message_receive_event("", "Please cycle faster to get your rpm up to 60");
+                            on_message_receive_event("", "Astrandtest : Please cycle faster to get your rpm up to 60");
                             correctRPM = false;
                         }
                         else if (int.Parse(RPM_Box.Text) > 70 && correctRPM && (time%10 == 0))
                         {
-                            on_message_receive_event("", "Please cycle slower to get your rpm down to 60");
+                            on_message_receive_event("", "Astrandtest : Please cycle slower to get your rpm down to 60");
                             correctRPM = false;
                         }
                         else
                         {
                             correctRPM = true;
                         }
-                        if (int.Parse(Heartbeats_Box.Text) < 80 && time > 20 && currentPower < 400)
+                        if (int.Parse(Heartbeats_Box.Text) < 120 && time > 15 && currentPower < 400 && !testReallyBusy)
                         {
                             currentPower += powerIncrement;
                             _bikeController.SetPower(currentPower);
-                            on_message_receive_event("", "Inspanningstest : " + "Power opgevoerd naar " + currentPower);
+                            on_message_receive_event("", "Astrandtest : Power upped to " + currentPower);
                             time = 0;
                         }
-                        else if (int.Parse(Heartbeats_Box.Text) > 80)
+                        else if (int.Parse(Heartbeats_Box.Text) > 170 && time > 15 && currentPower > 50 && !testReallyBusy)
+                        {
+                            currentPower -= powerIncrement;
+                            _bikeController.SetPower(currentPower);
+                            on_message_receive_event("", "Astrandtest : Power decreased to " + currentPower);
+                        }
+                        else if (int.Parse(Heartbeats_Box.Text) > 120)
+                        {
+                            testReallyBusy = true;
+                        }
+                        else if (testReallyBusy)
                         {
                             testTimeCompleted++;
-                            if (testTimeCompleted%60 == 0)
+                            if (testTimeCompleted % 60 == 0)
                             {
-                                on_message_receive_event("", "Heartbeat added");
+                                on_message_receive_event("", "Astrandtest : Another minute completed");
                                 heartbeatList.Add(int.Parse(Heartbeats_Box.Text));
                             }
-                            if (testTimeCompleted%60 == 0)
+                            if (testTimeCompleted % 360 == 0)
                             {
-                                on_message_receive_event("", "Test completed, sending results");
+                                on_message_receive_event("", "Astrandtest : Test completed, sending results");
+                                on_message_receive_event("", "Astrandtest : Please keep cycling at a slower pace for a cooldown period");
                                 testBusy = false;
                                 double workload = currentPower * 6.12;
                                 double result = 0;
                                 if (p._message == "female")
                                 {
-                                    result = (0.00193*workload + 0.326)/
-                                                    (0.769*(int) heartbeatList[heartbeatList.Count - 1] - 56.1)*100;
+                                    result = (0.00193 * workload + 0.326) /
+                                                    (0.769 * (int)heartbeatList[heartbeatList.Count - 1] - 56.1) * 100;
                                 }
                                 else if (p._message == "male")
                                 {
@@ -254,6 +265,7 @@ namespace MediCare.Client
                                 }
                                 Packet responsePacket = new Packet(_ID, "CycleTestFinished", p._id, result.ToString());
                                 _client.sendMessage(responsePacket);
+                                _bikeController.SetPower(100);
                             }
                         }
                         time++;

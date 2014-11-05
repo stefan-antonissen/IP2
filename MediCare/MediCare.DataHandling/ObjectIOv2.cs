@@ -107,6 +107,35 @@ namespace MediCare.DataHandling
             }
         }
 
+        public void Add_Result(Packet p)
+        {
+            string message = p._message;
+            string filename = _dirDictionary[p._id];
+
+            using (StreamWriter sw = File.AppendText(Path.Combine(_dir, p._id, filename + _fileExt)))
+            {
+                byte[] clearBytes = Encoding.Unicode.GetBytes("       " + p._message);
+                string encryptedData = "";
+                using (Aes encryptor = Aes.Create())
+                {
+                    encryptor.Padding = PaddingMode.Zeros;
+                    Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, salt);
+                    encryptor.Key = pdb.GetBytes(32);
+                    encryptor.IV = pdb.GetBytes(16);
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+                        {
+                            cs.Write(clearBytes, 0, clearBytes.Length);
+                            cs.Close();
+                        }
+                        encryptedData = Convert.ToBase64String(ms.ToArray());
+                    }
+                }
+                sw.WriteLine(encryptedData);
+            }
+        }
+
         public void Remove_client(Packet p)
         {
             if (_dirDictionary.ContainsKey(p._id))

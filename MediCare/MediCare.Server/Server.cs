@@ -528,6 +528,7 @@ namespace MediCare.Server
         private void HandleCycleTestFinishedPacket(Packet packet)
         {
             Console.WriteLine("Received Cycle Test Finished packet: " + packet._message);
+            mIOv2.Add_Result(packet);
             SendToDestination(packet);
         }
 
